@@ -1,5 +1,3 @@
-import './style.css';
-
 // View Components
 const views = {
   '/': () => `
