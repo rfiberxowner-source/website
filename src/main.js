@@ -8,85 +8,87 @@ const views = {
         <h2 class="hero-kicker">RFIBERX</h2>
         <h1 class="hero-title">FAST INTERNET</h1>
         <p class="hero-subtitle">Experience next-level connectivity and seamless reliability.</p>
-        <button class="btn btn-white" onclick="window.router.navigate('/subscriptions')">Get connected now</button>
+        <button class="btn btn-white" onclick="window.router.navigate('/subscriptions')">Get Unlimited Network Now</button>
+      </div>
+    </section>
+
+    <section class="our-company scroll-animate">
+      <div class="our-company-content" style="display: flex; align-items: center; justify-content: space-between; gap: 4rem;">
+        <div class="our-company-text" style="flex: 1;">
+          <h2 class="our-company-title">Our Company</h2>
+          <p class="our-company-desc">We believe that quality connectivity should be straightforward and accessible. Through practical solutions and a customer-first approach, we strive to deliver dependable internet services that enhance daily life and support your continuous growth.</p>
+          <button class="btn btn-company" onclick="window.router.navigate('/about')">Learn More <span class="btn-arrow">→</span></button>
+        </div>
+        <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
+          <div style="display: flex; align-items: flex-end; font-family: 'Saira Condensed', sans-serif; font-size: 8rem; font-weight: 800; font-style: italic; letter-spacing: -4px; text-transform: uppercase;">
+            <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: -35px; margin-bottom: 35px; z-index: 2;">
+              <g transform="rotate(-40 12 20)">
+                <path d="M8.5 16.5a5 5 0 0 1 7 0 M4.5 12.5a10 10 0 0 1 15 0" stroke="#E53935" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+            </svg>
+            <span><span style="color: #E53935;">R</span><span style="color: #fff;">FIBER</span><span style="color: #E53935;">X</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="our-company-cards">
+        <div class="company-card">
+          <h3 class="company-card-title">Our Purpose</h3>
+          <p>We are dedicated to empowering individuals, families, and businesses by providing seamless digital connectivity. We strive to make everyday communication and online experiences smoother and more accessible for everyone.</p>
+        </div>
+        <div class="company-card">
+          <h3 class="company-card-title">Our Vision</h3>
+          <p>We envision a future where technology bridges gaps rather than creating them, building robust and forward-looking networks that enable continuous growth, collaboration, and endless digital possibilities.</p>
+        </div>
+        <div class="company-card">
+          <h3 class="company-card-title">Our Mission</h3>
+          <p>Our team is committed to providing innovative telecommunication services that enhance daily life. We work tirelessly to simplify how people connect, ensuring you stay online and thriving every single day.</p>
+        </div>
       </div>
     </section>
 
     <section class="pldt-ad scroll-animate">
       <div class="pldt-ad-content">
-        <h2>MORE SHOWS.<br>MORE STREAMING.</h2>
-        <p>Now with HBO Max alongside Netflix and Cignal when you apply for Fiber Plan 2499!</p>
+        <h2>MORE SHOWS.<br>MORE GAMING.</h2>
+        <p>Power your entertainment with Fiber Plan 2499! Enjoy lag-free gaming in Valorant, Dota, and Mobile Legends, alongside smooth, seamless streaming for Netflix, YouTube, anime, and all your favorite websites.</p>
         <button class="btn btn-white rounded-pill" onclick="window.router.navigate('/subscriptions')">APPLY NOW</button>
       </div>
       <div class="pldt-overlay-card">
-        <h3>FIBER UNLI ALL PLAN 2499</h3>
-        <p>FREE SPEEDBOOST*</p>
-        <div class="speed">700 MBPS</div>
-        <p>AVG SPEED 570 MBPS, 80% RELIABILITY</p>
+        <h3>RFiberX Super Plan 2000</h3>
+        <div class="speed">200 MBPS</div>
+        <p>NO CAP LIMIT, 100% RELIABILITY</p>
         <p style="font-weight: bold; margin-top: 1rem;">UNLI CALLS</p>
       </div>
     </section>
 
-    <section class="section-container scroll-animate">
-      <div class="section-header-left">
-        <h2>Promos and offers</h2>
-        <p>Take advantage of the fiber-powered offers and immerse yourself in the world of X possibilities.</p>
-      </div>
-      <div class="promo-grid">
-        <div class="promo-card">
-          <div class="img-placeholder grad-1">[Promo Image]</div>
-          <div class="card-content">
-            <h3>Nine's the Sign Upgrade Promo</h3>
-            <p>Pay additional ₱9 on your next bill after upgrading to a new plan.</p>
-            <button class="btn btn-outline">Unlock the promo</button>
-          </div>
-        </div>
-        <div class="promo-card">
-          <div class="img-placeholder grad-2">[Challenge Image]</div>
-          <div class="card-content">
-            <h3>Fastest Speedtest Challenge</h3>
-            <p>Show your Super Speeds for a chance to win Super Prizes!</p>
-            <button class="btn btn-outline">Unlock the promo</button>
-          </div>
-        </div>
-      </div>
-    </section>
+
 
     <section class="section-container scroll-animate">
       <div class="section-header-left">
-        <h2>Plans and Bundles</h2>
+        <h2>Fiber Plans</h2>
         <p>Your NEXT-LEVEL FIBER experience starts here.</p>
       </div>
       <div class="bundle-grid">
         <div class="bundle-card">
-          <div class="img-placeholder bg-purple">[Family Image]</div>
+          <div class="img-placeholder" style="background: url('/laptop.jpg') center/cover no-repeat;"></div>
           <div class="card-content">
-            <h3>Super FiberX</h3>
-            <p>Packed fiber plans to power up your digital experience.</p>
+            <h3>Starter Plan</h3>
+            <p>Reliable 30Mbps connection for everyday browsing and social media.</p>
             <button class="btn btn-outline" onclick="window.router.navigate('/subscriptions')">Check plans</button>
           </div>
         </div>
         <div class="bundle-card">
-          <div class="img-placeholder bg-dark">[Netflix Image]</div>
+          <div class="img-placeholder" style="background: url('/family.jpg') center/cover no-repeat;"></div>
           <div class="card-content">
-            <h3>Netflix Bundles</h3>
-            <p>Stream seamlessly with FiberX plans that include Netflix.</p>
+            <h3>Family Plan</h3>
+            <p>Smooth 70Mbps speed perfect for households with multiple devices.</p>
             <button class="btn btn-outline" onclick="window.router.navigate('/subscriptions')">Check plans</button>
           </div>
         </div>
         <div class="bundle-card">
-          <div class="img-placeholder bg-blue">[Night Image]</div>
+          <div class="img-placeholder" style="background: url('/gaming.jpg') center/cover no-repeat;"></div>
           <div class="card-content">
-            <h3>FiberX Time of Day</h3>
-            <p>Faster Speeds when you need them most.</p>
-            <button class="btn btn-outline" onclick="window.router.navigate('/subscriptions')">Check plans</button>
-          </div>
-        </div>
-        <div class="bundle-card">
-          <div class="img-placeholder bg-black">[Gamer Image]</div>
-          <div class="card-content">
-            <h3>The GameChanger</h3>
-            <p>High-speed fiber plans dedicated for gamers and gaming enthusiasts.</p>
+            <h3>Gaming Plan</h3>
+            <p>Ultra-fast 200Mbps speeds dedicated for gamers and enthusiasts.</p>
             <button class="btn btn-outline" onclick="window.router.navigate('/subscriptions')">Check plans</button>
           </div>
         </div>
@@ -94,51 +96,51 @@ const views = {
     </section>
   `,
   '/subscriptions': () => `
-    <section class="section-container scroll-animate" style="max-width: 1600px; width: 95%;">
+    <section class="section-container scroll-animate" style="max-width: 1600px; width: 95%; background: linear-gradient(rgba(10, 15, 26, 0.8), rgba(10, 15, 26, 0.8)), url('/8.png') center/cover no-repeat; border-radius: 16px; padding: 3rem 1rem;">
       <div class="section-header-left" style="text-align: center; margin-bottom: 4rem;">
         <h2>Choose Your Power</h2>
         <p>Unbeatable plans for every need. No hidden fees.</p>
       </div>
       <div class="pricing-grid">
         <!-- Plan 1 -->
-        <div class="bundle-card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1.5rem;">Starter Fiber</h3>
+        <div id="starter" class="bundle-card" style="padding: 1.5rem;">
+          <h3 style="font-size: 1.5rem;">Starter RFiberX</h3>
           <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱800<span style="font-size: 1rem; color: #555;">/mo</span></div>
           <p style="margin-bottom: 2rem; line-height: 2;">Up to 30 Mbps<br>Unlimited Data<br>Standard Router<br>Good for 1-2 devices</p>
-          <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Starter Fiber', 'Up to 30 Mbps')">Get Started</button>
+          <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Starter RFiberX', 'Up to 30 Mbps', '₱800/mo')">Get Started</button>
         </div>
         
         <!-- Plan 2 -->
-        <div class="bundle-card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1.5rem;">Value Fiber</h3>
+        <div id="value" class="bundle-card" style="padding: 1.5rem;">
+          <h3 style="font-size: 1.5rem;">Value RFiberX</h3>
           <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱1000<span style="font-size: 1rem; color: #555;">/mo</span></div>
           <p style="margin-bottom: 2rem; line-height: 2;">Up to 50 Mbps<br>Unlimited Data<br>Standard Router<br>HD Streaming Ready</p>
-          <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Value Fiber', 'Up to 50 Mbps')">Get Started</button>
+          <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Value RFiberX', 'Up to 50 Mbps', '₱1000/mo')">Get Started</button>
         </div>
 
         <!-- Plan 3 -->
-        <div class="bundle-card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1.5rem;">Family Fiber</h3>
+        <div id="family" class="bundle-card" style="padding: 1.5rem;">
+          <h3 style="font-size: 1.5rem;">Family RFiberX</h3>
           <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱1300<span style="font-size: 1rem; color: #555;">/mo</span></div>
           <p style="margin-bottom: 2rem; line-height: 2;">Up to 70 Mbps<br>Unlimited Data<br>Dual-Band Router<br>Great for 4-6 devices</p>
-          <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Family Fiber', 'Up to 70 Mbps')">Get Started</button>
+          <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Family RFiberX', 'Up to 70 Mbps', '₱1300/mo')">Get Started</button>
         </div>
 
         <!-- Plan 4 (Most Popular) -->
-        <div class="bundle-card popular-card" style="padding: 1.5rem; border-color: var(--accent-color); z-index: 1;">
+        <div id="pro" class="bundle-card popular-card" style="padding: 1.5rem; border-color: var(--accent-color); z-index: 1;">
           <div style="position: absolute; top: 0; right: 0; background: var(--accent-color); color: #fff; padding: 0.2rem 1rem; font-size: 0.8rem; font-weight: bold; border-bottom-left-radius: 16px;">MOST POPULAR</div>
-          <h3 style="font-size: 1.5rem;">Pro Fiber</h3>
+          <h3 style="font-size: 1.5rem;">Pro RFiberX</h3>
           <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱1500<span style="font-size: 1rem; color: #555;">/mo</span></div>
           <p style="margin-bottom: 2rem; line-height: 2;">Up to 100 Mbps<br>Unlimited Data<br>Wi-Fi 6 Router<br>4K Streaming & Gaming</p>
-          <button class="btn btn-outline" style="margin-top: auto; background: var(--accent-color); color: #fff;" onclick="window.router.openSignupForm('Pro Fiber', 'Up to 100 Mbps')">Get Started</button>
+          <button class="btn btn-outline" style="margin-top: auto; background: var(--accent-color); color: #fff;" onclick="window.router.openSignupForm('Pro RFiberX', 'Up to 100 Mbps', '₱1500/mo')">Get Started</button>
         </div>
 
         <!-- Plan 5 -->
-        <div class="bundle-card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1.5rem;">Extreme Fiber X</h3>
+        <div id="extreme" class="bundle-card" style="padding: 1.5rem;">
+          <h3 style="font-size: 1.5rem;">Extreme RFiberX</h3>
           <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱2000<span style="font-size: 1rem; color: #555;">/mo</span></div>
           <p style="margin-bottom: 2rem; line-height: 2;">Up to 200 Mbps<br>Unlimited Data<br>Mesh System Included<br>Ultimate Smart Home</p>
-          <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Extreme Fiber X', 'Up to 200 Mbps')">Get Started</button>
+          <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Extreme RFiberX', 'Up to 200 Mbps', '₱2000/mo')">Get Started</button>
         </div>
       </div>
 
@@ -146,28 +148,34 @@ const views = {
       <div id="signup-form-container" class="signup-container">
         <div style="background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--accent-color); max-width: 800px; margin: 0 auto; text-align: left;">
           <h2 style="margin-bottom: 2rem; text-align: center;">Complete Your Application</h2>
-          <form onsubmit="event.preventDefault(); alert('Application submitted successfully!');">
+          <form onsubmit="window.router.submitApplication(event)">
             <div class="contact-grid" style="gap: 2rem;">
               <div>
                 <div class="form-group">
                   <label>Selected Plan</label>
-                  <input type="text" id="selected-plan-input" class="form-control" readonly style="background: rgba(16, 185, 129, 0.1); border-color: var(--accent-color); font-weight: bold; color: var(--accent-color);">
+                  <input type="text" id="selected-plan-input" class="form-control" readonly style="background: rgba(229, 57, 53, 0.1); border-color: var(--accent-color); font-weight: bold; color: var(--accent-color);">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div class="form-group">
+                    <label>Plan Speed</label>
+                    <input type="text" id="selected-plan-speed" class="form-control" readonly style="background: rgba(0,0,0,0.4); color: #888;">
+                  </div>
+                  <div class="form-group">
+                    <label>Price</label>
+                    <input type="text" id="selected-plan-price" class="form-control" readonly style="background: rgba(0,0,0,0.4); color: #888;">
+                  </div>
                 </div>
                 <div class="form-group">
-                  <label>Plan Speed</label>
-                  <input type="text" id="selected-plan-speed" class="form-control" readonly style="background: rgba(0,0,0,0.4); color: #888;">
-                </div>
-                <div class="form-group">
-                  <label>Email Address</label>
-                  <input type="email" class="form-control" placeholder="john@example.com" required>
+                  <label>Gmail Address</label>
+                  <input type="email" id="applicant-email" class="form-control" placeholder="john@gmail.com" pattern=".+@gmail\.com$" title="Please provide a valid @gmail.com address" required>
                 </div>
                 <div class="form-group">
                   <label>Facebook Name</label>
-                  <input type="text" class="form-control" placeholder="John Doe" required>
+                  <input type="text" id="applicant-facebook" class="form-control" placeholder="John Doe" required>
                 </div>
                 <div class="form-group">
-                  <label>Phone Number</label>
-                  <input type="tel" class="form-control" placeholder="0912 345 6789" required>
+                  <label>Phone Number (11 digits)</label>
+                  <input type="tel" id="applicant-phone" class="form-control" placeholder="09123456789" maxlength="11" pattern="^09[0-9]{9}$" title="Phone number must start with 09 and be exactly 11 digits" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
                 </div>
               </div>
               <div>
@@ -177,7 +185,7 @@ const views = {
                 </div>
                 <div class="form-group">
                   <label>Sub Location</label>
-                  <select class="form-control" required style="appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=%22white%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 95%; background-position-y: 50%;">
+                  <select id="applicant-sublocation" class="form-control" required onchange="document.getElementById('other-location-group').style.display = this.value === 'Other' ? 'block' : 'none';" style="appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=%22white%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 95%; background-position-y: 50%;">
                     <option value="" disabled selected>Select Sub Location</option>
                     <option style="background: #111;">Salasad</option>
                     <option style="background: #111;">Brgy. Ilog</option>
@@ -193,7 +201,16 @@ const views = {
                     <option style="background: #111;">Sabang</option>
                     <option style="background: #111;">Buenavista</option>
                     <option style="background: #111;">Malaking Ambling</option>
+                    <option style="background: #111;" value="Other">Other (Please specify)</option>
                   </select>
+                </div>
+                <div class="form-group" id="other-location-group" style="display: none;">
+                  <label>Insert Location</label>
+                  <input type="text" id="applicant-other-location" class="form-control" placeholder="Enter your complete sub-location">
+                </div>
+                <div class="form-group">
+                  <label>Additional Details / Landmarks</label>
+                  <textarea id="applicant-landmarks" class="form-control" rows="2" placeholder="e.g., Near the blue gate, beside the bakery, etc."></textarea>
                 </div>
               </div>
             </div>
@@ -203,48 +220,140 @@ const views = {
       </div>
     </section>
 
-    <!-- Detailed Features Section -->
-    <section class="section-container scroll-animate" style="margin-top: 2rem; padding-top: 4rem; border-top: 1px solid var(--glass-border);">
-      <div class="section-header-left" style="text-align: center; margin-bottom: 3rem;">
-        <h2>What's included in every plan?</h2>
-        <p>We don't hold back. Every RFiberX customer gets the VIP treatment.</p>
+    <!-- Compare All Plans Table -->
+    <section class="section-container scroll-animate compare-section" style="border-top: 1px solid var(--glass-border);">
+      <div class="compare-header">
+        <h2>Compare <span>All Plans</span></h2>
+        <p>See exactly what's included with every plan.</p>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; text-align: center;">
-        <div style="padding: 2rem; background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border);">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
-          <h3 style="margin-bottom: 1rem;">Symmetrical Speeds</h3>
-          <p style="color: var(--text-secondary); font-size: 0.95rem;">Upload as fast as you download. Perfect for content creators, remote work, and intense gaming.</p>
-        </div>
-        <div style="padding: 2rem; background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border);">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">♾️</div>
-          <h3 style="margin-bottom: 1rem;">No Data Caps</h3>
-          <p style="color: var(--text-secondary); font-size: 0.95rem;">Stream, game, and download endlessly without worrying about overage charges or throttling.</p>
-        </div>
-        <div style="padding: 2rem; background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border);">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
-          <h3 style="margin-bottom: 1rem;">Built-in Security</h3>
-          <p style="color: var(--text-secondary); font-size: 0.95rem;">Our routers come equipped with advanced firewall protections and network-level ad blocking.</p>
-        </div>
+      <div class="compare-table-wrapper">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Plan 800</th>
+              <th>Plan 1000</th>
+              <th class="highlight-col">Plan 1300</th>
+              <th>Plan 1500</th>
+              <th>Plan 2000</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Download Speed</td>
+              <td>30 Mbps</td>
+              <td>50 Mbps</td>
+              <td class="highlight-col">70 Mbps</td>
+              <td>100 Mbps</td>
+              <td>200 Mbps</td>
+            </tr>
+            <tr>
+              <td>Data Cap</td>
+              <td>Unlimited</td>
+              <td>Unlimited</td>
+              <td class="highlight-col">Unlimited</td>
+              <td>Unlimited</td>
+              <td>Unlimited</td>
+            </tr>
+            <tr>
+              <td>Free Modem</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+              <td class="highlight-col check">✓</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>Best Used For</td>
+              <td>Social Media & Chatting</td>
+              <td>Online School & Browsing</td>
+              <td class="highlight-col">HD Streaming & Working</td>
+              <td>Online Gaming & Video Calls</td>
+              <td>Heavy Gaming, 4K Streaming & Large Downloads</td>
+            </tr>
+            <tr>
+              <td>Recommended Devices</td>
+              <td>1 to 3 devices</td>
+              <td>3 to 5 devices</td>
+              <td class="highlight-col">5 to 8 devices</td>
+              <td>8 to 12 devices</td>
+              <td>15+ devices</td>
+            </tr>
+            <tr>
+              <td>Streaming Quality</td>
+              <td>Standard HD</td>
+              <td>Full HD (1080p)</td>
+              <td class="highlight-col">Multiple Full HD Screens</td>
+              <td>4K Ultra HD</td>
+              <td>Multiple 4K Streams Simultaneously</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
     <!-- FAQ Section -->
-    <section class="section-container scroll-animate" style="margin-bottom: 4rem;">
-      <div class="section-header-left">
-        <h2>Frequently Asked Questions</h2>
+    <section class="section-container scroll-animate faq-section">
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <h2 style="font-size: 2.5rem; color: #fff;">Frequently Asked Questions</h2>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 1rem;">
-        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 12px;">
-          <h3 style="margin-bottom: 0.5rem; color: var(--accent-color);">How long does installation take?</h3>
-          <p style="color: var(--text-secondary);">Standard installations usually take between 2 to 4 hours. Once you sign up, our dispatch team will contact you within 24 hours to schedule a convenient time.</p>
+      <div class="faq-item" onclick="this.classList.toggle('active')">
+        <div class="faq-question">
+          How long does installation take?
+          <span class="faq-icon">+</span>
         </div>
-        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 12px;">
-          <h3 style="margin-bottom: 0.5rem; color: var(--accent-color);">Can I upgrade my plan later?</h3>
-          <p style="color: var(--text-secondary);">Absolutely! You can upgrade your plan at any time through our online portal without any penalty fees. Downgrades are also permitted after your first 6 months.</p>
+        <div class="faq-answer">
+          Standard installations usually take between 2 to 4 hours. Once you sign up, our dispatch team will contact you within 24 hours to schedule a convenient time.
         </div>
-        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 12px;">
-          <h3 style="margin-bottom: 0.5rem; color: var(--accent-color);">Is the router really free?</h3>
-          <p style="color: var(--text-secondary);">Yes, the router is included with your monthly service fee. We upgrade your equipment for free every 3 years to ensure you always have the best technology.</p>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('active')">
+        <div class="faq-question">
+          Can I upgrade or downgrade my plan?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          Absolutely! You can easily request an upgrade or downgrade using our website portal, or you can directly <a href="#" onclick="window.scrollTo(0, document.body.scrollHeight); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Contact</a> our support team for assistance.
+        </div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('active')">
+        <div class="faq-question">
+          Is RFiberX available in my area?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          We are rapidly expanding our coverage. You can check the availability in your area by starting the application process or directly <a href="#" onclick="window.scrollTo(0, document.body.scrollHeight); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Contact</a> our sales team.
+        </div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('active')">
+        <div class="faq-question">
+          What happens if my internet goes down?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          If you experience any issues, you can easily <a href="#" onclick="window.scrollTo(0, document.body.scrollHeight); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Contact</a> our support team or the company directly.
+        </div>
+      </div>
+    </section>
+
+    <!-- Not Sure Which Plan Banner -->
+    <section class="section-container scroll-animate" style="margin-bottom: 4rem;">
+      <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 4rem 3rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2rem; position: relative; overflow: hidden;">
+        <!-- Subtle accent glow -->
+        <div style="position: absolute; top: -50px; left: -50px; width: 150px; height: 150px; background: var(--accent-color); filter: blur(100px); opacity: 0.3; z-index: 0;"></div>
+        
+        <div style="flex: 1; min-width: 300px; z-index: 1;">
+          <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 1rem;">
+            Not Sure Which Plan?
+          </h2>
+          <p style="color: var(--text-secondary); font-size: 1.15rem; max-width: 600px;">
+            Talk to our experts and we'll help you find the perfect plan for your home or business. No commitments.
+          </p>
+        </div>
+        <div style="z-index: 1;">
+          <button class="btn btn-outline" onclick="window.router.navigate('/contact')" style="background: #fff; color: var(--bg-color); border: none; display: flex; align-items: center; gap: 0.75rem; font-weight: 700; padding: 1.25rem 2.5rem; font-size: 1.1rem; box-shadow: 0 10px 25px rgba(255,255,255,0.1);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            Talk to an Expert
+          </button>
         </div>
       </div>
     </section>
@@ -252,43 +361,124 @@ const views = {
   '/support': () => `
     <section class="section-container scroll-animate" style="text-align: center; padding-top: 6rem; border-bottom: 1px solid var(--glass-border);">
       <h1 style="font-size: 3rem; margin-bottom: 1.5rem;">How can we help?</h1>
-      <p style="color: var(--text-secondary); font-size: 1.2rem; margin-bottom: 3rem; max-width: 600px; margin-inline: auto;">Search our knowledge base or browse categories below to find exactly what you need.</p>
+      <p style="color: var(--text-secondary); font-size: 1.2rem; margin-bottom: 3rem; max-width: 600px; margin-inline: auto;">Browse the categories below to find exactly what you need.</p>
       
-      <div style="max-width: 600px; margin: 0 auto 4rem auto; position: relative;">
-        <input type="text" class="form-control" placeholder="Search for answers..." style="padding: 1.2rem; font-size: 1.1rem; border-radius: 50px;">
-        <button class="btn btn-outline" style="position: absolute; right: 5px; top: 5px; margin-top: 0; border-radius: 50px; padding: 0.8rem 1.5rem; width: auto;">Search</button>
+      <div class="bundle-grid" style="margin-bottom: 4rem;">
+        <div class="bundle-card" style="padding: 2.5rem; text-align: center; cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--accent-color)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent';" onclick="window.router.navigate('/support/billing')">
+          <div style="margin-bottom: 1.5rem; color: var(--accent-color);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          </div>
+          <h3 style="margin-bottom: 1rem; font-size: 1.4rem;">Billing & Payments</h3>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Securely manage your statements, review current charges, and process monthly payments seamlessly.</p>
+        </div>
+        
+        <div class="bundle-card" style="padding: 2.5rem; text-align: center; cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--accent-color)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent';" onclick="window.router.navigate('/support/technical')">
+          <div style="margin-bottom: 1.5rem; color: var(--accent-color);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+          </div>
+          <h3 style="margin-bottom: 1rem; font-size: 1.4rem;">Technical Support</h3>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Access our comprehensive troubleshooting guide to resolve internet issues and optimize your Wi-Fi setup.</p>
+        </div>
+        
+        <div class="bundle-card" style="padding: 2.5rem; text-align: center; cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--accent-color)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent';" onclick="window.router.navigate('/support/account')">
+          <div style="margin-bottom: 1.5rem; color: var(--accent-color);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <h3 style="margin-bottom: 1rem; font-size: 1.4rem;">Account Management</h3>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Easily update your plan, request a service relocation, or initiate a change of account ownership.</p>
+        </div>
+        
+        <div class="bundle-card" style="padding: 2.5rem; text-align: center; cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--accent-color)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent';" onclick="window.router.navigate('/support/outages')">
+          <div style="margin-bottom: 1.5rem; color: var(--accent-color);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          </div>
+          <h3 style="margin-bottom: 1rem; font-size: 1.4rem;">Outages & Network</h3>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Stay informed about network status, scheduled maintenance, and report any downed lines in your area.</p>
+        </div>
       </div>
     </section>
 
-    <section class="section-container scroll-animate">
-      <h2 style="text-align: center; margin-bottom: 3rem;">Browse by Category</h2>
-      <div class="bundle-grid">
-        <div class="bundle-card" style="padding: 2rem; text-align: center; cursor: pointer;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">💳</div>
-          <h3 style="margin-bottom: 0.5rem;">Billing & Payments</h3>
-          <p style="color: var(--text-secondary); font-size: 0.9rem;">View your statements, update payment methods, or understand charges.</p>
+    <section class="section-container scroll-animate" style="margin-bottom: 5rem; max-width: 1200px;">
+      <h2 style="margin-bottom: 2.5rem; font-size: 2.5rem; text-align: center;">Quick Resources</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; align-items: start;">
+        
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--accent-color); cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 10px 20px rgba(229, 57, 53, 0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';" onclick="const d = document.getElementById('guide-1'); if(d.style.maxHeight === '0px' || d.style.maxHeight === ''){ d.style.maxHeight = '500px'; d.style.opacity = '1'; d.style.marginTop = '1.5rem'; d.style.paddingTop = '1.5rem'; d.style.borderTop = '1px dashed rgba(255,255,255,0.1)'; document.getElementById('icon-1').style.transform = 'rotate(45deg)'; } else { d.style.maxHeight = '0px'; d.style.opacity = '0'; d.style.marginTop = '0'; d.style.paddingTop = '0'; d.style.borderTop = 'none'; document.getElementById('icon-1').style.transform = 'rotate(0deg)'; }">
+          <h3 style="color: #fff; margin-bottom: 1rem; font-size: 1.3rem; display: flex; justify-content: space-between; align-items: center;">New Subscriber Guide <span id="icon-1" style="color: var(--accent-color); font-size: 1.5rem; transition: transform 0.3s ease;">+</span></h3>
+          <p style="color: var(--text-secondary); line-height: 1.6;">Everything you need to know about getting started with RFiberX, from your first bill to understanding your router's lights.</p>
+          <div id="guide-1" style="max-height: 0px; opacity: 0; overflow: hidden; transition: all 0.4s ease; color: var(--text-secondary); font-size: 0.95rem;">
+            <strong style="color: #fff;">1. Your First Bill:</strong> It may include a pro-rated charge depending on your activation date.<br><br>
+            <strong style="color: #fff;">2. Router Lights:</strong> 'PON' should be steady green. 'LOS' should be off. If 'LOS' is red, there is a physical connection issue.<br><br>
+            <strong style="color: #fff;">3. Wi-Fi Setup:</strong> For the best coverage, place your router in an open, central location away from thick walls or microwaves.
+          </div>
         </div>
-        <div class="bundle-card" style="padding: 2rem; text-align: center; cursor: pointer;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🔧</div>
-          <h3 style="margin-bottom: 0.5rem;">Technical Support</h3>
-          <p style="color: var(--text-secondary); font-size: 0.9rem;">Troubleshoot internet issues, router setups, and speed diagnostics.</p>
+
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--accent-color); cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 10px 20px rgba(229, 57, 53, 0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';" onclick="const d = document.getElementById('guide-2'); if(d.style.maxHeight === '0px' || d.style.maxHeight === ''){ d.style.maxHeight = '500px'; d.style.opacity = '1'; d.style.marginTop = '1.5rem'; d.style.paddingTop = '1.5rem'; d.style.borderTop = '1px dashed rgba(255,255,255,0.1)'; document.getElementById('icon-2').style.transform = 'rotate(45deg)'; } else { d.style.maxHeight = '0px'; d.style.opacity = '0'; d.style.marginTop = '0'; d.style.paddingTop = '0'; d.style.borderTop = 'none'; document.getElementById('icon-2').style.transform = 'rotate(0deg)'; }">
+          <h3 style="color: #fff; margin-bottom: 1rem; font-size: 1.3rem; display: flex; justify-content: space-between; align-items: center;">Speed Test Diagnostics <span id="icon-2" style="color: var(--accent-color); font-size: 1.5rem; transition: transform 0.3s ease;">+</span></h3>
+          <p style="color: var(--text-secondary); line-height: 1.6;">Experiencing slow speeds? Learn how to properly test your connection and optimize your home network for maximum performance.</p>
+          <div id="guide-2" style="max-height: 0px; opacity: 0; overflow: hidden; transition: all 0.4s ease; color: var(--text-secondary); font-size: 0.95rem;">
+            <strong style="color: #fff;">Step 1:</strong> Connect a laptop or PC directly to the router using a LAN cable.<br><br>
+            <strong style="color: #fff;">Step 2:</strong> Ensure no other devices are downloading heavy files or streaming video.<br><br>
+            <strong style="color: #fff;">Step 3:</strong> Go to speedtest.net and select a local server.<br><br>
+            <strong style="color: #fff;">Note:</strong> Wi-Fi speeds are naturally slower than wired connections due to environmental interference.
+          </div>
         </div>
-        <div class="bundle-card" style="padding: 2rem; text-align: center; cursor: pointer;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
-          <h3 style="margin-bottom: 0.5rem;">Account Management</h3>
-          <p style="color: var(--text-secondary); font-size: 0.9rem;">Change your plan, update contact info, or move services.</p>
+
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--accent-color); cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 10px 20px rgba(229, 57, 53, 0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';" onclick="const d = document.getElementById('guide-3'); if(d.style.maxHeight === '0px' || d.style.maxHeight === ''){ d.style.maxHeight = '500px'; d.style.opacity = '1'; d.style.marginTop = '1.5rem'; d.style.paddingTop = '1.5rem'; d.style.borderTop = '1px dashed rgba(255,255,255,0.1)'; document.getElementById('icon-3').style.transform = 'rotate(45deg)'; } else { d.style.maxHeight = '0px'; d.style.opacity = '0'; d.style.marginTop = '0'; d.style.paddingTop = '0'; d.style.borderTop = 'none'; document.getElementById('icon-3').style.transform = 'rotate(0deg)'; }">
+          <h3 style="color: #fff; margin-bottom: 1rem; font-size: 1.3rem; display: flex; justify-content: space-between; align-items: center;">Service Relocation <span id="icon-3" style="color: var(--accent-color); font-size: 1.5rem; transition: transform 0.3s ease;">+</span></h3>
+          <p style="color: var(--text-secondary); line-height: 1.6;">Moving soon? Discover the step-by-step process for transferring your RFiberX internet connection to your new address.</p>
+          <div id="guide-3" style="max-height: 0px; opacity: 0; overflow: hidden; transition: all 0.4s ease; color: var(--text-secondary); font-size: 0.95rem;">
+            <strong style="color: #fff;">1. Check Availability:</strong> Contact us to verify if RFiberX facilities are available in your new location.<br><br>
+            <strong style="color: #fff;">2. Request Transfer:</strong> Provide your new address and preferred relocation date (at least 1 week in advance).<br><br>
+            <strong style="color: #fff;">3. Setup & Activation:</strong> Our technicians will visit your new home, lay the fiber, and set up your existing modem. The standard fee depends on the line distance but is often waived.
+          </div>
         </div>
-        <div class="bundle-card" style="padding: 2rem; text-align: center; cursor: pointer;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">📡</div>
-          <h3 style="margin-bottom: 0.5rem;">Outages & Network</h3>
-          <p style="color: var(--text-secondary); font-size: 0.9rem;">Check for service interruptions in your area or report a downed line.</p>
-        </div>
+
       </div>
     </section>
     
     <section class="section-container scroll-animate" style="text-align: center; margin-bottom: 4rem;">
-      <h2 style="margin-bottom: 1rem;">Still need help?</h2>
-      <p style="color: var(--text-secondary); margin-bottom: 2rem;">Our support team is available 24/7 to assist you.</p>
+      <h2 style="margin-bottom: 1.5rem; font-size: 2.5rem;">Still need help?</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 3rem; font-size: 1.1rem;">Our dedicated support team is available at working hours to assist you.</p>
+      
+      <div style="display: flex; justify-content: center; gap: 2.5rem; margin-bottom: 3rem; flex-wrap: wrap;">
+        
+        <div style="text-align: center;">
+          <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(229, 57, 53, 0.1); border: 2px solid var(--accent-color); margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center; color: var(--accent-color); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <p style="color: var(--accent-color); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Technician</p>
+        </div>
+        
+        <div style="text-align: center;">
+          <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(229, 57, 53, 0.1); border: 2px solid var(--accent-color); margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center; color: var(--accent-color); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <p style="color: var(--accent-color); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Technician</p>
+        </div>
+        
+        <div style="text-align: center;">
+          <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(229, 57, 53, 0.1); border: 2px solid var(--accent-color); margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center; color: var(--accent-color); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <p style="color: var(--accent-color); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Technician</p>
+        </div>
+
+        <div style="text-align: center;">
+          <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(229, 57, 53, 0.1); border: 2px solid var(--accent-color); margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center; color: var(--accent-color); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <p style="color: var(--accent-color); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Technician</p>
+        </div>
+
+        <div style="text-align: center;">
+          <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(229, 57, 53, 0.1); border: 2px solid var(--accent-color); margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center; color: var(--accent-color); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)';" onmouseout="this.style.transform='scale(1)';">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <p style="color: var(--accent-color); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Technician</p>
+        </div>
+
+      </div>
+      
       <button class="btn btn-outline" onclick="window.router.navigate('/contact')" style="width: auto;">Contact Support</button>
     </section>
   `,
@@ -303,27 +493,68 @@ const views = {
         <!-- Contact Form -->
         <div style="background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); backdrop-filter: blur(10px);">
           <h2 style="margin-bottom: 2rem;">Send us a message</h2>
-          <form onsubmit="event.preventDefault(); alert('Message sent successfully! We will get back to you shortly.');">
+          <form onsubmit="window.router.submitContactMessage(event)">
+            
             <div class="form-group">
               <label>Full Name</label>
-              <input type="text" class="form-control" placeholder="John Doe" required>
+              <input type="text" id="contact-name" class="form-control" placeholder="John Doe" required>
             </div>
-            <div class="form-group">
-              <label>Email Address</label>
-              <input type="email" class="form-control" placeholder="john@example.com" required>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="contact-email" class="form-control" placeholder="john@example.com" required>
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="contact-phone" class="form-control" placeholder="09123456789" maxlength="11" pattern="^09[0-9]{9}$" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+              </div>
             </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label>Location</label>
+                <input type="text" class="form-control" value="Magdalena" readonly style="background: rgba(0,0,0,0.4); color: #888;">
+              </div>
+              <div class="form-group">
+                <label>Sub Location</label>
+                <select id="contact-sublocation" class="form-control" required style="appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=%22white%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 95%; background-position-y: 50%;" onchange="document.getElementById('contact-other-location-group').style.display = this.value === 'Other' ? 'block' : 'none';">
+                  <option value="" disabled selected>Select Sub Location</option>
+                  <option style="background: #111;">Salasad</option>
+                  <option style="background: #111;">Brgy. Ilog</option>
+                  <option style="background: #111;">Bucal</option>
+                  <option style="background: #111;">Ibabang Butnong</option>
+                  <option style="background: #111;">Poblacion</option>
+                  <option style="background: #111;">Munting Ambling</option>
+                  <option style="background: #111;">Cigaras</option>
+                  <option style="background: #111;">Tipunan</option>
+                  <option style="background: #111;">Balanac</option>
+                  <option style="background: #111;">Malinao</option>
+                  <option style="background: #111;">Ilayang Butnong</option>
+                  <option style="background: #111;">Sabang</option>
+                  <option style="background: #111;">Buenavista</option>
+                  <option style="background: #111;">Malaking Ambling</option>
+                  <option value="Other" style="background: #111;">Other (Please specify)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" id="contact-other-location-group" style="display: none;">
+              <label>Insert Location</label>
+              <input type="text" id="contact-other-location" class="form-control" placeholder="Enter your complete sub-location">
+            </div>
+
             <div class="form-group">
               <label>Subject</label>
-              <select class="form-control" style="appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=%22white%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 95%; background-position-y: 50%;">
-                <option value="sales" style="background: #111;">Sales Inquiry</option>
-                <option value="support" style="background: #111;">Technical Support</option>
-                <option value="billing" style="background: #111;">Billing Question</option>
-                <option value="other" style="background: #111;">Other</option>
+              <select id="contact-subject" class="form-control" style="appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=%22white%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 95%; background-position-y: 50%;" onchange="const msg = document.getElementById('contact-message'); if(this.value === 'Technical Support') msg.placeholder = 'e.g., No internet'; else if(this.value === 'Billing Question') msg.placeholder = 'e.g., How can we pay our internet fee?'; else msg.placeholder = 'How can we help you?';">
+                <option value="Technical Support" style="background: #111;">Technical Support</option>
+                <option value="Billing Question" style="background: #111;">Billing Question</option>
+                <option value="Other" style="background: #111;">Other</option>
               </select>
             </div>
             <div class="form-group">
               <label>Message</label>
-              <textarea class="form-control" rows="5" placeholder="How can we help you?" required></textarea>
+              <textarea id="contact-message" class="form-control" rows="4" placeholder="e.g., No internet" required></textarea>
             </div>
             <button type="submit" class="btn btn-outline" style="width: 100%;">Submit Message</button>
           </form>
@@ -334,44 +565,563 @@ const views = {
           <h2 style="margin-bottom: 2rem;">Contact Information</h2>
           
           <div style="margin-bottom: 2.5rem; display: flex; gap: 1rem;">
-            <div style="font-size: 2rem; color: var(--accent-color);">📞</div>
-            <div>
-              <h3 style="margin-bottom: 0.5rem;">Sales & Signups</h3>
-              <p style="color: var(--text-secondary); font-size: 1.1rem;">1-800-RFIBERX</p>
-              <p style="color: var(--text-secondary); font-size: 0.9rem;">Mon-Fri, 8am to 8pm EST</p>
-            </div>
-          </div>
-
-          <div style="margin-bottom: 2.5rem; display: flex; gap: 1rem;">
-            <div style="font-size: 2rem; color: var(--accent-color);">🎧</div>
             <div>
               <h3 style="margin-bottom: 0.5rem;">Technical Support</h3>
-              <p style="color: var(--text-secondary); font-size: 1.1rem;">1-888-RFIBERX-HELP</p>
+              <p style="color: var(--text-secondary); font-size: 1.1rem;">+63 09058395471</p>
               <p style="color: var(--text-secondary); font-size: 0.9rem;">Available 24/7, 365 days a year</p>
             </div>
           </div>
 
           <div style="margin-bottom: 2.5rem; display: flex; gap: 1rem;">
-            <div style="font-size: 2rem; color: var(--accent-color);">✉️</div>
             <div>
               <h3 style="margin-bottom: 0.5rem;">Email Us</h3>
-              <p style="color: var(--text-secondary); font-size: 1.1rem;">support@rfiberx.com</p>
+              <p style="color: var(--text-secondary); font-size: 1.1rem;">technicians@rfiberx.net</p>
               <p style="color: var(--text-secondary); font-size: 0.9rem;">We aim to reply within 2 hours.</p>
             </div>
           </div>
 
           <div style="margin-bottom: 2.5rem; display: flex; gap: 1rem;">
-            <div style="font-size: 2rem; color: var(--accent-color);">🏢</div>
             <div>
               <h3 style="margin-bottom: 0.5rem;">Headquarters</h3>
               <p style="color: var(--text-secondary); line-height: 1.6;">
-                Newstreet Bldg., Mc Arthur Hi-way<br>
-                Balibago, Angeles City<br>
-                Philippines
+                Salasad, Magadalena<br>
+                Laguna, Philippines
               </p>
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section-container scroll-animate faq-section" style="margin-top: -2rem;">
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <h2 style="font-size: 2.5rem; color: #fff;">Frequently Asked Questions</h2>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('active')">
+        <div class="faq-question">
+          How long does installation take?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          Standard installations usually take between 2 to 4 hours. Once you sign up, our dispatch team will contact you within 24 hours to schedule a convenient time.
+        </div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('active')">
+        <div class="faq-question">
+          Can I upgrade or downgrade my plan?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          Absolutely! You can easily request an upgrade or downgrade using our website portal, or you can directly <a href="#" onclick="window.scrollTo(0, document.body.scrollHeight); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Contact</a> our support team for assistance.
+        </div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('active')">
+        <div class="faq-question">
+          Is RFiberX available in my area?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          We are rapidly expanding our coverage. You can check the availability in your area by starting the application process or directly <a href="#" onclick="window.scrollTo(0, document.body.scrollHeight); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Contact</a> our sales team.
+        </div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('active')">
+        <div class="faq-question">
+          What happens if my internet goes down?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          If you experience any issues, you can easily <a href="#" onclick="window.scrollTo(0, document.body.scrollHeight); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Contact</a> our support team or the company directly.
+        </div>
+      </div>
+    </section>
+  `,
+  '/apply': () => `
+    <section class="section-container scroll-animate" style="padding-top: 6rem; margin-bottom: 4rem;">
+      <div style="text-align: center; margin-bottom: 4rem;">
+        <h1 style="font-size: 3.5rem; margin-bottom: 1rem;">Join <span style="background: var(--brand-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">RFiberX</span></h1>
+        <p style="color: var(--text-secondary); font-size: 1.2rem; max-width: 600px; margin: 0 auto;">Be part of our mission to connect every Filipino. We're looking for passionate individuals who want to make a difference.</p>
+      </div>
+
+      <div style="max-width: 800px; margin: 0 auto;">
+        <div style="background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); backdrop-filter: blur(10px);">
+          <h2 style="margin-bottom: 0.5rem;">Application Form</h2>
+          <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.95rem;">Fill out the form below and our HR team will get in touch with you.</p>
+          <form onsubmit="window.router.submitJobApplication(event)">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="form-group">
+                <label>First Name</label>
+                <input type="text" id="apply-firstname" class="form-control" placeholder="Juan" required>
+              </div>
+              <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" id="apply-lastname" class="form-control" placeholder="Dela Cruz" required>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="apply-email" class="form-control" placeholder="juan@example.com" required>
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="apply-phone" class="form-control" placeholder="09XXXXXXXXX" maxlength="11" required
+                  oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value.length >= 2 && !this.value.startsWith('09')){this.value='09';}"
+                  onfocus="if(!this.value) this.value='09';">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Position Applying For</label>
+              <input type="text" id="apply-position" class="form-control" value="Field Technician" readonly style="background: rgba(0,0,0,0.4); color: #888;">
+            </div>
+            <div class="form-group">
+              <label>Highest Educational Attainment</label>
+              <select id="apply-education" class="form-control" required style="appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=%22white%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 95%; background-position-y: 50%;">
+                <option value="" disabled selected>Select education</option>
+                <option style="background: #111;">High School Graduate</option>
+                <option style="background: #111;">Vocational / Technical</option>
+                <option style="background: #111;">College Undergraduate</option>
+                <option style="background: #111;">College Graduate</option>
+                <option style="background: #111;">Master's Degree</option>
+                <option style="background: #111;">Doctorate / PhD</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Years of Experience</label>
+              <select id="apply-experience" class="form-control" required style="appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=%22white%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 95%; background-position-y: 50%;">
+                <option value="" disabled selected>Select experience level</option>
+                <option style="background: #111;">Fresh Graduate (No experience)</option>
+                <option style="background: #111;">Less than 1 year</option>
+                <option style="background: #111;">1 - 3 years</option>
+                <option style="background: #111;">3 - 5 years</option>
+                <option style="background: #111;">5 - 10 years</option>
+                <option style="background: #111;">10+ years</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Cover Letter / Message <span style="color: var(--text-secondary); font-weight: 400;">(Optional)</span></label>
+              <textarea id="apply-coverletter" class="form-control" rows="5" placeholder="Tell us why you want to join RFiberX and what makes you a great fit for this role..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Upload Resume / CV</label>
+              <div id="resume-dropzone" style="border: 2px dashed rgba(255,255,255,0.15); border-radius: 12px; padding: 3rem 2rem; text-align: center; cursor: pointer; transition: all 0.3s ease; position: relative;" onmouseover="this.style.borderColor='var(--accent-color)'; this.style.background='rgba(59,130,246,0.05)';" onmouseout="this.style.borderColor='rgba(255,255,255,0.15)'; this.style.background='transparent';" onclick="document.getElementById('resume-file-input').click();">
+                <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📄</div>
+                <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;" id="resume-filename">Click to upload your resume</p>
+                <p style="color: var(--text-secondary); font-size: 0.85rem;">PDF, DOC, or DOCX \u2022 Max 10MB</p>
+                <input type="file" id="resume-file-input" accept=".pdf,.doc,.docx" style="display:none;" onchange="document.getElementById('resume-filename').textContent = this.files[0] ? this.files[0].name : 'Click to upload your resume';">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Cover Letter / Message <span style="color: var(--text-secondary); font-weight: 400;">(Optional)</span></label>
+              <textarea class="form-control" rows="5" placeholder="Tell us why you want to join RFiberX and what makes you a great fit for this role..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-outline" style="width: 100%; margin-top: 1rem; background: var(--accent-color); color: #fff; border-color: var(--accent-color); font-size: 1.1rem; padding: 1.25rem;">Submit Application</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Work With Us -->
+    <section class="section-container scroll-animate" style="margin-bottom: 4rem;">
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <h2 style="font-size: 2.5rem;">Why Work With <span style="background: var(--brand-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Us?</span></h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+        <div style="padding: 2.5rem; background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border); text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+          <h3 style="margin-bottom: 1rem;">Growth Opportunities</h3>
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">We invest in our people with training programs, certifications, and clear career paths.</p>
+        </div>
+        <div style="padding: 2.5rem; background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border); text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
+          <h3 style="margin-bottom: 1rem;">Competitive Benefits</h3>
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">Health insurance, performance bonuses, free internet, and more perks for our team.</p>
+        </div>
+        <div style="padding: 2.5rem; background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border); text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🤝</div>
+          <h3 style="margin-bottom: 1rem;">Inclusive Culture</h3>
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">A collaborative, diverse workplace where every voice matters and innovation is celebrated.</p>
+        </div>
+        <div style="padding: 2.5rem; background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border); text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🌍</div>
+          <h3 style="margin-bottom: 1rem;">Meaningful Impact</h3>
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">Help bridge the digital divide and connect millions of Filipinos to a better future.</p>
+        </div>
+      </div>
+    </section>
+  `,
+  '/about': () => `
+    <!-- Who We Are Hero -->
+    <section id="who-we-are" class="about-hero scroll-animate" style="position: relative; overflow: hidden;">
+      <svg width="800" height="800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; right: -200px; top: -150px; opacity: 0.03; pointer-events: none; z-index: 0;">
+        <g transform="rotate(-40 12 20)">
+          <path d="M8.5 16.5a5 5 0 0 1 7 0 M4.5 12.5a10 10 0 0 1 15 0" stroke="#3b82f6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <div class="about-hero-content" style="position: relative; z-index: 1;">
+        <h2 class="about-hero-kicker">ABOUT RFIBERX</h2>
+        <h1 class="about-hero-title">Who We Are</h1>
+        <p class="about-hero-desc">At RFiberX, we are dedicated to delivering fast and dependable telecommunications directly to your doorstep. Founded with the vision of making high-speed internet accessible and straightforward, we have established ourselves as a trusted partner in fiber-optic connectivity. Our focus is on providing seamless, high-quality service so that every household and business we serve can stay connected to what matters most.</p>
+      </div>
+    </section>
+
+    <!-- Purpose, Vision, Mission -->
+    <section id="purpose" class="section-container scroll-animate" style="margin-bottom: 4rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+        
+        <!-- Purpose Card -->
+        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--accent-color)'; this.style.boxShadow='0 20px 40px rgba(16, 185, 129, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
+          <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--accent-color); filter: blur(80px); border-radius: 50%; opacity: 0.3; z-index: 0;"></div>
+          <div style="width: 80px; height: 80px; background: rgba(229, 57, 53, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: var(--accent-color); position: relative; z-index: 1;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>
+          </div>
+          <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: #fff; position: relative; z-index: 1;">Our <span style="color: var(--accent-color);">Purpose</span></h2>
+          <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; position: relative; z-index: 1;">Our purpose is to inspire progress by fostering meaningful and stable connections within the communities we serve. We believe that reliable internet is an essential tool, one that empowers students to learn, businesses to operate smoothly, and everyday people to thrive in an increasingly digital world.</p>
+        </div>
+
+        <!-- Vision Card -->
+        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='#E53935'; this.style.boxShadow='0 20px 40px rgba(229, 57, 53, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
+          <div style="position: absolute; top: -50px; left: -50px; width: 150px; height: 150px; background: #E53935; filter: blur(80px); border-radius: 50%; opacity: 0.3; z-index: 0;"></div>
+          <div style="width: 80px; height: 80px; background: rgba(229, 57, 53, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: #E53935; position: relative; z-index: 1;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </div>
+          <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: #fff; position: relative; z-index: 1;">Our <span style="color: #E53935;">Vision</span></h2>
+          <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; position: relative; z-index: 1;">We envision a future where every neighborhood enjoys seamless, high-speed connectivity. By building robust technological bridges, we aim to be the reliable foundation that allows education to flourish online and local businesses to compete, grow, and succeed on a broader stage.</p>
+        </div>
+
+        <!-- Mission Card -->
+        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='#E53935'; this.style.boxShadow='0 20px 40px rgba(229, 57, 53, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
+          <div style="position: absolute; bottom: -50px; right: -50px; width: 150px; height: 150px; background: #E53935; filter: blur(80px); border-radius: 50%; opacity: 0.3; z-index: 0;"></div>
+          <div style="width: 80px; height: 80px; background: rgba(229, 57, 53, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: #E53935; position: relative; z-index: 1;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          </div>
+          <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: #fff; position: relative; z-index: 1;">Our <span style="color: #E53935;">Mission</span></h2>
+          <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; position: relative; z-index: 1;">Since our founding, RFiberX has been on a mission to provide fast, reliable, and affordable internet access without the hassle. We strive to build a strong digital backbone that empowers homes and businesses alike, ensuring every connection we make is a step toward a more connected community.</p>
+        </div>
+        
+      </div>
+    </section>
+
+
+
+    <!-- Owner Section -->
+    <section id="owner" class="section-container scroll-animate">
+      <div class="about-owner">
+        <div class="about-owner-avatar">
+          <div class="about-owner-placeholder">&#128100;</div>
+        </div>
+        <div class="about-owner-info">
+          <h3 class="about-owner-kicker">Leadership</h3>
+          <h2 class="about-owner-name">The Founder</h2>
+          <h3 style="font-size: 1.75rem; margin-bottom: 1rem; color: var(--accent-color);">Rendell Blanco Noceto</h3>
+          <p class="about-owner-role">Founder & CEO, RFiberX Network and Data Solution</p>
+          <p class="about-owner-bio">Driven by a passion for technology and a commitment to our hometown, our founder established RFiberX to bring reliable, high-speed internet directly to Magdalena. From our very first installation to where we are today, we have remained dedicated to providing our neighbors with the dependable connectivity they need to learn, work, and stay entertained.</p>
+          <blockquote class="about-owner-quote">"Our goal is simple — to ensure our community has the seamless connection it deserves."</blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- Our Journey Timeline -->
+    <section id="journey" class="journey-section scroll-animate">
+      <div class="journey-header">
+        <h2>Our <span>Journey</span></h2>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">Key milestones in our mission to connect every Filipino.</p>
+      </div>
+      <div class="journey-timeline">
+        <div class="journey-line"></div>
+        
+        <div class="journey-item">
+          <div class="journey-dot" style="top: 20px;"></div>
+          <div class="journey-content">
+            <div class="journey-year">2024</div>
+            <h3 class="journey-title">Company Founded</h3>
+            <p class="journey-desc">RFIBER was founded with a vision to provide world-class internet connectivity across the Philippines.</p>
+          </div>
+        </div>
+
+        <div class="journey-item">
+          <div class="journey-dot" style="top: 20px;"></div>
+          <div class="journey-content">
+            <div class="journey-year">2025</div>
+            <h3 class="journey-title">Pure Fiber Infrastructure</h3>
+            <p class="journey-desc">Established our pure fiber infrastructure in Magdalena, delivering fast and stable speeds up to 200 Mbps to power seamless streaming, gaming, and online learning for local households.</p>
+          </div>
+        </div>
+
+        <div class="journey-item">
+          <div class="journey-dot" style="top: 20px;"></div>
+          <div class="journey-content">
+            <h3 class="journey-title">Expansion</h3>
+            <p class="journey-desc">Grew our local network footprint by connecting new barangays, ensuring that more families and small businesses have access to the seamless digital experience they deserve.</p>
+          </div>
+        </div>
+
+        <div class="journey-item">
+          <div class="journey-dot" style="top: 20px;"></div>
+          <div class="journey-content">
+            <h3 class="journey-title">Most Reliable</h3>
+            <p class="journey-desc">Earned the trust of the Magdalena community as the most reliable local network by offering fast, same-day technician response to keep our subscribers connected without the wait.</p>
+          </div>
+        </div>
+
+        <div class="journey-item">
+          <div class="journey-dot" style="top: 20px;"></div>
+          <div class="journey-content">
+            <div class="journey-year">2026</div>
+            <h3 class="journey-title">Subscribed</h3>
+            <p class="journey-desc">Join your neighbors in Magdalena who have already made the switch to seamless connectivity. With speeds up to 200 Mbps, absolutely no data caps, and our guaranteed same-day technician support, getting connected has never been this stress-free.</p>
+          </div>
+        </div>
+
+        <div class="journey-item">
+          <div class="journey-dot" style="top: 20px;"></div>
+          <div class="journey-content">
+            <h3 class="journey-title">Digital Advancement</h3>
+            <p class="journey-desc">RFiberX officially went fully digital to bring you maximum convenience. We launched our new website, introduced automated email updates, and rolled out a secure online payment portal that accepts direct bank transfers. Powered by our newly created apps, managing your account and getting support is now just a tap away.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Us & Join Us CTA -->
+    <section class="about-cta scroll-animate">
+      <div class="about-cta-inner">
+        <div class="about-cta-card">
+          <h3>Contact Us</h3>
+          <p>Have questions or need assistance? Our team is ready to help you get connected with the perfect plan.</p>
+          <button class="btn btn-outline" onclick="window.router.navigate('/contact')" style="width: auto;">Get in Touch <span class="btn-arrow">&#8594;</span></button>
+        </div>
+        <div class="about-cta-card">
+          <h3>Join Us</h3>
+          <p>Be part of the RFiberX family. We're always looking for talented, passionate individuals to join our growing team.</p>
+          <button class="btn btn-outline" onclick="window.router.navigate('/apply')" style="width: auto;">Apply Now <span class="btn-arrow">&#8594;</span></button>
+        </div>
+      </div>
+    </section>
+  `,
+  '/apply': () => `
+    <section class="section-container scroll-animate" style="padding-top: 6rem;">
+      <div style="text-align: center; margin-bottom: 4rem;">
+        <h1 style="font-size: 3.5rem; margin-bottom: 1rem;">Join the RFiberX Team</h1>
+        <p style="color: var(--text-secondary); font-size: 1.2rem; max-width: 600px; margin: 0 auto;">We're building the future of Filipino connectivity. If you're passionate about technology and community, we want to hear from you.</p>
+      </div>
+
+      <div style="max-width: 800px; margin: 0 auto;">
+        <div style="background: var(--glass-bg); padding: 3rem; border-radius: 16px; border: 1px solid var(--glass-border); backdrop-filter: blur(10px);">
+          <h2 style="margin-bottom: 2rem; text-align: center;">Application Form</h2>
+          <form onsubmit="event.preventDefault(); alert('Application submitted successfully! We will review your information and get back to you.')">
+            <div class="contact-grid" style="gap: 2rem;">
+              <div>
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <input type="text" class="form-control" placeholder="Juan Dela Cruz" required>
+                </div>
+                <div class="form-group">
+                  <label>Email Address</label>
+                  <input type="email" class="form-control" placeholder="juan@example.com" required>
+                </div>
+                <div class="form-group">
+                  <label>Phone Number</label>
+                  <input type="tel" class="form-control" placeholder="0912 345 6789" required>
+                </div>
+              </div>
+              <div>
+                <div class="form-group">
+                  <label>Position Applying For</label>
+                  <select class="form-control" required style="appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=%22white%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 95%; background-position-y: 50%;">
+                    <option value="Field Technician" selected style="background: #111;">Field Technician</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Years of Experience</label>
+                  <select class="form-control" required style="appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=%22white%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 95%; background-position-y: 50%;">
+                    <option value="" disabled selected style="background: #111;">Select Experience</option>
+                    <option style="background: #111;">Fresh Graduate</option>
+                    <option style="background: #111;">1-2 Years</option>
+                    <option style="background: #111;">3-5 Years</option>
+                    <option style="background: #111;">5+ Years</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Why do you want to join RFiberX?</label>
+                  <textarea class="form-control" rows="4" placeholder="Tell us about yourself and why you'd be a great fit..." required></textarea>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-outline" style="width: 100%; margin-top: 1rem; background: var(--accent-color); color: #fff; border-color: var(--accent-color);">Submit Application</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+
+  `,
+  '/support/billing': () => `
+    <section class="section-container scroll-animate" style="padding-top: 6rem; max-width: 1000px;">
+      <div style="text-align: center; margin-top: 2rem; margin-bottom: 4rem;">
+        <h2 class="about-mission-title" style="font-size: 3rem; margin-bottom: 1rem;">Billing & <span style="color: var(--accent-color);">Payments</span></h2>
+        <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Manage your statements, understand your charges, and securely process your payments.</p>
+      </div>
+      
+      <div style="background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 2rem;">
+        <h2 style="margin-bottom: 1.5rem; color: var(--accent-color);">Payment Methods</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 1.05rem;">Payments can be securely processed directly through our billing system. We currently accept the following payment methods:</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; transition: transform 0.2s ease, border-color 0.2s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='var(--accent-color)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.05)';">
+            <h3 style="color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+              GCash
+            </h3>
+            <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Send your payment via GCash to our official company number:</p>
+            <p style="font-weight: 700; font-size: 1.4rem; color: var(--accent-color); letter-spacing: 1px;">+63 09058395471</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; transition: transform 0.2s ease, border-color 0.2s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='var(--accent-color)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.05)';">
+            <h3 style="color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+              Bank Transfer (BDO Only)
+            </h3>
+            <p style="color: var(--text-secondary);">Direct bank deposits or online transfers to our official BDO account. Details will be provided upon checkout.</p>
+          </div>
+        </div>
+
+        <div style="text-align: center; border-top: 1px solid var(--glass-border); padding-top: 2rem; margin-top: 1rem;">
+          <p style="color: var(--text-secondary); font-size: 1.05rem; margin-bottom: 1rem;">If you are already online and have account, please visit the Payment Processing System</p>
+          <a href="#" class="btn btn-white" style="text-decoration: none;" onclick="alert('This will lead to the billing system. (Currently in development)'); return false;">Go TO RFiberX Payment Processing System</a>
+        </div>
+      </div>
+      
+      <div style="background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 3rem;">
+        <h2 style="margin-bottom: 1.5rem; color: var(--accent-color);">Frequently Asked Questions</h2>
+        
+        <div style="margin-bottom: 1.5rem; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent-color);">
+          <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #fff;">When is my bill due?</h4>
+          <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0;">The start of your billing cycle is the <strong style="color: #fff;">1st of the month</strong>, and the due date is every <strong style="color: #fff;">7th of the month</strong>.</p>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent-color);">
+          <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #fff;">How do I get my Statement of Account (SOA)?</h4>
+          <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0;">We send e-Statements to your registered email address. You can also view it in our upcoming Mobile App.</p>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent-color);">
+          <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #fff;">Why is my first bill higher than expected?</h4>
+          <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0;">Your first bill includes the one-time <strong style="color: #fff;">installation fee</strong> plus an <strong style="color: #fff;">advance fee</strong> required for your internet service to be fully activated. Subsequent bills will only reflect your regular monthly plan rate.</p>
+        </div>
+      </div>
+      
+      <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+        <button class="btn btn-white rounded-pill" onclick="window.router.navigate('/subscriptions')" style="font-size: 1.1rem; padding: 1rem 2.5rem;">Ready to Have Connection</button>
+        <button class="btn btn-outline" onclick="window.router.navigate('/support')" style="width: auto; border: none;">← Back to Support</button>
+      </div>
+    </section>
+  `,
+  '/support/technical': () => `
+    <section class="section-container scroll-animate" style="padding-top: 6rem; max-width: 1000px;">
+      <div style="text-align: center; margin-top: 2rem; margin-bottom: 4rem;">
+        <h2 class="about-mission-title" style="font-size: 3rem; margin-bottom: 1rem;">Technical <span style="color: var(--accent-color);">Support</span></h2>
+        <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Find solutions to common connectivity issues and router configurations to get you back online quickly.</p>
+      </div>
+      
+      <div style="background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 2rem;">
+        <h2 style="margin-bottom: 1.5rem; color: var(--accent-color);">Basic Troubleshooting Guide</h2>
+        <ol style="padding-left: 1.5rem; color: var(--text-secondary); line-height: 2; font-size: 1.05rem;">
+          <li style="margin-bottom: 1rem;"><strong style="color: #fff;">Check the LOS Light:</strong> If the Red LOS light on your modem is blinking, there is a fiber cut. Please contact support immediately.</li>
+          <li style="margin-bottom: 1rem;"><strong style="color: #fff;">Restart Your Modem:</strong> Turn off the modem, unplug it for 5 seconds, then plug it back in. Wait 1-2 minutes for all lights to stabilize.</li>
+          <li style="margin-bottom: 1rem;"><strong style="color: #fff;">Check Your Cables:</strong> Ensure the yellow/connector fiber patch cord is securely connected to the router and wall outlet without bending sharply.</li>
+          <li><strong style="color: #fff;">Isolate the Issue:</strong> Connect a laptop directly to the router using a LAN cable. If the internet works, the issue might be your Wi-Fi signal.</li>
+        </ol>
+      </div>
+
+      <div style="background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 3rem;">
+        <h2 style="margin-bottom: 1.5rem; color: var(--accent-color);">Optimizing Your Wi-Fi</h2>
+        
+        <div style="margin-bottom: 1.5rem; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent-color);">
+          <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #fff;">Where should I place my router?</h4>
+          <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0;">Place your router in an open, central location, off the floor. Avoid putting it near thick walls, microwaves, or large metal objects.</p>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent-color);">
+          <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #fff;">2.4GHz vs 5GHz?</h4>
+          <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0;">Use <strong style="color: #fff;">5GHz</strong> for devices close to the router (faster speeds, less range). Use <strong style="color: #fff;">2.4GHz</strong> for devices far from the router or older devices (slower speeds, longer range).</p>
+        </div>
+      </div>
+
+      <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; border-top: 1px solid var(--glass-border); padding-top: 3rem; margin-top: 2rem;">
+        <p style="color: var(--text-secondary); font-size: 1.1rem; max-width: 600px;">If theres another concern that you might be encountering try contacting the Technicians</p>
+        <button class="btn btn-white rounded-pill" onclick="window.router.navigate('/contact')" style="font-size: 1.1rem; padding: 1rem 2.5rem;">Contact Technicians</button>
+        <button class="btn btn-outline" onclick="window.router.navigate('/support')" style="width: auto; border: none; margin-top: 1rem;">← Back to Support</button>
+      </div>
+    </section>
+  `,
+  '/support/account': () => `
+    <section class="section-container scroll-animate" style="padding-top: 6rem; max-width: 1000px;">
+      <div style="text-align: center; margin-top: 2rem; margin-bottom: 4rem;">
+        <h2 class="about-mission-title" style="font-size: 3rem; margin-bottom: 1rem;">Account <span style="color: var(--accent-color);">Management</span></h2>
+        <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Need to make changes to your existing service? We've got you covered.</p>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem;">
+        <div style="background: var(--glass-bg); padding: 2rem; border-radius: 16px; border: 1px solid var(--glass-border);">
+          <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Upgrading Your Plan</h3>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">Want faster speeds? You can upgrade your plan at any time without any termination fees. The new speed and billing rate will take effect within 24 hours.</p>
+        </div>
+        
+        <div style="background: var(--glass-bg); padding: 2rem; border-radius: 16px; border: 1px solid var(--glass-border);">
+          <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Transfer of Location</h3>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">Moving to a new house? We can transfer your connection to your new address, subject to facility availability in the new area. A standard relocation fee is based on the complexity of the work, most of the time is free.</p>
+          <p style="color: var(--text-secondary);">To request a transfer, please contact our support team at least 1 week before your move.</p>
+        </div>
+        
+        <div style="background: var(--glass-bg); padding: 2rem; border-radius: 16px; border: 1px solid var(--glass-border);">
+          <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Change of Account Name</h3>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">To transfer ownership of the account, both the current owner and new owner must submit valid Information to our nearest business center.</p>
+        </div>
+
+        <div style="text-align: center; border-top: 1px solid var(--glass-border); padding-top: 2rem; margin-top: 1rem;">
+          <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.6;">If you already had Payment Process account and also want some changes there, contact the <a href="#" onclick="window.router.navigate('/contact'); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: underline;">IT Specialist</a> for that.</p>
+        </div>
+      </div>
+
+      <div style="text-align: center;">
+        <button class="btn btn-outline" onclick="window.router.navigate('/support')" style="width: auto;">← Back to Support</button>
+      </div>
+    </section>
+  `,
+  '/support/outages': () => `
+    <section class="section-container scroll-animate" style="padding-top: 6rem; max-width: 1000px;">
+      <div style="text-align: center; margin-top: 2rem; margin-bottom: 4rem;">
+        <h2 class="about-mission-title" style="font-size: 3rem; margin-bottom: 1rem;">Outages & <span style="color: var(--accent-color);">Network</span></h2>
+        <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Stay updated on network maintenance and localized outages.</p>
+      </div>
+      
+      <div style="background: rgba(229, 57, 53, 0.1); border: 1px solid var(--accent-color); padding: 2rem; border-radius: 16px; text-align: center; margin-bottom: 3rem; display: flex; flex-direction: column; align-items: center;">
+        <h2 style="color: var(--accent-color); margin-bottom: 0.5rem; font-size: 2rem;">Stay Updated</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 1.1rem; max-width: 500px;">To stay updated about maintenance, news and updates, follow our official page.</p>
+        <a href="https://www.facebook.com/RFiber1" target="_blank" rel="noopener noreferrer" class="btn btn-white" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Follow our page
+        </a>
+      </div>
+
+      <div style="background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 3rem;">
+        <h2 style="margin-bottom: 1.5rem; color: #dc2626;">Report a Downed Line</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">If you see a fallen fiber optic cable or a damaged distribution box on a utility pole, please <b>DO NOT</b> touch it. Report it immediately to our hotline.</p>
+        <div style="background: #111; padding: 1.5rem; border-radius: 8px; font-family: monospace; font-size: 1.2rem; text-align: center; letter-spacing: 2px;">
+          Call: +63 09058395471
+        </div>
+      </div>
+
+      <div style="background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 3rem;">
+        <h2 style="margin-bottom: 1.5rem; color: var(--accent-color);">Scheduled Maintenance</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">To ensure optimal performance, we actively and quickly fix broken or downed lines on the same schedule that they occur.</p>
+        <p style="color: var(--text-secondary);">We will notify affected subscribers via SMS and Email at least 24 hours prior to any scheduled maintenance.</p>
+      </div>
+
+      <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; border-top: 1px solid var(--glass-border); padding-top: 3rem; margin-top: 2rem;">
+        <p style="color: var(--text-secondary); font-size: 1.1rem; max-width: 600px;">If theres another concern that you might be encountering try contacting the Technicians</p>
+        <button class="btn btn-white rounded-pill" onclick="window.router.navigate('/contact')" style="font-size: 1.1rem; padding: 1rem 2.5rem;">Contact Technicians</button>
+        <button class="btn btn-outline" onclick="window.router.navigate('/support')" style="width: auto; border: none; margin-top: 1rem;">← Back to Support</button>
       </div>
     </section>
   `,
@@ -392,6 +1142,7 @@ class Router {
 
   route() {
     let path = window.location.pathname;
+    let hash = window.location.hash;
     if (!views[path]) {
       path = '/';
       window.history.replaceState(null, null, '/');
@@ -400,6 +1151,31 @@ class Router {
     this.appContent.innerHTML = views[path]();
     this.setupScrollAnimations();
     this.updateNavLinks(path);
+
+    if (hash) {
+      setTimeout(() => {
+        const id = hash.substring(1);
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        if (path === '/subscriptions') {
+          const plans = {
+            'starter': ['Starter Fiber', 'Up to 30 Mbps', '₱800/mo'],
+            'value': ['Value Fiber', 'Up to 50 Mbps', '₱1000/mo'],
+            'family': ['Family Fiber', 'Up to 70 Mbps', '₱1300/mo'],
+            'pro': ['Pro Fiber', 'Up to 100 Mbps', '₱1500/mo'],
+            'extreme': ['Extreme Fiber X', 'Up to 200 Mbps', '₱2000/mo']
+          };
+          if (plans[id]) {
+            setTimeout(() => {
+              this.openSignupForm(plans[id][0], plans[id][1], plans[id][2]);
+            }, 300);
+          }
+        }
+      }, 100);
+    } else {
+      window.scrollTo(0, 0);
+    }
   }
 
   setupScrollAnimations() {
@@ -428,16 +1204,294 @@ class Router {
     });
   }
 
-  openSignupForm(planName, planSpeed) {
+  submitApplication(event) {
+    event.preventDefault();
+    this._pendingForm = event.target;
+    const emailInput = document.getElementById('applicant-email');
+    const email = emailInput ? emailInput.value : '';
+
+    if (!email) {
+      alert('Please fill in your Gmail address.');
+      return;
+    }
+
+    this._applicantEmail = email;
+
+    // Immediately send the application (bypassing verification)
+    this._sendApplicationToOwner();
+
+    // Show the success step in the modal
+    const modal = document.getElementById('verify-modal');
+    const step1 = document.getElementById('verify-step-1');
+    const step2 = document.getElementById('verify-step-2');
+
+    if (modal && step1 && step2) {
+      step1.style.display = 'none';
+      step2.style.display = 'block';
+      modal.style.display = 'flex';
+    }
+
+    // Reset and close the signup form
+    if (this._pendingForm) this._pendingForm.reset();
+    const formContainer = document.getElementById('signup-form-container');
+    if (formContainer) formContainer.classList.remove('open');
+  }
+
+  _sendVerificationEmail(toEmail, code) {
+    // EmailJS integration
+    // To make this work with real emails, you need to:
+    // 1. Sign up at https://www.emailjs.com
+    // 2. Create an email service and template
+    // 3. Replace the IDs below with your own
+    //
+    // Template should have variables: {{to_email}}, {{verification_code}}, {{to_name}}
+
+    if (typeof emailjs !== 'undefined' && emailjs.send) {
+      try {
+        emailjs.init('YOUR_PUBLIC_KEY'); // Replace with your EmailJS public key
+
+        emailjs.send('YOUR_SERVICE_ID', 'YOUR_VERIFICATION_TEMPLATE_ID', {
+          to_email: toEmail,
+          verification_code: code,
+          to_name: 'RFiberX Applicant'
+        }).then(() => {
+          console.log('Verification email sent successfully to', toEmail);
+        }).catch((err) => {
+          console.warn('EmailJS not configured yet. Code for testing:', code);
+        });
+      } catch (e) {
+        console.warn('EmailJS not configured yet. Code for testing:', code);
+      }
+    } else {
+      // Fallback: log the code for demo/testing purposes
+      console.log('%c[RFiberX] Verification code for ' + toEmail + ': ' + code, 'color: #E53935; font-size: 16px; font-weight: bold;');
+    }
+  }
+
+  verifyCode() {
+    const codeInput = document.getElementById('verify-code-input');
+    const errorMsg = document.getElementById('verify-error');
+    const step1 = document.getElementById('verify-step-1');
+    const step2 = document.getElementById('verify-step-2');
+
+    if (!codeInput) return;
+
+    const enteredCode = codeInput.value.trim();
+
+    if (enteredCode === this._verificationCode) {
+      // Code is correct — send the application email
+      if (errorMsg) errorMsg.style.display = 'none';
+      this._sendApplicationToOwner();
+
+      // Show success step
+      if (step1) step1.style.display = 'none';
+      if (step2) step2.style.display = 'block';
+
+      // Reset and close the signup form
+      if (this._pendingForm) this._pendingForm.reset();
+      const formContainer = document.getElementById('signup-form-container');
+      if (formContainer) formContainer.classList.remove('open');
+    } else {
+      // Wrong code
+      if (errorMsg) {
+        errorMsg.textContent = 'Incorrect code. Please try again.';
+        errorMsg.style.display = 'block';
+      }
+      codeInput.value = '';
+      codeInput.focus();
+    }
+  }
+
+  resendCode() {
+    // Generate a new code and resend
+    this._verificationCode = String(Math.floor(100000 + Math.random() * 900000));
+    this._sendVerificationEmail(this._applicantEmail, this._verificationCode);
+
+    const errorMsg = document.getElementById('verify-error');
+    if (errorMsg) {
+      errorMsg.textContent = 'A new verification code has been sent!';
+      errorMsg.style.color = '#E53935';
+      errorMsg.style.display = 'block';
+      setTimeout(() => {
+        errorMsg.style.display = 'none';
+        errorMsg.style.color = '#ef4444';
+      }, 3000);
+    }
+  }
+
+  closeVerifyModal() {
+    const modal = document.getElementById('verify-modal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  _sendApplicationToOwner() {
+    // Collect form data
+    const plan = document.getElementById('selected-plan-input')?.value || 'N/A';
+    const speed = document.getElementById('selected-plan-speed')?.value || 'N/A';
+    const price = document.getElementById('selected-plan-price')?.value || 'N/A';
+    const email = this._applicantEmail || 'N/A';
+    const facebook = document.getElementById('applicant-facebook')?.value || 'N/A';
+    const phone = document.getElementById('applicant-phone')?.value || 'N/A';
+    const subLocation = document.getElementById('applicant-sublocation')?.value || 'N/A';
+    const otherLocation = document.getElementById('applicant-other-location')?.value || 'N/A';
+    const landmarks = document.getElementById('applicant-landmarks')?.value || 'N/A';
+    const time = new Date().toLocaleString();
+
+    const applicationSummary = `
+New RFiberX Application
+========================
+Plan: ${plan} (${speed} - ${price})
+Email: ${email}
+Facebook: ${facebook}
+Phone: ${phone}
+Location: Magdalena
+Sub Location: ${subLocation}
+Other Location: ${otherLocation}
+Landmarks: ${landmarks}
+========================
+Submitted at: ${time}
+    `.trim();
+
+    // Send to applicant@rfiberx.net via EmailJS
+    if (typeof emailjs !== 'undefined' && emailjs.send) {
+      try {
+        // EmailJS v4 method: Pass public key directly into the send function
+        emailjs.send('service_pg8s2oz', 'template_1585hug', {
+          to_email: 'applicant@rfiberx.net',
+          applicant_email: email,
+          email: email, // Required for Reply-To
+          facebook_name: facebook,
+          name: facebook, // Required for From Name
+          title: plan + " Plan", // Required for Subject
+          phone_number: phone,
+          plan_name: plan,
+          plan_speed: speed,
+          plan_price: price,
+          sub_location: subLocation,
+          other_location: otherLocation,
+          landmarks: landmarks,
+          time: time,
+          message: applicationSummary
+        }, 'S98OERrmNiDPNOP7D').then((response) => {
+          console.log('Application email sent successfully!', response.status, response.text);
+        }).catch((err) => {
+          console.error('EmailJS Error:', err);
+          alert('EmailJS Error: ' + (err.text || err.message || JSON.stringify(err)) + '\n\nPlease ensure your website URL (localhost or your domain) is added to the "Allowed Origins" in your EmailJS Account Security settings.');
+        });
+      } catch (e) {
+        console.warn('EmailJS not configured. Application details:', applicationSummary);
+      }
+    } else {
+      console.log('%c[RFiberX] Application submitted to applicant@rfiberx.net', 'color: #10b981; font-size: 14px; font-weight: bold;');
+      console.log(applicationSummary);
+    }
+  }
+
+  submitContactMessage(event) {
+    event.preventDefault();
+    const form = event.target;
+    const name = document.getElementById('contact-name')?.value || 'N/A';
+    const email = document.getElementById('contact-email')?.value || 'N/A';
+    const phone = document.getElementById('contact-phone')?.value || 'N/A';
+    const subject = document.getElementById('contact-subject')?.value || 'N/A';
+    const message = document.getElementById('contact-message')?.value || 'N/A';
+    let subLocation = document.getElementById('contact-sublocation')?.value || 'N/A';
+
+    if (subLocation === 'Other') {
+      const otherLocation = document.getElementById('contact-other-location')?.value || 'N/A';
+      subLocation = `Other: ${otherLocation}`;
+    }
+
+    const time = new Date().toLocaleString();
+
+    if (typeof emailjs !== 'undefined' && emailjs.send) {
+      emailjs.send('service_pg8s2oz', 'template_m960j5j', {
+        to_email: 'clients@rfiberx.net',
+        email: email,
+        phone_number: phone,
+        name: name,
+        title: subject,
+        sub_location: subLocation,
+        message: message,
+        time: time
+      }, 'S98OERrmNiDPNOP7D').then((response) => {
+        const modal = document.getElementById('contact-modal');
+        if (modal) modal.style.display = 'flex';
+        form.reset();
+      }).catch((err) => {
+        console.error('EmailJS Error:', err);
+        alert('EmailJS Error: ' + (err.text || err.message || JSON.stringify(err)) + '\n\nPlease ensure your origin is allowed in EmailJS.');
+      });
+    } else {
+      alert('Email service not configured yet.');
+    }
+  }
+
+  submitJobApplication(event) {
+    event.preventDefault();
+    const form = event.target;
+
+    // Extract job form data
+    const firstName = document.getElementById('apply-firstname')?.value || '';
+    const lastName = document.getElementById('apply-lastname')?.value || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+    const email = document.getElementById('apply-email')?.value || 'N/A';
+    const phone = document.getElementById('apply-phone')?.value || 'N/A';
+    const position = document.getElementById('apply-position')?.value || 'N/A';
+    const education = document.getElementById('apply-education')?.value || 'N/A';
+    const experience = document.getElementById('apply-experience')?.value || 'N/A';
+    const coverLetter = document.getElementById('apply-coverletter')?.value || 'No cover letter provided.';
+    const time = new Date().toLocaleString();
+
+    // Format all of this into a single text block for the EmailJS message
+    const jobApplicationSummary =
+      `--- APPLICANT PROFILE ---\n` +
+      `Position: ${position}\n` +
+      `Education: ${education}\n` +
+      `Experience: ${experience}\n\n` +
+      `--- COVER LETTER ---\n${coverLetter}`;
+
+    if (typeof emailjs !== 'undefined' && emailjs.send) {
+      // Reusing the Concern Template (template_m960j5j) but sending to applicant@rfiberx.net
+      emailjs.send('service_pg8s2oz', 'template_m960j5j', {
+        to_email: 'applicant@rfiberx.net',
+        email: email,
+        phone_number: phone,
+        name: fullName,
+        title: `Job Application: ${position}`,
+        sub_location: 'Not Applicable',
+        message: jobApplicationSummary,
+        time: time
+      }, 'S98OERrmNiDPNOP7D').then((response) => {
+        alert('Job Application submitted successfully! Our HR team will review your application and contact you within 5\u20137 business days.');
+        form.reset();
+      }).catch((err) => {
+        console.error('EmailJS Error:', err);
+        alert('EmailJS Error: ' + (err.text || err.message || JSON.stringify(err)));
+      });
+    } else {
+      alert('Email service not configured. Job application saved locally.');
+      console.log('Job App:', { fullName, email, position });
+    }
+  }
+
+  openSignupForm(planName, planSpeed, planPrice) {
     const formContainer = document.getElementById('signup-form-container');
     const planInput = document.getElementById('selected-plan-input');
     const speedInput = document.getElementById('selected-plan-speed');
-    
+    const priceInput = document.getElementById('selected-plan-price');
+
     if (formContainer && planInput && speedInput) {
+      if (formContainer.classList.contains('open') && planInput.value === planName) {
+        formContainer.classList.remove('open');
+        return;
+      }
+
       planInput.value = planName;
       speedInput.value = planSpeed;
+      if (priceInput) priceInput.value = planPrice || '';
       formContainer.classList.add('open');
-      
+
       // Smooth scroll to the form
       setTimeout(() => {
         formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -446,7 +1500,7 @@ class Router {
       // If they clicked it from the home page, redirect to subscriptions first
       this.navigate('/subscriptions');
       setTimeout(() => {
-        this.openSignupForm(planName, planSpeed);
+        this.openSignupForm(planName, planSpeed, planPrice);
       }, 100);
     }
   }
@@ -458,8 +1512,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.addEventListener('click', e => {
     if (e.target.matches('[data-link]')) {
       e.preventDefault();
-      window.router.navigate(e.target.getAttribute('href'));
-      
+      const href = e.target.getAttribute('href');
+      window.router.navigate(href);
+
       // Close mobile menu if open
       const mobileMenu = document.getElementById('mobile-menu');
       if (mobileMenu) mobileMenu.classList.remove('open');
@@ -469,10 +1524,154 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mobile menu toggle logic
   const mobileToggle = document.getElementById('mobile-toggle');
   const mobileMenu = document.getElementById('mobile-menu');
-  
+
   if (mobileToggle && mobileMenu) {
     mobileToggle.addEventListener('click', () => {
       mobileMenu.classList.toggle('open');
     });
   }
+
+  // Legal Modal System
+  const legalContent = {
+    privacy: {
+      title: 'Privacy Notice',
+      date: 'Effective Date: January 1, 2026',
+      body: `
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">1. Introduction</h3>
+        <p>RFiberX Network and Data Solution ("RFiberX," "we," "our," or "us") is committed to protecting the privacy of our subscribers, website visitors, and service users. This Privacy Notice explains how we collect, use, store, and protect your personal information in accordance with the Data Privacy Act of 2012 (Republic Act No. 10173) and its Implementing Rules and Regulations.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">2. Information We Collect</h3>
+        <p>We may collect the following types of personal information:</p>
+        <ul style="padding-left:1.5rem; margin:0.5rem 0;">
+          <li>Full name, address, and contact details (phone number, email address)</li>
+          <li>Government-issued identification for identity verification</li>
+          <li>Billing and payment information</li>
+          <li>Service usage data, including bandwidth consumption and connection logs</li>
+          <li>Device information and IP addresses used to access our services</li>
+          <li>Customer support interaction records</li>
+        </ul>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">3. How We Use Your Information</h3>
+        <p>Your personal information is used to:</p>
+        <ul style="padding-left:1.5rem; margin:0.5rem 0;">
+          <li>Process service applications and manage your subscription</li>
+          <li>Provide, maintain, and improve our internet connectivity services</li>
+          <li>Process billing, payments, and account management</li>
+          <li>Communicate important service updates, outage notifications, and promotional offers</li>
+          <li>Respond to customer inquiries and provide technical support</li>
+          <li>Comply with legal and regulatory requirements</li>
+        </ul>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">4. Data Sharing & Disclosure</h3>
+        <p>We do not sell your personal data to third parties. We may share your information only with authorized service partners (e.g., payment processors, technicians) strictly for the purpose of delivering our services, or when required by law or a valid court order.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">5. Data Security</h3>
+        <p>We implement reasonable organizational, technical, and physical security measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction. Access to subscriber data is restricted to authorized personnel only.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">6. Your Rights</h3>
+        <p>Under the Data Privacy Act of 2012, you have the right to access, correct, and request the deletion of your personal data. You may also withdraw consent or object to certain processing activities. To exercise any of these rights, please contact us at <span style="color:var(--accent-color);">technicians@rfiberx.net</span>.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">7. Changes to This Notice</h3>
+        <p>RFiberX reserves the right to update this Privacy Notice at any time. Significant changes will be communicated through our website or via email notification to active subscribers.</p>
+      `
+    },
+    cookie: {
+      title: 'Cookie Policy',
+      date: 'Effective Date: January 1, 2026',
+      body: `
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">1. What Are Cookies</h3>
+        <p>Cookies are small text files placed on your device when you visit our website. They help us provide you with a better browsing experience by remembering your preferences and understanding how you interact with our site.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">2. Types of Cookies We Use</h3>
+        <p><strong style="color:#fff;">Essential Cookies:</strong> These are required for the basic functionality of our website, such as navigating between pages and accessing secure areas of the site. Our website cannot function properly without these cookies.</p>
+        <p><strong style="color:#fff;">Functional Cookies:</strong> These cookies allow our website to remember choices you make (such as your preferred language or region) and provide enhanced, personalized features.</p>
+        <p><strong style="color:#fff;">Analytics Cookies:</strong> We use analytics cookies to understand how visitors interact with our website. This data helps us improve site performance, content relevance, and overall user experience. All analytics data is collected anonymously.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">3. Managing Cookies</h3>
+        <p>You can control and manage cookies through your browser settings. Please note that disabling certain cookies may affect the functionality and performance of our website. Most browsers allow you to view, delete, and block cookies from specific or all websites.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">4. Third-Party Cookies</h3>
+        <p>Our website may contain links to third-party services that may set their own cookies. RFiberX does not control these cookies and is not responsible for the privacy practices of external websites. We encourage you to review the cookie policies of any third-party services you access through our site.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">5. Updates to This Policy</h3>
+        <p>We may update this Cookie Policy from time to time to reflect changes in technology or legal requirements. Any updates will be posted on this page with a revised effective date.</p>
+      `
+    },
+    terms: {
+      title: 'Terms of Use',
+      date: 'Effective Date: January 1, 2026',
+      body: `
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">1. Acceptance of Terms</h3>
+        <p>By accessing and using the RFiberX website and subscribing to our internet services, you agree to be bound by these Terms of Use, our Privacy Notice, and all applicable laws and regulations. If you do not agree to any of these terms, you must discontinue use of our services immediately.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">2. Service Description</h3>
+        <p>RFiberX provides fiber-optic internet connectivity services to residential and small business subscribers within our coverage areas in Magdalena, Laguna and surrounding barangays. Service speeds, availability, and features are subject to technical feasibility and the specific plan selected by the subscriber.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">3. Subscriber Obligations</h3>
+        <ul style="padding-left:1.5rem; margin:0.5rem 0;">
+          <li>Provide accurate and complete information during the application process</li>
+          <li>Pay all applicable fees on time as outlined in your subscription plan</li>
+          <li>Use the service in compliance with all applicable Philippine laws</li>
+          <li>Refrain from any activity that may disrupt the network or degrade service quality for other subscribers</li>
+          <li>Safeguard any equipment provided by RFiberX and return it in good condition upon service termination</li>
+        </ul>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">4. Prohibited Uses</h3>
+        <p>Subscribers shall not use RFiberX services for any unlawful purpose, including but not limited to: distributing malicious software, unauthorized access to networks or systems, hosting of illegal content, or any activity that violates the Cybercrime Prevention Act of 2012 (Republic Act No. 10175).</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">5. Service Availability</h3>
+        <p>While we strive for 100% uptime, RFiberX does not guarantee uninterrupted service. Scheduled maintenance, force majeure events, and unforeseen technical issues may temporarily affect service availability. We commit to resolving issues promptly and will provide same-day technician support whenever possible.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">6. Limitation of Liability</h3>
+        <p>RFiberX shall not be held liable for any indirect, incidental, or consequential damages arising from the use or inability to use our services, including but not limited to loss of data, revenue, or business opportunities. Our total liability shall not exceed the subscription fees paid by the subscriber during the affected billing period.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">7. Termination</h3>
+        <p>Either party may terminate the service subscription with proper written notice. RFiberX reserves the right to suspend or terminate service for non-payment, violation of these terms, or any activity deemed harmful to our network infrastructure or other subscribers.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">8. Governing Law</h3>
+        <p>These Terms of Use shall be governed by and construed in accordance with the laws of the Republic of the Philippines. Any disputes arising hereunder shall be subject to the exclusive jurisdiction of the courts of Laguna, Philippines.</p>
+      `
+    },
+    locations: {
+      title: 'Service Locations',
+      date: 'Coverage Area Information',
+      body: `
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">Main Office</h3>
+        <p><strong style="color:#fff;">RFiberX Network and Data Solution</strong></p>
+        <p>Salasad, Magdalena, Laguna, Philippines</p>
+        <p style="margin-top:0.5rem;">Phone: <span style="color:var(--accent-color);">+63 09058395471</span></p>
+        <p>Email: <span style="color:var(--accent-color);">technicians@rfiberx.net</span></p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">Current Coverage Areas</h3>
+        <p>RFiberX currently provides fiber-optic internet services across <strong style="color:#fff;">21 barangays</strong> in Magdalena, Laguna and the surrounding municipalities. Our network is actively expanding to bring seamless connectivity to more communities.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">Served Barangays</h3>
+        <p>Our fiber infrastructure currently covers select barangays within Magdalena, Laguna. If you are unsure whether your area is within our coverage, please do not hesitate to contact us for a quick availability check.</p>
+
+        <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">Request Coverage</h3>
+        <p>If your barangay is not yet within our service area, we encourage you to reach out. We prioritize expansion based on community demand and may be able to extend our network to your location.</p>
+
+        <div style="margin-top:2rem; padding:1.5rem; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); border-radius:12px;">
+          <p style="color:var(--accent-color); font-weight:bold; margin-bottom:0.5rem;">Need a coverage check?</p>
+          <p style="margin:0;">Call us at <strong style="color:#fff;">+63 09058395471</strong> or email <strong style="color:#fff;">technicians@rfiberx.net</strong> and our team will verify availability in your area within the same day.</p>
+        </div>
+      `
+    }
+  };
+
+  window.openLegalModal = function (type) {
+    const modal = document.getElementById('legal-modal');
+    const content = legalContent[type];
+    if (!content) return;
+
+    document.getElementById('legal-modal-title').textContent = content.title;
+    document.getElementById('legal-modal-date').textContent = content.date;
+    document.getElementById('legal-modal-body').innerHTML = content.body;
+    modal.style.display = 'flex';
+  };
+
+  // Close legal modal on outside click
+  document.getElementById('legal-modal').addEventListener('click', function (e) {
+    if (e.target === this) this.style.display = 'none';
+  });
 });
