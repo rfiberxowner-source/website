@@ -56,7 +56,6 @@ const views = {
         <h3>RFiberX Super Plan 2000</h3>
         <div class="speed">200 MBPS</div>
         <p>NO CAP LIMIT, 100% RELIABILITY</p>
-        <p style="font-weight: bold; margin-top: 1rem;">UNLI CALLS</p>
       </div>
     </section>
 
@@ -106,7 +105,7 @@ const views = {
         <div id="starter" class="bundle-card" style="padding: 1.5rem;">
           <h3 style="font-size: 1.5rem;">Starter RFiberX</h3>
           <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱800<span style="font-size: 1rem; color: #555;">/mo</span></div>
-          <p style="margin-bottom: 2rem; line-height: 2;">Up to 30 Mbps<br>Unlimited Data<br>Standard Router<br>Good for 1-2 devices</p>
+          <p style="margin-bottom: 2rem; line-height: 2;">Up to 30 Mbps<br>Unlimited Data<br>Standard Router<br>Good for 10 devices</p>
           <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Starter RFiberX', 'Up to 30 Mbps', '₱800/mo')">Get Started</button>
         </div>
         
@@ -122,7 +121,7 @@ const views = {
         <div id="family" class="bundle-card" style="padding: 1.5rem;">
           <h3 style="font-size: 1.5rem;">Family RFiberX</h3>
           <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱1300<span style="font-size: 1rem; color: #555;">/mo</span></div>
-          <p style="margin-bottom: 2rem; line-height: 2;">Up to 70 Mbps<br>Unlimited Data<br>Dual-Band Router<br>Great for 4-6 devices</p>
+          <p style="margin-bottom: 2rem; line-height: 2;">Up to 70 Mbps<br>Unlimited Data<br>Dual-Band Router<br>Great for 10 devices</p>
           <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Family RFiberX', 'Up to 70 Mbps', '₱1300/mo')">Get Started</button>
         </div>
 
@@ -273,11 +272,11 @@ const views = {
             </tr>
             <tr>
               <td>Recommended Devices</td>
-              <td>1 to 3 devices</td>
-              <td>3 to 5 devices</td>
-              <td class="highlight-col">5 to 8 devices</td>
-              <td>8 to 12 devices</td>
-              <td>15+ devices</td>
+              <td>Up to 8 devices</td>
+              <td>Up to 12 devices</td>
+              <td class="highlight-col">Up to 15 devices</td>
+              <td>Up to 20 devices</td>
+              <td>Up to 30 devices</td>
             </tr>
             <tr>
               <td>Streaming Quality</td>
