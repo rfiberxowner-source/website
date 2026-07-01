@@ -49,12 +49,12 @@ const views = {
     <section class="pldt-ad scroll-animate">
       <div class="pldt-ad-content">
         <h2>MORE SHOWS.<br>MORE GAMING.</h2>
-        <p>Power your entertainment with Fiber Plan 2499! Enjoy lag-free gaming in Valorant, Dota, and Mobile Legends, alongside smooth, seamless streaming for Netflix, YouTube, anime, and all your favorite websites.</p>
+        <p>Power your entertainment with Fiber Plan 2000! Enjoy lag-free gaming in Valorant, Dota, and Mobile Legends, alongside smooth, seamless streaming for Netflix, YouTube, anime, and all your favorite websites.</p>
         <button class="btn btn-white rounded-pill" onclick="window.router.navigate('/subscriptions')">APPLY NOW</button>
       </div>
       <div class="pldt-overlay-card">
         <h3>RFiberX Super Plan 2000</h3>
-        <div class="speed">200 MBPS</div>
+        <div class="speed">1 GBPS</div>
         <p>NO CAP LIMIT, 100% RELIABILITY</p>
       </div>
     </section>
