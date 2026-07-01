@@ -12,6 +12,52 @@ const views = {
       </div>
     </section>
 
+    <section class="section-container scroll-animate">
+      <div class="section-header-left">
+        <h2>Fiber Plans</h2>
+        <p>Your NEXT-LEVEL FIBER experience starts here.</p>
+      </div>
+      <div class="bundle-grid">
+        <div class="bundle-card">
+          <div class="img-placeholder" style="background: url('/laptop.jpg') center/cover no-repeat;"></div>
+          <div class="card-content">
+            <h3>Starter Plan</h3>
+            <p>Reliable 30Mbps connection for everyday browsing and social media.</p>
+            <button class="btn btn-outline" onclick="window.router.navigate('/subscriptions')">Check plans</button>
+          </div>
+        </div>
+        <div class="bundle-card">
+          <div class="img-placeholder" style="background: url('/family.jpg') center/cover no-repeat;"></div>
+          <div class="card-content">
+            <h3>Family Plan</h3>
+            <p>Smooth 70Mbps speed perfect for households with multiple devices.</p>
+            <button class="btn btn-outline" onclick="window.router.navigate('/subscriptions')">Check plans</button>
+          </div>
+        </div>
+        <div class="bundle-card">
+          <div class="img-placeholder" style="background: url('/gaming.jpg') center/cover no-repeat;"></div>
+          <div class="card-content">
+            <h3>Gaming Plan</h3>
+            <p>Ultra-fast 200Mbps speeds dedicated for gamers and enthusiasts.</p>
+            <button class="btn btn-outline" onclick="window.router.navigate('/subscriptions')">Check plans</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pldt-ad scroll-animate">
+      <div class="pldt-ad-content">
+        <h2>MORE SHOWS.<br>MORE GAMING.</h2>
+        <p>Power your entertainment with Fiber Plan 2000! Enjoy lag-free gaming in Valorant, Dota, and Mobile Legends, alongside smooth, seamless streaming for Netflix, YouTube, anime, and all your favorite websites.</p>
+        <button class="btn btn-white rounded-pill" onclick="window.router.navigate('/subscriptions')">APPLY NOW</button>
+      </div>
+      <div class="pldt-overlay-card">
+        <h3>RFiberX Super Plan 2000</h3>
+        <div class="speed">1 GBPS</div>
+        <p>NO CAP LIMIT, 100% RELIABILITY</p>
+      </div>
+    </section>
+
     <section class="our-company scroll-animate">
       <div class="our-company-content" style="display: flex; align-items: center; justify-content: space-between; gap: 4rem;">
         <div class="our-company-text" style="flex: 1;">
@@ -42,54 +88,6 @@ const views = {
         <div class="company-card">
           <h3 class="company-card-title">Our Mission</h3>
           <p>Our team is committed to providing innovative telecommunication services that enhance daily life. We work tirelessly to simplify how people connect, ensuring you stay online and thriving every single day.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="pldt-ad scroll-animate">
-      <div class="pldt-ad-content">
-        <h2>MORE SHOWS.<br>MORE GAMING.</h2>
-        <p>Power your entertainment with Fiber Plan 2000! Enjoy lag-free gaming in Valorant, Dota, and Mobile Legends, alongside smooth, seamless streaming for Netflix, YouTube, anime, and all your favorite websites.</p>
-        <button class="btn btn-white rounded-pill" onclick="window.router.navigate('/subscriptions')">APPLY NOW</button>
-      </div>
-      <div class="pldt-overlay-card">
-        <h3>RFiberX Super Plan 2000</h3>
-        <div class="speed">1 GBPS</div>
-        <p>NO CAP LIMIT, 100% RELIABILITY</p>
-      </div>
-    </section>
-
-
-
-    <section class="section-container scroll-animate">
-      <div class="section-header-left">
-        <h2>Fiber Plans</h2>
-        <p>Your NEXT-LEVEL FIBER experience starts here.</p>
-      </div>
-      <div class="bundle-grid">
-        <div class="bundle-card">
-          <div class="img-placeholder" style="background: url('/laptop.jpg') center/cover no-repeat;"></div>
-          <div class="card-content">
-            <h3>Starter Plan</h3>
-            <p>Reliable 30Mbps connection for everyday browsing and social media.</p>
-            <button class="btn btn-outline" onclick="window.router.navigate('/subscriptions')">Check plans</button>
-          </div>
-        </div>
-        <div class="bundle-card">
-          <div class="img-placeholder" style="background: url('/family.jpg') center/cover no-repeat;"></div>
-          <div class="card-content">
-            <h3>Family Plan</h3>
-            <p>Smooth 70Mbps speed perfect for households with multiple devices.</p>
-            <button class="btn btn-outline" onclick="window.router.navigate('/subscriptions')">Check plans</button>
-          </div>
-        </div>
-        <div class="bundle-card">
-          <div class="img-placeholder" style="background: url('/gaming.jpg') center/cover no-repeat;"></div>
-          <div class="card-content">
-            <h3>Gaming Plan</h3>
-            <p>Ultra-fast 200Mbps speeds dedicated for gamers and enthusiasts.</p>
-            <button class="btn btn-outline" onclick="window.router.navigate('/subscriptions')">Check plans</button>
-          </div>
         </div>
       </div>
     </section>
@@ -140,6 +138,14 @@ const views = {
           <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱2000<span style="font-size: 1rem; color: #555;">/mo</span></div>
           <p style="margin-bottom: 2rem; line-height: 2;">Up to 200 Mbps<br>Unlimited Data<br>Mesh System Included<br>Ultimate Smart Home</p>
           <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Extreme RFiberX', 'Up to 200 Mbps', '₱2000/mo')">Get Started</button>
+        </div>
+
+        <!-- Plan 6 -->
+        <div id="ultra" class="bundle-card" style="padding: 1.5rem;">
+          <h3 style="font-size: 1.5rem;">Ultra RFiberX</h3>
+          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱4500<span style="font-size: 1rem; color: #555;">/mo</span></div>
+          <p style="margin-bottom: 2rem; line-height: 2;">Up to 500 Mbps<br>Unlimited Data<br>Tri-Band Wi-Fi 6E Router<br>Priority Business Support</p>
+          <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Ultra RFiberX', 'Up to 500 Mbps', '₱4500/mo')">Get Started</button>
         </div>
       </div>
 
@@ -235,6 +241,7 @@ const views = {
               <th class="highlight-col">Plan 1300</th>
               <th>Plan 1500</th>
               <th>Plan 2000</th>
+              <th>Plan 4500</th>
             </tr>
           </thead>
           <tbody>
@@ -245,12 +252,14 @@ const views = {
               <td class="highlight-col">70 Mbps</td>
               <td>100 Mbps</td>
               <td>200 Mbps</td>
+              <td>500 Mbps</td>
             </tr>
             <tr>
               <td>Data Cap</td>
               <td>Unlimited</td>
               <td>Unlimited</td>
               <td class="highlight-col">Unlimited</td>
+              <td>Unlimited</td>
               <td>Unlimited</td>
               <td>Unlimited</td>
             </tr>
@@ -261,6 +270,7 @@ const views = {
               <td class="highlight-col check">✓</td>
               <td class="check">✓</td>
               <td class="check">✓</td>
+              <td class="check">✓</td>
             </tr>
             <tr>
               <td>Best Used For</td>
@@ -269,6 +279,7 @@ const views = {
               <td class="highlight-col">HD Streaming & Working</td>
               <td>Online Gaming & Video Calls</td>
               <td>Heavy Gaming, 4K Streaming & Large Downloads</td>
+              <td>Enterprise, Bulk Streaming & Max Performance</td>
             </tr>
             <tr>
               <td>Recommended Devices</td>
@@ -277,6 +288,7 @@ const views = {
               <td class="highlight-col">Up to 15 devices</td>
               <td>Up to 20 devices</td>
               <td>Up to 30 devices</td>
+              <td>Up to 50 devices</td>
             </tr>
             <tr>
               <td>Streaming Quality</td>
@@ -285,6 +297,7 @@ const views = {
               <td class="highlight-col">Multiple Full HD Screens</td>
               <td>4K Ultra HD</td>
               <td>Multiple 4K Streams Simultaneously</td>
+              <td>8K / Multiple 4K Streams + Zero Buffering</td>
             </tr>
           </tbody>
         </table>
@@ -566,7 +579,7 @@ const views = {
           <div style="margin-bottom: 2.5rem; display: flex; gap: 1rem;">
             <div>
               <h3 style="margin-bottom: 0.5rem;">Technical Support</h3>
-              <p style="color: var(--text-secondary); font-size: 1.1rem;">+63 09058395471</p>
+              <p style="color: var(--text-secondary); font-size: 1.1rem;">+63 9058395471</p>
               <p style="color: var(--text-secondary); font-size: 0.9rem;">Available 24/7, 365 days a year</p>
             </div>
           </div>
@@ -973,7 +986,7 @@ const views = {
               GCash
             </h3>
             <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Send your payment via GCash to our official company number:</p>
-            <p style="font-weight: 700; font-size: 1.4rem; color: var(--accent-color); letter-spacing: 1px;">+63 09058395471</p>
+            <p style="font-weight: 700; font-size: 1.4rem; color: var(--accent-color); letter-spacing: 1px;">+63 9058395471</p>
           </div>
           <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; transition: transform 0.2s ease, border-color 0.2s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='var(--accent-color)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.05)';">
             <h3 style="color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
