@@ -65,29 +65,22 @@ const views = {
           <p class="our-company-desc">We believe that quality connectivity should be straightforward and accessible. Through practical solutions and a customer-first approach, we strive to deliver dependable internet services that enhance daily life and support your continuous growth.</p>
           <button class="btn btn-company" onclick="window.router.navigate('/about')">Learn More <span class="btn-arrow">→</span></button>
         </div>
-        <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
-          <div style="display: flex; align-items: flex-end; font-family: 'Saira Condensed', sans-serif; font-size: 8rem; font-weight: 800; font-style: italic; letter-spacing: -4px; text-transform: uppercase;">
-            <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: -35px; margin-bottom: 35px; z-index: 2;">
-              <g transform="rotate(-40 12 20)">
-                <path d="M8.5 16.5a5 5 0 0 1 7 0 M4.5 12.5a10 10 0 0 1 15 0" stroke="#E53935" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </g>
-            </svg>
-            <span><span style="color: #E53935;">R</span><span style="color: #fff;">FIBER</span><span style="color: #E53935;">X</span></span>
-          </div>
+        <div style="flex:1;display:flex;justify-content:center;align-items:center;">
+          <img src="/white%20logo.png" alt="RFiberX Networks Logo" style="max-width: 550px; width: 100%; height: auto; object-fit: contain;">
         </div>
       </div>
       <div class="our-company-cards">
         <div class="company-card">
-          <h3 class="company-card-title">Our Purpose</h3>
-          <p>We are dedicated to empowering individuals, families, and businesses by providing seamless digital connectivity. We strive to make everyday communication and online experiences smoother and more accessible for everyone.</p>
+          <h3 class="company-card-title">Our Mission</h3>
+          <p>Our team is committed to providing innovative telecommunication services that enhance daily life. We work tirelessly to simplify how people connect, ensuring you stay online and thriving every single day.</p>
         </div>
         <div class="company-card">
           <h3 class="company-card-title">Our Vision</h3>
           <p>We envision a future where technology bridges gaps rather than creating them, building robust and forward-looking networks that enable continuous growth, collaboration, and endless digital possibilities.</p>
         </div>
         <div class="company-card">
-          <h3 class="company-card-title">Our Mission</h3>
-          <p>Our team is committed to providing innovative telecommunication services that enhance daily life. We work tirelessly to simplify how people connect, ensuring you stay online and thriving every single day.</p>
+          <h3 class="company-card-title">Our Mandate</h3>
+          <p>To bridge communication gaps through innovative telecommunication services, empowering communities with forward-looking network infrastructure that fosters continuous growth, collaboration, and endless digital possibilities.</p>
         </div>
       </div>
     </section>
@@ -101,50 +94,50 @@ const views = {
       <div class="pricing-grid">
         <!-- Plan 1 -->
         <div id="starter" class="bundle-card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1.5rem;">Starter RFiberX</h3>
-          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱800<span style="font-size: 1rem; color: #555;">/mo</span></div>
-          <p style="margin-bottom: 2rem; line-height: 2;">Up to 30 Mbps<br>Unlimited Data<br>Standard Router<br>Good for 10 devices</p>
+          <h3 style="font-size: 1.5rem; height: 4rem; margin: 0;">Starter RFiberX</h3>
+          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 0.5rem 0 1rem 0; height: 4rem; display: flex; align-items: center;">₱800<span style="font-size: 1rem; color: #555; margin-left: 5px;">/mo</span></div>
+          <p style="margin-bottom: 2rem; line-height: 2;">Up to 30 Mbps<br>Unlimited Data<br>Standard Router<br>Good for 8 devices</p>
           <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Starter RFiberX', 'Up to 30 Mbps', '₱800/mo')">Get Started</button>
         </div>
         
         <!-- Plan 2 -->
         <div id="value" class="bundle-card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1.5rem;">Value RFiberX</h3>
-          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱1000<span style="font-size: 1rem; color: #555;">/mo</span></div>
-          <p style="margin-bottom: 2rem; line-height: 2;">Up to 50 Mbps<br>Unlimited Data<br>Standard Router<br>HD Streaming Ready</p>
+          <h3 style="font-size: 1.5rem; height: 4rem; margin: 0;">Value RFiberX</h3>
+          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 0.5rem 0 1rem 0; height: 4rem; display: flex; align-items: center;">₱1000<span style="font-size: 1rem; color: #555; margin-left: 5px;">/mo</span></div>
+          <p style="margin-bottom: 2rem; line-height: 2;">Up to 50 Mbps<br>Unlimited Data<br>Standard Router<br>Good for 12 devices</p>
           <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Value RFiberX', 'Up to 50 Mbps', '₱1000/mo')">Get Started</button>
         </div>
 
         <!-- Plan 3 -->
         <div id="family" class="bundle-card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1.5rem;">Family RFiberX</h3>
-          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱1300<span style="font-size: 1rem; color: #555;">/mo</span></div>
-          <p style="margin-bottom: 2rem; line-height: 2;">Up to 70 Mbps<br>Unlimited Data<br>Dual-Band Router<br>Great for 10 devices</p>
+          <h3 style="font-size: 1.5rem; height: 4rem; margin: 0;">Family RFiberX</h3>
+          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 0.5rem 0 1rem 0; height: 4rem; display: flex; align-items: center;">₱1300<span style="font-size: 1rem; color: #555; margin-left: 5px;">/mo</span></div>
+          <p style="margin-bottom: 2rem; line-height: 2;">Up to 70 Mbps<br>Unlimited Data<br>Dual-Band Router 5G<br>Great for 15 devices</p>
           <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Family RFiberX', 'Up to 70 Mbps', '₱1300/mo')">Get Started</button>
         </div>
 
-        <!-- Plan 4 (Most Popular) -->
-        <div id="pro" class="bundle-card popular-card" style="padding: 1.5rem; border-color: var(--accent-color); z-index: 1;">
+        <!-- Plan 4 (Popular) -->
+        <div id="pro" class="bundle-card" style="padding: 1.5rem; border: 2px solid var(--accent-color); box-shadow: 0 0 25px rgba(239, 68, 68, 0.4); z-index: 1;">
           <div style="position: absolute; top: 0; right: 0; background: var(--accent-color); color: #fff; padding: 0.2rem 1rem; font-size: 0.8rem; font-weight: bold; border-bottom-left-radius: 16px;">MOST POPULAR</div>
-          <h3 style="font-size: 1.5rem;">Pro RFiberX</h3>
-          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱1500<span style="font-size: 1rem; color: #555;">/mo</span></div>
-          <p style="margin-bottom: 2rem; line-height: 2;">Up to 100 Mbps<br>Unlimited Data<br>Wi-Fi 6 Router<br>4K Streaming & Gaming</p>
+          <h3 style="font-size: 1.5rem; height: 4rem; margin: 0;">Pro RFiberX</h3>
+          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 0.5rem 0 1rem 0; height: 4rem; display: flex; align-items: center;">₱1500<span style="font-size: 1rem; color: #555; margin-left: 5px;">/mo</span></div>
+          <p style="margin-bottom: 2rem; line-height: 2;">Up to 100 Mbps<br>Unlimited Data<br>Dual-Band Router 5G<br>Up to 20 devices</p>
           <button class="btn btn-outline" style="margin-top: auto; background: var(--accent-color); color: #fff;" onclick="window.router.openSignupForm('Pro RFiberX', 'Up to 100 Mbps', '₱1500/mo')">Get Started</button>
         </div>
 
         <!-- Plan 5 -->
         <div id="extreme" class="bundle-card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1.5rem;">Extreme RFiberX</h3>
-          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱2000<span style="font-size: 1rem; color: #555;">/mo</span></div>
-          <p style="margin-bottom: 2rem; line-height: 2;">Up to 200 Mbps<br>Unlimited Data<br>Mesh System Included<br>Ultimate Smart Home</p>
+          <h3 style="font-size: 1.5rem; height: 4rem; margin: 0;">Extreme RFiberX</h3>
+          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 0.5rem 0 1rem 0; height: 4rem; display: flex; align-items: center;">₱2000<span style="font-size: 1rem; color: #555; margin-left: 5px;">/mo</span></div>
+          <p style="margin-bottom: 2rem; line-height: 2;">Up to 200 Mbps<br>Unlimited Data<br>Up to 30 devices<br></p>
           <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Extreme RFiberX', 'Up to 200 Mbps', '₱2000/mo')">Get Started</button>
         </div>
 
         <!-- Plan 6 -->
         <div id="ultra" class="bundle-card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1.5rem;">Ultra RFiberX</h3>
-          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 1rem 0;">₱4500<span style="font-size: 1rem; color: #555;">/mo</span></div>
-          <p style="margin-bottom: 2rem; line-height: 2;">Up to 500 Mbps<br>Unlimited Data<br>Tri-Band Wi-Fi 6E Router<br>Priority Business Support</p>
+          <h3 style="font-size: 1.5rem; height: 4rem; margin: 0;">Ultra RFiberX</h3>
+          <div style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin: 0.5rem 0 1rem 0; height: 4rem; display: flex; align-items: center;">₱4500<span style="font-size: 1rem; color: #555; margin-left: 5px;">/mo</span></div>
+          <p style="margin-bottom: 2rem; line-height: 2;">Dual-Band Router 5G<br>Unlimited Data<br>Up to 50 devices<br></p>
           <button class="btn btn-outline" style="margin-top: auto;" onclick="window.router.openSignupForm('Ultra RFiberX', 'Up to 500 Mbps', '₱4500/mo')">Get Started</button>
         </div>
       </div>
@@ -579,8 +572,8 @@ const views = {
           <div style="margin-bottom: 2.5rem; display: flex; gap: 1rem;">
             <div>
               <h3 style="margin-bottom: 0.5rem;">Technical Support</h3>
-              <p style="color: var(--text-secondary); font-size: 1.1rem;">+63 9058395471</p>
-              <p style="color: var(--text-secondary); font-size: 0.9rem;">Available 24/7, 365 days a year</p>
+              <p style="color: var(--text-secondary); font-size: 1.1rem;">+63 9913746474</p>
+              <p style="color: var(--text-secondary); font-size: 0.9rem;">Available 24/7</p>
             </div>
           </div>
 
@@ -588,16 +581,16 @@ const views = {
             <div>
               <h3 style="margin-bottom: 0.5rem;">Email Us</h3>
               <p style="color: var(--text-secondary); font-size: 1.1rem;">technicians@rfiberx.net</p>
-              <p style="color: var(--text-secondary); font-size: 0.9rem;">We aim to reply within 2 hours.</p>
+              <p style="color: var(--text-secondary); font-size: 0.9rem;"></p>
             </div>
           </div>
 
           <div style="margin-bottom: 2.5rem; display: flex; gap: 1rem;">
             <div>
-              <h3 style="margin-bottom: 0.5rem;">Headquarters</h3>
+              <h3 style="margin-bottom: 0.5rem;">Main Office</h3>
               <p style="color: var(--text-secondary); line-height: 1.6;">
-                Salasad, Magadalena<br>
-                Laguna, Philippines
+                Carnation Street, Barangay Uno, Calamba,4027 Laguna<br>
+                
               </p>
             </div>
           </div>
@@ -777,18 +770,18 @@ const views = {
       </div>
     </section>
 
-    <!-- Purpose, Vision, Mission -->
-    <section id="purpose" class="section-container scroll-animate" style="margin-bottom: 4rem;">
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+    <!-- Mission, Vision, Core Values, Mandate -->
+    <section id="mandate" class="section-container scroll-animate" style="margin-bottom: 4rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto;">
         
-        <!-- Purpose Card -->
-        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--accent-color)'; this.style.boxShadow='0 20px 40px rgba(16, 185, 129, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
-          <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--accent-color); filter: blur(80px); border-radius: 50%; opacity: 0.3; z-index: 0;"></div>
-          <div style="width: 80px; height: 80px; background: rgba(229, 57, 53, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: var(--accent-color); position: relative; z-index: 1;">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>
+        <!-- Mission Card -->
+        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='#E53935'; this.style.boxShadow='0 20px 40px rgba(229, 57, 53, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
+          <div style="position: absolute; bottom: -50px; right: -50px; width: 150px; height: 150px; background: #E53935; filter: blur(80px); border-radius: 50%; opacity: 0.3; z-index: 0;"></div>
+          <div style="width: 80px; height: 80px; background: rgba(229, 57, 53, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: #E53935; position: relative; z-index: 1;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
           </div>
-          <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: #fff; position: relative; z-index: 1;">Our <span style="color: var(--accent-color);">Purpose</span></h2>
-          <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; position: relative; z-index: 1;">Our purpose is to inspire progress by fostering meaningful and stable connections within the communities we serve. We believe that reliable internet is an essential tool, one that empowers students to learn, businesses to operate smoothly, and everyday people to thrive in an increasingly digital world.</p>
+          <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: #fff; position: relative; z-index: 1;">Our <span style="color: #E53935;">Mission</span></h2>
+          <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; position: relative; z-index: 1;">Since our founding, RFiberX has been on a mission to provide fast, reliable, and affordable internet access without the hassle. We strive to build a strong digital backbone that empowers homes and businesses alike, ensuring every connection we make is a step toward a more connected community.</p>
         </div>
 
         <!-- Vision Card -->
@@ -801,14 +794,16 @@ const views = {
           <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; position: relative; z-index: 1;">We envision a future where every neighborhood enjoys seamless, high-speed connectivity. By building robust technological bridges, we aim to be the reliable foundation that allows education to flourish online and local businesses to compete, grow, and succeed on a broader stage.</p>
         </div>
 
-        <!-- Mission Card -->
-        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='#E53935'; this.style.boxShadow='0 20px 40px rgba(229, 57, 53, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
-          <div style="position: absolute; bottom: -50px; right: -50px; width: 150px; height: 150px; background: #E53935; filter: blur(80px); border-radius: 50%; opacity: 0.3; z-index: 0;"></div>
-          <div style="width: 80px; height: 80px; background: rgba(229, 57, 53, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: #E53935; position: relative; z-index: 1;">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+
+
+        <!-- Mandate Card -->
+        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden; transition: all 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--accent-color)'; this.style.boxShadow='0 20px 40px rgba(229, 57, 53, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--glass-border)'; this.style.boxShadow='none'">
+          <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--accent-color); filter: blur(80px); border-radius: 50%; opacity: 0.3; z-index: 0;"></div>
+          <div style="width: 80px; height: 80px; background: rgba(229, 57, 53, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: var(--accent-color); position: relative; z-index: 1;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
           </div>
-          <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: #fff; position: relative; z-index: 1;">Our <span style="color: #E53935;">Mission</span></h2>
-          <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; position: relative; z-index: 1;">Since our founding, RFiberX has been on a mission to provide fast, reliable, and affordable internet access without the hassle. We strive to build a strong digital backbone that empowers homes and businesses alike, ensuring every connection we make is a step toward a more connected community.</p>
+          <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: #fff; position: relative; z-index: 1;">Our <span style="color: var(--accent-color);">Mandate</span></h2>
+          <p style="color: var(--text-secondary); line-height: 1.8; font-size: 1.05rem; position: relative; z-index: 1;">To bridge communication gaps through innovative telecommunication services, empowering communities with forward-looking network infrastructure that fosters continuous growth, collaboration, and endless digital possibilities.</p>
         </div>
         
       </div>
@@ -986,14 +981,15 @@ const views = {
               GCash
             </h3>
             <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Send your payment via GCash to our official company number:</p>
-            <p style="font-weight: 700; font-size: 1.4rem; color: var(--accent-color); letter-spacing: 1px;">+63 9058395471</p>
+            <p style="font-weight: 700; font-size: 1.4rem; color: var(--accent-color); letter-spacing: 1px;">09058395471</p>
           </div>
           <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; transition: transform 0.2s ease, border-color 0.2s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='var(--accent-color)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.05)';">
             <h3 style="color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-              Bank Transfer (BDO Only)
+              THRU BANK (Union Bank)
             </h3>
-            <p style="color: var(--text-secondary);">Direct bank deposits or online transfers to our official BDO account. Details will be provided upon checkout.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Direct bank deposits or online transfers to our official Union Bank of the Philippines account:</p>
+            <p style="font-weight: 700; font-size: 1.4rem; color: var(--accent-color); letter-spacing: 1px;">1096-6732-3727</p>
           </div>
         </div>
 
@@ -1039,8 +1035,8 @@ const views = {
         <h2 style="margin-bottom: 1.5rem; color: var(--accent-color);">Basic Troubleshooting Guide</h2>
         <ol style="padding-left: 1.5rem; color: var(--text-secondary); line-height: 2; font-size: 1.05rem;">
           <li style="margin-bottom: 1rem;"><strong style="color: #fff;">Check the LOS Light:</strong> If the Red LOS light on your modem is blinking, there is a fiber cut. Please contact support immediately.</li>
-          <li style="margin-bottom: 1rem;"><strong style="color: #fff;">Restart Your Modem:</strong> Turn off the modem, unplug it for 5 seconds, then plug it back in. Wait 1-2 minutes for all lights to stabilize.</li>
-          <li style="margin-bottom: 1rem;"><strong style="color: #fff;">Check Your Cables:</strong> Ensure the yellow/connector fiber patch cord is securely connected to the router and wall outlet without bending sharply.</li>
+          <li style="margin-bottom: 1rem;"><strong style="color: #fff;">Steady Modem Light:</strong> Turn off the modem, unplug it for 5 seconds, then plug it back in. Wait 1-2 minutes for all lights to stabilize.</li>
+          <li style="margin-bottom: 1rem;"><strong style="color: #fff;">Check Your Cables:</strong> Ensure the yellow/connector fiber patch cord is securely connected to the modem and wall outlet without bending sharply.</li>
           <li><strong style="color: #fff;">Isolate the Issue:</strong> Connect a laptop directly to the router using a LAN cable. If the internet works, the issue might be your Wi-Fi signal.</li>
         </ol>
       </div>
@@ -1049,7 +1045,7 @@ const views = {
         <h2 style="margin-bottom: 1.5rem; color: var(--accent-color);">Optimizing Your Wi-Fi</h2>
         
         <div style="margin-bottom: 1.5rem; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent-color);">
-          <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #fff;">Where should I place my router?</h4>
+          <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #fff;">Where should I place my modem?</h4>
           <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0;">Place your router in an open, central location, off the floor. Avoid putting it near thick walls, microwaves, or large metal objects.</p>
         </div>
         
@@ -1120,7 +1116,7 @@ const views = {
         <h2 style="margin-bottom: 1.5rem; color: #dc2626;">Report a Downed Line</h2>
         <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">If you see a fallen fiber optic cable or a damaged distribution box on a utility pole, please <b>DO NOT</b> touch it. Report it immediately to our hotline.</p>
         <div style="background: #111; padding: 1.5rem; border-radius: 8px; font-family: monospace; font-size: 1.2rem; text-align: center; letter-spacing: 2px;">
-          Call: +63 09058395471
+          Call: +63 9913746474
         </div>
       </div>
 
@@ -1650,8 +1646,11 @@ document.addEventListener('DOMContentLoaded', () => {
       body: `
         <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">Main Office</h3>
         <p><strong style="color:#fff;">RFiberX Network and Data Solution</strong></p>
-        <p>Salasad, Magdalena, Laguna, Philippines</p>
-        <p style="margin-top:0.5rem;">Phone: <span style="color:var(--accent-color);">+63 09058395471</span></p>
+        <p>Carnation Street, Barangay Uno, Calamba,4027 Laguna
+
+
+</p>
+        <p style="margin-top:0.5rem;">Phone: <span style="color:var(--accent-color);">+63 9913746474</span></p>
         <p>Email: <span style="color:var(--accent-color);">technicians@rfiberx.net</span></p>
 
         <h3 style="color:#fff; margin: 1.5rem 0 0.75rem; font-size:1.1rem;">Current Coverage Areas</h3>
@@ -1665,7 +1664,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <div style="margin-top:2rem; padding:1.5rem; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); border-radius:12px;">
           <p style="color:var(--accent-color); font-weight:bold; margin-bottom:0.5rem;">Need a coverage check?</p>
-          <p style="margin:0;">Call us at <strong style="color:#fff;">+63 09058395471</strong> or email <strong style="color:#fff;">technicians@rfiberx.net</strong> and our team will verify availability in your area within the same day.</p>
+          <p style="margin:0;">Call us at <strong style="color:#fff;">+63 9913746474</strong> or email <strong style="color:#fff;">technicians@rfiberx.net</strong> and our team will verify availability in your area within the same day.</p>
         </div>
       `
     }
