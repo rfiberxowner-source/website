@@ -5429,7 +5429,8 @@ window.sendSimulatorPayload = async function(payloadText) {
     }]
   };
   
-  await fetch('/webhook', {
+  const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://rfiberx.net';
+  await fetch(`${BACKEND_URL}/webhook`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
@@ -5463,7 +5464,8 @@ window.sendSimulatorMessage = async function() {
     }]
   };
   
-  await fetch('/webhook', {
+  const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://rfiberx.net';
+  await fetch(`${BACKEND_URL}/webhook`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
@@ -5473,7 +5475,8 @@ window.sendSimulatorMessage = async function() {
 window.resetSimulator = async function() {
   if (!confirm("Are you sure? This will wipe all test users, complaints, applications, and memory for the simulator.")) return;
   try {
-    const res = await fetch('/api/simulator/reset', { method: 'POST' });
+    const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://rfiberx.net';
+    const res = await fetch(`${BACKEND_URL}/api/simulator/reset`, { method: 'POST' });
     const data = await res.json();
     if (data.success) {
       alert("Simulator successfully reset! Database is clean.");
