@@ -5429,7 +5429,7 @@ window.sendSimulatorPayload = async function(payloadText) {
     }]
   };
   
-  const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://rfiberx.net';
+  const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
   await fetch(`${BACKEND_URL}/webhook`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -5464,7 +5464,7 @@ window.sendSimulatorMessage = async function() {
     }]
   };
   
-  const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://rfiberx.net';
+  const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
   await fetch(`${BACKEND_URL}/webhook`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -5475,7 +5475,7 @@ window.sendSimulatorMessage = async function() {
 window.resetSimulator = async function() {
   if (!confirm("Are you sure? This will wipe all test users, complaints, applications, and memory for the simulator.")) return;
   try {
-    const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://rfiberx.net';
+    const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
     const res = await fetch(`${BACKEND_URL}/api/simulator/reset`, { method: 'POST' });
     const data = await res.json();
     if (data.success) {
