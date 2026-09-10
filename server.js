@@ -275,6 +275,13 @@ app.post('/webhook', (req, res) => {
             // Get the webhook event
             let webhook_event = entry.messaging[0];
 
+            // Normalize postbacks to messages (Supports standard buttons and Simulator)
+            if (webhook_event.postback && !webhook_event.message) {
+                webhook_event.message = {
+                    text: webhook_event.postback.payload
+                };
+            }
+
             // GLOBAL TESTER WHITELIST (TEMPORARY FOR TESTING)
             // This completely disables the chatbot for public/live clients.
             const isEcho = webhook_event.message && webhook_event.message.is_echo;
@@ -473,7 +480,8 @@ app.post('/webhook', (req, res) => {
                             '27076770378611516', // Jasper Mangulabnan
                             '27846036101654635', // Angela Calubayan
                             '36533187462992743', // Francis Serrano Agosto
-                            '27314329474875273'  // Marc S. Cambel
+                            '27314329474875273', // Marc S. Cambel
+                            'SIMULATOR_TEST'     // Bot Simulator
                         ];
                         if (ALLOWED_TESTERS.includes(sender_psid)) {
                             console.log("✔️ Allowed PSID chatting: " + sender_psid);
