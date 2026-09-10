@@ -170,6 +170,12 @@ window.renderAdminLayout = (activeRoute, pageTitle, contentHtml) => {
               ${['Admin', 'Technician'].includes(adminRole) ? navItem('Network Mapping', '/RFiberXAdminportal-mapping', iconMap, activeRoute === 'mapping') : ''}
             </nav>
           </div>
+          <div>
+            <div style="padding: 0 1.5rem; font-size: 0.65rem; color: #64748b; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 0.5rem; text-transform: uppercase;">Simulations</div>
+            <nav style="display: flex; flex-direction: column; gap: 0.15rem; padding: 0 0.75rem;">
+              ${['Admin'].includes(adminRole) ? navItem('Chatbot Simulation', '/RFiberXAdminportal-simulator', `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>`, activeRoute === 'simulator') : ''}
+            </nav>
+          </div>
         </div>
         
         <div style="padding: 1.5rem; flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between;">
@@ -1870,6 +1876,37 @@ export const adminViews = {
       <div id="network-map-root" style="width: 100%; min-height: 100vh;"></div>
     `;
     return window.renderAdminLayout('mapping', 'Network Map', content);
+  },
+
+  '/RFiberXAdminportal-simulator': () => {
+    const content = `
+      <div style="display: flex; flex-direction: column; height: calc(100vh - 140px); background: #0f131f; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
+        <div style="padding: 1rem 1.5rem; background: rgba(59, 130, 246, 0.1); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></div>
+            <h2 style="margin: 0; color: #fff; font-size: 1.1rem; font-family: 'Outfit', sans-serif;">Bot Simulator</h2>
+          </div>
+          <button onclick="window.resetSimulator()" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'">
+            Reset Simulation
+          </button>
+        </div>
+        
+        <div id="simulator-chat-window" style="flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; background: #0b0f19;">
+          <div style="text-align: center; color: #64748b; font-size: 0.8rem; margin-top: auto; margin-bottom: 1rem;">Simulation started. Say hi to begin.</div>
+        </div>
+
+        <div style="padding: 1rem; background: #0f131f; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 0.5rem;">
+          <input type="text" id="simulator-input" placeholder="Type a message..." style="flex: 1; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.95rem; outline: none;" onkeypress="if(event.key === 'Enter') window.sendSimulatorMessage()" />
+          <button onclick="window.sendSimulatorMessage()" style="background: #3b82f6; color: #fff; border: none; padding: 0 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">Send</button>
+        </div>
+      </div>
+    `;
+
+    setTimeout(() => {
+      if (window.initSimulator) window.initSimulator();
+    }, 100);
+
+    return window.renderAdminLayout('simulator', 'Chatbot Simulation', content);
   }
 };
 window._getAdminDb = async function () {
@@ -2860,7 +2897,10 @@ window.openAdminComplaint = async function (id, viewMode = 'Complaints') {
         const tStr = m.timestamp?.toDate ? m.timestamp.toDate().toLocaleString([], {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit'}) : '';
         mHtml += `
           <div style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); border-radius: 8px; padding: 0.75rem; align-self: flex-start; max-width: 85%;">
-            <div style="color: #fff; font-size: 0.9rem; line-height: 1.4;">${m.text}</div>
+            <div style="color: #fff; font-size: 0.9rem; line-height: 1.4;">
+              ${m.text}
+              ${m.imageUrl ? `<br/><a href="${m.imageUrl}" target="_blank"><img src="${m.imageUrl}" style="max-width:100%; max-height:300px; border-radius:4px; margin-top:8px; cursor:pointer;" /></a>` : ''}
+            </div>
             <div style="color: #64748b; font-size: 0.65rem; text-align: right; margin-top: 0.25rem;">${tStr}</div>
           </div>
         `;
@@ -5286,5 +5326,161 @@ window.chatboxSendClient = async function (clientId) {
   } catch (e) {
     console.error("Error sending client:", e);
     alert("Failed to send client details: " + e.message);
+  }
+};
+
+window.initSimulator = async function() {
+  const db = await window._getAdminDb();
+  const firestore = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+  
+  if (window._simUnsubscribe) window._simUnsubscribe();
+  
+  const q = firestore.query(firestore.collection(db, 'simulator_chats'), firestore.orderBy('timestamp', 'asc'));
+  window._simUnsubscribe = firestore.onSnapshot(q, (snapshot) => {
+    const chatWin = document.getElementById('simulator-chat-window');
+    if (!chatWin) return;
+    
+    let html = '';
+    let isTyping = false;
+    
+    snapshot.docs.forEach(doc => {
+      const data = doc.data();
+      if (data.sender === 'user') {
+        html += `
+          <div style="background: #3b82f6; color: #fff; padding: 0.75rem 1rem; border-radius: 12px; align-self: flex-end; max-width: 75%; font-size: 0.95rem;">
+            ${data.text || data.payload || 'Attachment'}
+          </div>
+        `;
+        isTyping = false;
+      } else if (data.sender === 'bot_action') {
+        if (data.action === 'typing_on') isTyping = true;
+      } else if (data.sender === 'bot') {
+        isTyping = false;
+        const response = data.response;
+        if (response.text) {
+           html += `
+             <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 0.75rem 1rem; border-radius: 12px; align-self: flex-start; max-width: 75%; font-size: 0.95rem;">
+               ${response.text.replace(/\n/g, '<br/>')}
+               ${response.quick_replies ? `<div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;">` + response.quick_replies.map(qr => `<button onclick="window.sendSimulatorPayload('${qr.payload}')" style="background: #1e293b; border: 1px solid #3b82f6; color: #60a5fa; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">${qr.title}</button>`).join('') + `</div>` : ''}
+             </div>
+           `;
+        }
+        if (response.attachment) {
+           const elements = response.attachment.payload.elements;
+           if (elements) {
+             html += `
+               <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-self: flex-start; max-width: 90%;">
+                 ${elements.map(el => `
+                   <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 1rem; width: 200px;">
+                     ${el.image_url ? `<img src="${el.image_url}" style="width:100%; border-radius:4px; margin-bottom:0.5rem;" />` : ''}
+                     <div style="font-weight: 600; color: #fff;">${el.title}</div>
+                     <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem;">${el.subtitle || ''}</div>
+                     ${el.buttons ? el.buttons.map(b => `<button onclick="window.sendSimulatorPayload('${b.payload}')" style="background: #3b82f6; border: none; color: #fff; padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; width: 100%; margin-top: 0.25rem;">${b.title}</button>`).join('') : ''}
+                   </div>
+                 `).join('')}
+               </div>
+             `;
+           }
+        }
+      }
+    });
+    
+    if (isTyping) {
+      html += `
+        <div style="align-self: flex-start; color: #64748b; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem;">
+          <div style="display:flex; gap:3px;">
+            <div style="width:6px; height:6px; background:#64748b; border-radius:50%; animation: blink 1.4s infinite .2s;"></div>
+            <div style="width:6px; height:6px; background:#64748b; border-radius:50%; animation: blink 1.4s infinite .4s;"></div>
+            <div style="width:6px; height:6px; background:#64748b; border-radius:50%; animation: blink 1.4s infinite .6s;"></div>
+          </div>
+          <style>@keyframes blink { 0% { opacity: .2; } 20% { opacity: 1; } 100% { opacity: .2; } }</style>
+        </div>
+      `;
+    }
+    
+    if (snapshot.docs.length === 0) {
+      html = `<div style="text-align: center; color: #64748b; font-size: 0.8rem; margin-top: auto; margin-bottom: 1rem;">Simulation started. Say hi to begin.</div>`;
+    }
+    
+    chatWin.innerHTML = html;
+    chatWin.scrollTop = chatWin.scrollHeight;
+  });
+};
+
+window.sendSimulatorPayload = async function(payloadText) {
+  const db = await window._getAdminDb();
+  const firestore = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+  
+  await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
+    sender: 'user',
+    payload: payloadText,
+    timestamp: firestore.FieldValue.serverTimestamp()
+  });
+
+  const body = {
+    object: "page",
+    entry: [{
+      messaging: [{
+        sender: { id: "SIMULATOR_TEST" },
+        recipient: { id: "SIMULATOR_PAGE" },
+        timestamp: Date.now(),
+        postback: { payload: payloadText }
+      }]
+    }]
+  };
+  
+  await fetch('/webhook', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+};
+
+window.sendSimulatorMessage = async function() {
+  const input = document.getElementById('simulator-input');
+  if (!input || !input.value.trim()) return;
+  const text = input.value.trim();
+  input.value = '';
+  
+  const db = await window._getAdminDb();
+  const firestore = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+  
+  await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
+    sender: 'user',
+    text: text,
+    timestamp: firestore.FieldValue.serverTimestamp()
+  });
+
+  const body = {
+    object: "page",
+    entry: [{
+      messaging: [{
+        sender: { id: "SIMULATOR_TEST" },
+        recipient: { id: "SIMULATOR_PAGE" },
+        timestamp: Date.now(),
+        message: { text: text }
+      }]
+    }]
+  };
+  
+  await fetch('/webhook', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+};
+
+window.resetSimulator = async function() {
+  if (!confirm("Are you sure? This will wipe all test users, complaints, applications, and memory for the simulator.")) return;
+  try {
+    const res = await fetch('/api/simulator/reset', { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      alert("Simulator successfully reset! Database is clean.");
+    } else {
+      alert("Error resetting simulator: " + data.error);
+    }
+  } catch(e) {
+    alert("Connection error: " + e.message);
   }
 };

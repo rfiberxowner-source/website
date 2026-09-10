@@ -1766,13 +1766,13 @@ export const clientViews = {
               });
             };
 
-            try {
-              await runErrorLevelAnalysis(file);
-            } catch (err) {
-              alert(`🚨 FRAUD DETECTED 🚨\\n\\nError Level Analysis (ELA) indicates this image has been digitally altered or spliced.\\n\\nThe compression artifacts on the text do not match the background, proving this receipt was manually edited.`);
-              input.value = ''; // Clear input
-              return;
-            }
+            // try {
+            //   await runErrorLevelAnalysis(file);
+            // } catch (err) {
+            //   alert(`🚨 FRAUD DETECTED 🚨\\n\\nError Level Analysis (ELA) indicates this image has been digitally altered or spliced.\\n\\nThe compression artifacts on the text do not match the background, proving this receipt was manually edited.`);
+            //   input.value = ''; // Clear input
+            //   return;
+            // }
 
             // --- pHash Image Fingerprinting ---
             const generateDHash = (imageFile) => {
@@ -1921,8 +1921,8 @@ export const clientViews = {
                   if (!apiKey) throw new Error('Gemini API Key missing');
 
                   const prompt = `You are an expert computer vision and OCR data extraction model.
-I need you to scan this GCash receipt image and extract text for these specific classes:
-1. "REF NO." (Reference number digits)
+I need you to scan this GCash or UnionBank receipt image and extract text for these specific classes:
+1. "REF NO." (Reference number, digits or alphanumeric)
 2. "AMOUNT" (Transacted amount)
 3. "NAME" (Recipient or sender name)
 4. "FIRST DATE AND TIME" (Full timestamp. MUST be perfectly formatted as "Month DD, YYYY HH:MM AM/PM". ALWAYS include the full year. If year is missing on receipt, infer current year.)
@@ -1993,28 +1993,23 @@ If a field is not found, return "TBD".`;
 
                   // 1. Reference Number
                   extractedData.referenceNumber = 'TBD';
-                  if (formatType === 'FORMAT_A') {
-                    const refFullMatch = singleLineText.match(/Ref\.?\s*No\.?\s*([\d\sOoSs]+)/i);
+                  if (formatType === 'FORMAT_A' || formatType === 'FORMAT_B') {
+                    // Unified alphanumeric parsing to support UnionBank and GCash
+                    const refFullMatch = singleLineText.match(/(?:Ref\.?\s*No[,\.]?|Reference\s*Number|Trace\s*No\.?)\s*([\w\sOoSs]{8,25})/i);
                     if (refFullMatch) {
                       addDetection('REF NO. FULL', refFullMatch[0], '#ef4444');
-                      const cleanRef = refFullMatch[1].replace(/[\sOo]/g, '').replace(/[Ss]/g, '5');
-                      if (cleanRef.length >= 13) {
-                        extractedData.referenceNumber = cleanRef.substring(0, 13);
-                      } else if (cleanRef.length >= 8) {
-                        extractedData.referenceNumber = cleanRef;
-                      }
-                    }
-                  } else {
-                    // Format B usually has spaces in the reference number (e.g. 6038 296 538242) and OCR can mistake 0 for O
-                    const refFullMatchB = singleLineText.match(/(?:Ref\.?\s*No[,\.]?|Reference\s*Number)\s*([\d\sOoSs]{13,25})/i);
-                    if (refFullMatchB) {
-                      addDetection('REF NO. FULL', refFullMatchB[0], '#ef4444');
-                      const cleanRef = refFullMatchB[1].replace(/[\sOo]/g, '').replace(/[Ss]/g, '5');
-                      if (cleanRef.length >= 10) {
-                        extractedData.referenceNumber = cleanRef.substring(0, 13);
+                      let cleanRef = refFullMatch[1].replace(/\s/g, '').toUpperCase();
+                      
+                      // If it only contains numbers, Os, and Ss, it's likely a GCash receipt with OCR mistakes
+                      if (cleanRef.match(/^[0-9OS]+$/)) {
+                        cleanRef = cleanRef.replace(/[O]/g, '0').replace(/[S]/g, '5');
+                        extractedData.referenceNumber = cleanRef.length >= 13 ? cleanRef.substring(0, 13) : cleanRef;
+                      } else {
+                        // Keep alphanumeric for UnionBank
+                        extractedData.referenceNumber = cleanRef.length > 16 ? cleanRef.substring(0, 16) : cleanRef;
                       }
                     } else {
-                      // Fallback: search for any standalone 13 digit number that might be the reference number
+                      // Fallback: search for any standalone 13 digit number
                       const fallbackRef = singleLineText.match(/\b(?:\d\s*){13}\b/);
                       if (fallbackRef) {
                         extractedData.referenceNumber = fallbackRef[0].replace(/\s+/g, '');
@@ -2172,11 +2167,12 @@ If a field is not found, return "TBD".`;
                   const clientUser = userStr ? JSON.parse(userStr) : {};
 
                   // 1. Reference Number Length Validation
-                  const cleanRefNo = String(extractedData.referenceNumber).replace(/[^0-9]/g, '');
-                  if (cleanRefNo.length !== 13) {
+                  // Updated to allow UnionBank references which can be alphanumeric and variable length (usually 8-15 chars)
+                  const cleanRefNo = String(extractedData.referenceNumber).replace(/[^A-Z0-9]/ig, '');
+                  if (cleanRefNo.length < 6 || cleanRefNo.length > 16) {
                     fraudDetected = true;
                     document.getElementById('ai-scanning-overlay').remove();
-                    alert(`🚨 FRAUD DETECTED 🚨\\n\\nInvalid GCash Reference Number. A valid GCash Reference Number must be exactly 13 digits. Your receipt showed ${cleanRefNo.length} digits.`);
+                    alert(`🚨 FRAUD DETECTED 🚨\\n\\nInvalid Reference Number. A valid Reference Number must be between 6 to 16 characters. Your receipt showed ${cleanRefNo.length} characters: "${cleanRefNo}".`);
                   }
 
                   // 2. Amount Validation
@@ -2265,7 +2261,8 @@ If a field is not found, return "TBD".`;
                         document.getElementById('ai-scanning-overlay').remove();
                         alert("🚨 FRAUD DETECTED 🚨\\n\\nThis Reference Number has already been submitted! Submitting duplicate reference numbers is strictly prohibited.\\n\\nWARNING: If you submit this reference number again, your account will be flagged for fraud and may be permanently disabled.");
                       } else {
-                        // Visual pHash Fraud Check (Check all past receipts for cropped duplicates)
+                        // Visual pHash Fraud Check (Check all past receipts for cropped duplicates) - DISABLED
+                        /*
                         const allReceipts = await getDocs(receiptsRef);
                         let pHashFraud = false;
                         allReceipts.forEach(doc => {
@@ -2282,6 +2279,7 @@ If a field is not found, return "TBD".`;
                           document.getElementById('ai-scanning-overlay').remove();
                           alert("🚨 FRAUD DETECTED 🚨\\n\\nVisual Analysis indicates this receipt is a cropped or slightly altered duplicate of a previously uploaded receipt. Submitting altered duplicate receipts is strictly prohibited.");
                         } else {
+                        */
                           // Save to Database
                           const userStr = localStorage.getItem('clientUser');
                           const clientUser = userStr ? JSON.parse(userStr) : {};
@@ -2297,7 +2295,7 @@ If a field is not found, return "TBD".`;
                             status: "Pending Verification",
                             timestamp: serverTimestamp()
                           });
-                        }
+                        // } // Disabled: pHash else block
                       }
                     } catch (dbErr) {
                       console.error("Database Error:", dbErr);
@@ -2393,11 +2391,30 @@ If a field is not found, return "TBD".`;
         `;
       } else if (method === 'bt') {
         html = `
-          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 2rem; text-align: center;">
-            <div style="width: 64px; height: 64px; background: rgba(245,158,11,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; margin-bottom: 1.5rem;">🚧</div>
-            <div style="color: #fff; font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem;">Bank Transfer</div>
-            <div style="color: #f59e0b; font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem;">Coming Soon</div>
-            <div style="color: #94a3b8; font-size: 0.9rem; max-width: 400px; line-height: 1.6;">This payment method is currently in development and not available at this time. Please use GCash to complete your payment.</div>
+          <div style="display: flex; gap: 2rem; align-items: stretch; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 250px;">
+              <div style="color: #fff; font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span style="color: #F59E0B;">UnionBank</span> Transfer
+              </div>
+              <div style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 0.5rem;">Please transfer your payment directly to our official bank account.</div>
+              <div style="color: #cbd5e1; font-size: 0.95rem; margin-top: 1rem; line-height: 1.6;">
+                Account Name: <strong style="color: #fff; letter-spacing: 0.5px;">RFIBERX</strong><br>
+                Account Number: <strong style="color: #fff; letter-spacing: 1px; font-size: 1.1rem; margin-left: 0.25rem;">1096-6732-3727</strong>
+              </div>
+              <div style="margin-top: 1.25rem; padding: 0.6rem 1rem; background: rgba(229,57,53,0.1); border: 1px solid rgba(229,57,53,0.2); border-radius: 8px; display: inline-block; color: #E53935; font-size: 0.8rem; font-weight: 600;">
+                <i style="margin-right:0.25rem">⚠️</i> Please include your Account Number in the transfer notes!
+              </div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.2); border-radius: 12px; min-width: 250px;">
+              <div style="color: #fff; font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">Upload Receipt</div>
+              <div style="color: #94a3b8; font-size: 0.8rem; text-align: center; margin-bottom: 1rem; max-width: 200px;">Upload a screenshot of your UnionBank receipt for verification.</div>
+              
+              <label style="background: \${window.isProfileIncomplete ? 'rgba(16, 185, 129, 0.5)' : '#10b981'}; color: #fff; padding: 0.6rem 1.5rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: \${window.isProfileIncomplete ? 'not-allowed' : 'pointer'}; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem;" \${window.isProfileIncomplete ? '' : 'onmouseover="this.style.background=\\\\'#059669\\\\'" onmouseout="this.style.background=\\\\'#10b981\\\\'"'}>
+                <span>📸</span> Add Image
+                <input type="file" accept="image/*" style="display: none;" onchange="window.simulateAIAnalysis(this)" \${window.isProfileIncomplete ? 'disabled' : ''}>
+              </label>
+            </div>
           </div>
         `;
       }
@@ -3129,15 +3146,6 @@ If a field is not found, return "TBD".`;
                       </div>
                     </div>
 
-                    <div id="payment-btn-cc" class="payment-btn" onclick="window.togglePaymentMethod('cc')" style="border: 1px solid rgba(255,255,255,0.05); background: transparent; padding: 1rem; border-radius: 8px; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: all 0.2s;">
-                      <div style="width: 24px; height: 24px; background: rgba(255,255,255,0.1); color: #fff; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                      </div>
-                      <div>
-                        <div style="color: #fff; font-size: 0.85rem; font-weight: 600;">Credit / Debit</div>
-                        <div style="color: #64748b; font-size: 0.7rem;">Visa or Mastercard</div>
-                      </div>
-                    </div>
                     <div id="payment-btn-bt" class="payment-btn" onclick="window.togglePaymentMethod('bt')" style="border: 1px solid rgba(255,255,255,0.05); background: transparent; padding: 1rem; border-radius: 8px; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: all 0.2s;">
                       <div style="width: 24px; height: 24px; background: rgba(255,255,255,0.1); color: #fff; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
@@ -3145,6 +3153,15 @@ If a field is not found, return "TBD".`;
                       <div>
                         <div style="color: #fff; font-size: 0.85rem; font-weight: 600;">Bank Transfer</div>
                         <div style="color: #64748b; font-size: 0.7rem;">Direct deposit</div>
+                      </div>
+                    </div>
+                    <div id="payment-btn-cc" class="payment-btn" onclick="window.togglePaymentMethod('cc')" style="border: 1px solid rgba(255,255,255,0.05); background: transparent; padding: 1rem; border-radius: 8px; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: all 0.2s;">
+                      <div style="width: 24px; height: 24px; background: rgba(255,255,255,0.1); color: #fff; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                      </div>
+                      <div>
+                        <div style="color: #fff; font-size: 0.85rem; font-weight: 600;">Credit / Debit</div>
+                        <div style="color: #64748b; font-size: 0.7rem;">Visa or Mastercard</div>
                       </div>
                     </div>
                   </div>

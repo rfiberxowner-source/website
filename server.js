@@ -23,6 +23,7 @@ const db = getFirestore();
 const userSessions = new Map();
 const topicTracker = new Map();
 const pendingTextMessages = new Map();
+const recentlyRepliedImages = new Map();
 const accountRecoveryData = new Map();
 const originalSet = accountRecoveryData.set.bind(accountRecoveryData);
 accountRecoveryData.set = function (key, value) {
@@ -147,8 +148,7 @@ async function processReceiptQueue() {
     if (!process.env.ENABLE_AI_RECEIPT) {
         // If disabled, just clear the queue to prevent memory leak
         while(receiptQueue.length > 0) {
-            const task = receiptQueue.shift();
-            if (fs.existsSync(task.localPath)) fs.unlinkSync(task.localPath);
+            receiptQueue.shift();
         }
         return;
     }
@@ -187,7 +187,7 @@ async function processReceiptQueue() {
         }
 
         // If they have an account, process it!
-        const success = await processImageAttachmentLogic(task.localPath, task.psid, accountNum, task.language);
+        const success = await processImageAttachmentLogic(task.base64Data, task.psid, accountNum, task.language, task.imageUrl);
         
         if (success === "BUSY") {
             // API is busy. Wait 30 seconds and retry.
@@ -196,24 +196,76 @@ async function processReceiptQueue() {
                 isProcessingQueue = false;
                 processReceiptQueue();
             }, 30000);
-            return; // Don't shift it from queue, don't delete file.
+            return; // Don't shift it from queue
         }
         
         // Success or unrecoverable error (e.g. invalid amount). We silently drop it and move on.
         receiptQueue.shift();
-        if (fs.existsSync(task.localPath)) fs.unlinkSync(task.localPath);
         
     } catch (e) {
         console.error("[Queue] Unhandled error processing receipt:", e);
         // On fatal error, discard the task
         receiptQueue.shift();
-        if (fs.existsSync(task.localPath)) fs.unlinkSync(task.localPath);
     }
     
     isProcessingQueue = false;
 }
 // Run the worker every 5 seconds
 setInterval(processReceiptQueue, 5000);
+
+app.post('/api/simulator/reset', async (req, res) => {
+    try {
+        const psid = 'SIMULATOR_TEST';
+        
+        // 1. Wipe simulator_chats
+        const chatsSnap = await db.collection('simulator_chats').get();
+        const batch = db.batch();
+        chatsSnap.docs.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+
+        // 2. Delete messenger_psids
+        await db.collection('messenger_psids').doc(psid).delete();
+        
+        // 3. Delete users
+        const usersSnap = await db.collection('users').where('psid', '==', psid).get();
+        const batch2 = db.batch();
+        usersSnap.docs.forEach(doc => batch2.delete(doc.ref));
+        await batch2.commit();
+        
+        // 4. Delete complaints & applications
+        const complaintsSnap = await db.collection('complaints').where('psid', '==', psid).get();
+        for (let doc of complaintsSnap.docs) {
+            const msgs = await doc.ref.collection('messages').get();
+            const b = db.batch();
+            msgs.forEach(m => b.delete(m.ref));
+            b.delete(doc.ref);
+            await b.commit();
+        }
+        const applySnap = await db.collection('applications').where('psid', '==', psid).get();
+        for (let doc of applySnap.docs) {
+            const msgs = await doc.ref.collection('messages').get();
+            const b = db.batch();
+            msgs.forEach(m => b.delete(m.ref));
+            b.delete(doc.ref);
+            await b.commit();
+        }
+        
+        // 5. Clear Memory
+        if (typeof userSessions !== 'undefined') userSessions.delete(psid);
+        if (typeof accountRecoveryData !== 'undefined') accountRecoveryData.delete(psid);
+        if (typeof recentlyRepliedImages !== 'undefined') recentlyRepliedImages.delete(psid);
+        if (typeof pendingTextMessages !== 'undefined') {
+            clearTimeout(pendingTextMessages.get(psid));
+            pendingTextMessages.delete(psid);
+        }
+        if (typeof userMessageQueues !== 'undefined') userMessageQueues.delete(psid);
+        
+        res.json({ success: true });
+    } catch (e) {
+        console.error("Simulator Reset Error:", e);
+        res.status(500).json({ error: e.toString() });
+    }
+});
 
 app.post('/webhook', (req, res) => {
     let body = req.body;
@@ -233,7 +285,8 @@ app.post('/webhook', (req, res) => {
                 '27076770378611516', // Jasper Mangulabnan
                 '27846036101654635', // Angela Calubayan
                 '36533187462992743', // Francis Serrano Agosto
-                '27314329474875273'  // Marc S. Cambel
+                '27314329474875273', // Marc S. Cambel
+                'SIMULATOR_TEST'     // Bot Simulator
             ];
             
             if (psidToCheck && !ALLOWED_TESTERS.includes(psidToCheck)) {
@@ -424,6 +477,10 @@ app.post('/webhook', (req, res) => {
                         ];
                         if (ALLOWED_TESTERS.includes(sender_psid)) {
                             console.log("✔️ Allowed PSID chatting: " + sender_psid);
+                            
+                            // Immediately show the typing indicator bubble!
+                            sendSenderAction(sender_psid, 'typing_on');
+
                             if (webhook_event.message.text) {
                                 let isQuickReply = !!webhook_event.message.quick_reply;
                                 let incomingMsg = webhook_event.message.quick_reply ? webhook_event.message.quick_reply.payload : webhook_event.message.text;
@@ -504,48 +561,71 @@ app.post('/webhook', (req, res) => {
                                     processText();
                                 }, 1500);
                                 pendingTextMessages.set(sender_psid, timeoutId);
-                            } else if (webhook_event.message.attachments && webhook_event.message.attachments[0].type === 'image') {
-                                if (pendingTextMessages.has(sender_psid)) {
-                                    clearTimeout(pendingTextMessages.get(sender_psid));
-                                    pendingTextMessages.delete(sender_psid);
-                                    console.log(`Cancelled text reply for ${sender_psid} because an image was received.`);
-                                }
+                            } else if (webhook_event.message.attachments) {
+                                const images = webhook_event.message.attachments.filter(att => att.type === 'image');
+                                if (images.length > 0) {
+                                    if (pendingTextMessages.has(sender_psid)) {
+                                        clearTimeout(pendingTextMessages.get(sender_psid));
+                                        pendingTextMessages.delete(sender_psid);
+                                        console.log(`Cancelled text reply for ${sender_psid} because an image was received.`);
+                                    }
 
-                                if (active_apply_id) {
-                                    // Log the image attachment in the apply session and skip AI
-                                    db.collection('applications').doc(active_apply_id).set({ status: "Unread" }, { merge: true });
-                                    db.collection('applications').doc(active_apply_id).collection('messages').add({
-                                        sender: 'client',
-                                        text: '[Image Attachment]',
-                                        timestamp: FieldValue.serverTimestamp()
-                                    });
-                                } else {
-                                    const imageUrl = webhook_event.message.attachments[0].payload.url;
-                                    queueImageAttachment(imageUrl, sender_psid, language).then(async replyMessage => {
-                                        if (replyMessage) {
-                                            if (replyMessage.isHandover) {
-                                                await psidRef.set({ is_paused: true }, { merge: true });
-                                                if (!active_complaint_id) {
-                                                    const newComplaintRef = db.collection('complaints').doc();
-                                                    active_complaint_id = newComplaintRef.id;
-                                                    await newComplaintRef.set({
-                                                        psid: sender_psid,
-                                                        name: existingName || psidPayload.name || "Unknown Client",
-                                                        status: "Unread",
-                                                        createdAt: FieldValue.serverTimestamp()
-                                                    });
-                                                    await db.collection('complaints').doc(active_complaint_id).collection('messages').add({
-                                                        sender: 'client',
-                                                        text: '[Image Attachment]',
-                                                        timestamp: FieldValue.serverTimestamp()
-                                                    });
-                                                    await psidRef.set({ active_complaint_id: active_complaint_id }, { merge: true });
-                                                }
-                                                delete replyMessage.isHandover;
-                                            }
-                                            callSendAPI(sender_psid, replyMessage);
+                                    if (active_apply_id) {
+                                        // Log the image attachment in the apply session and skip AI
+                                        db.collection('applications').doc(active_apply_id).set({ status: "Unread" }, { merge: true });
+                                        for (let img of images) {
+                                            db.collection('applications').doc(active_apply_id).collection('messages').add({
+                                                sender: 'client',
+                                                text: '[Image Attachment]',
+                                                imageUrl: img.payload.url,
+                                                timestamp: FieldValue.serverTimestamp()
+                                            });
                                         }
-                                    }).catch(err => console.error("Error queueing image:", err));
+                                    } else {
+                                        const now = Date.now();
+                                        const lastReplied = recentlyRepliedImages.get(sender_psid) || 0;
+                                        let shouldReply = false;
+                                        
+                                        if (now - lastReplied > 5000) {
+                                            recentlyRepliedImages.set(sender_psid, now);
+                                            shouldReply = true;
+                                        }
+
+                                        for (let img of images) {
+                                            const imageUrl = img.payload.url;
+                                            queueImageAttachment(imageUrl, sender_psid, language, shouldReply).then(async replyMessage => {
+                                                if (replyMessage) {
+                                                    if (replyMessage.isHandover) {
+                                                        await psidRef.set({ is_paused: true }, { merge: true });
+                                                        if (!active_complaint_id) {
+                                                            const newComplaintRef = db.collection('complaints').doc();
+                                                            active_complaint_id = newComplaintRef.id;
+                                                            await newComplaintRef.set({
+                                                                psid: sender_psid,
+                                                                name: existingName || psidPayload.name || "Unknown Client",
+                                                                status: "Unread",
+                                                                createdAt: FieldValue.serverTimestamp()
+                                                            });
+                                                            await psidRef.set({ active_complaint_id: active_complaint_id }, { merge: true });
+                                                        } else {
+                                                            await db.collection('complaints').doc(active_complaint_id).set({ status: "Unread" }, { merge: true });
+                                                        }
+                                                        await db.collection('complaints').doc(active_complaint_id).collection('messages').add({
+                                                            sender: 'client',
+                                                            text: '[Image Attachment]',
+                                                            imageUrl: imageUrl,
+                                                            timestamp: FieldValue.serverTimestamp()
+                                                        });
+                                                        delete replyMessage.isHandover;
+                                                    }
+                                                    callSendAPI(sender_psid, replyMessage);
+                                                }
+                                            }).catch(err => console.error("Error queueing image:", err));
+                                            
+                                            // Prevent subsequent images in the SAME array from getting the reply
+                                            shouldReply = false;
+                                        }
+                                    }
                                 }
                             }
                         } else {
@@ -2077,7 +2157,21 @@ db.collection('payments').onSnapshot((snapshot) => {
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN || 'EAAOCL1hceK8BSMsUSSYLdHh8bEVNuxGJZC7t24ZBPdG2x6ObyB3XIAclpVVGtvLrJQiHnZBaTWJmHsFXucILzvSbrTedn02okEsU446aEc0ZAzVLagUqjn78d6bzLhOcEZAITP0dIZAVzeuPlBYZADXH4St6j2NXfTtdjrZAHTptA1ZAsfUhYe2hnbweKApPjj3kmsfTSxNSNrgZDZD';
 
 // Function to send the message back to Facebook Graph API
-async function callSendAPI(sender_psid, response) {
+async function callSendAPI_Raw(sender_psid, response) {
+    if (sender_psid === 'SIMULATOR_TEST') {
+        try {
+            await db.collection('simulator_chats').add({
+                sender: 'bot',
+                response: response,
+                timestamp: FieldValue.serverTimestamp()
+            });
+            console.log('✅ Simulated message saved to simulator_chats!');
+        } catch(e) {
+            console.error("Error saving simulated message:", e);
+        }
+        return;
+    }
+
     const requestBody = {
         recipient: {
             id: sender_psid
@@ -2105,7 +2199,82 @@ async function callSendAPI(sender_psid, response) {
     }
 }
 
-async function queueImageAttachment(imageUrl, sender_psid, language) {
+const userMessageQueues = new Map();
+
+function callSendAPI(sender_psid, response) {
+    if (!userMessageQueues.has(sender_psid)) {
+        userMessageQueues.set(sender_psid, { messages: [], isProcessing: false });
+    }
+    const queue = userMessageQueues.get(sender_psid);
+    queue.messages.push(response);
+    
+    if (!queue.isProcessing) {
+        processOutgoingQueue(sender_psid);
+    }
+}
+
+async function processOutgoingQueue(sender_psid) {
+    const queue = userMessageQueues.get(sender_psid);
+    if (!queue || queue.isProcessing || queue.messages.length === 0) return;
+
+    queue.isProcessing = true;
+
+    try {
+        await sendSenderAction(sender_psid, 'typing_on');
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        while (queue.messages.length > 0) {
+            const response = queue.messages.shift();
+            await callSendAPI_Raw(sender_psid, response);
+            
+            if (queue.messages.length > 0) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+    } catch(e) {
+        console.error("Queue processing error:", e);
+    } finally {
+        queue.isProcessing = false;
+        if (queue.messages.length === 0) {
+            userMessageQueues.delete(sender_psid);
+        } else {
+            processOutgoingQueue(sender_psid);
+        }
+    }
+}
+
+// Function to send a typing indicator (typing_on)
+async function sendSenderAction(sender_psid, action) {
+    if (sender_psid === 'SIMULATOR_TEST') {
+        try {
+            await db.collection('simulator_chats').add({
+                sender: 'bot_action',
+                action: action,
+                timestamp: FieldValue.serverTimestamp()
+            });
+        } catch(e) {}
+        return;
+    }
+
+    const requestBody = {
+        recipient: { id: sender_psid },
+        sender_action: action
+    };
+
+    try {
+        await fetch(`https://graph.facebook.com/v19.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody)
+        });
+    } catch (err) {
+        console.error('❌ Failed to send sender action:', err);
+    }
+}
+
+async function queueImageAttachment(imageUrl, sender_psid, language, shouldReply = true) {
     const tl = language === 'tl';
     const T = (en, tag) => tl ? tag : en;
 
@@ -2119,18 +2288,18 @@ async function queueImageAttachment(imageUrl, sender_psid, language) {
 
     if (!process.env.ENABLE_AI_RECEIPT) {
         console.log("📸 Image received from PSID: " + sender_psid + ". Transferring to agent (AI receipt scanner disabled).");
-        return defaultReply;
+        return shouldReply ? defaultReply : null;
     }
 
     try {
         const imageResp = await fetch(imageUrl);
         const buffer = await imageResp.arrayBuffer();
-        const localPath = `./receipts/${sender_psid}_${Date.now()}.jpg`;
-        fs.writeFileSync(localPath, Buffer.from(buffer));
+        const base64Data = Buffer.from(buffer).toString("base64");
         
         receiptQueue.push({
             psid: sender_psid,
-            localPath: localPath,
+            base64Data: base64Data,
+            imageUrl: imageUrl,
             language: language,
             timestamp: Date.now()
         });
@@ -2139,12 +2308,37 @@ async function queueImageAttachment(imageUrl, sender_psid, language) {
         console.error("Failed to queue image:", e);
     }
     
-    return defaultReply;
+    return shouldReply ? defaultReply : null;
 }
 
-async function processImageAttachmentLogic(localPath, sender_psid, accountNum, language) {
+async function processImageAttachmentLogic(base64Data, sender_psid, accountNum, language, imageUrl) {
     const tl = language === 'tl';
     const T = (en, tag) => tl ? tag : en;
+
+    const createErrorTicket = async (reason) => {
+        try {
+            console.log(`[AI Ticket] Creating manual review ticket for ${sender_psid} due to: ${reason}`);
+            const psidDoc = await db.collection('messenger_psids').doc(sender_psid).get();
+            const clientName = (psidDoc.exists && psidDoc.data().name) ? psidDoc.data().name : "Unknown Client";
+            
+            const newComplaintRef = db.collection('complaints').doc();
+            await newComplaintRef.set({
+                psid: sender_psid,
+                name: clientName,
+                status: "Unread",
+                createdAt: FieldValue.serverTimestamp()
+            });
+            await db.collection('complaints').doc(newComplaintRef.id).collection('messages').add({
+                sender: 'client',
+                text: `[Failed AI Receipt Scan: ${reason}]`,
+                imageUrl: imageUrl || '',
+                timestamp: FieldValue.serverTimestamp()
+            });
+            await db.collection('messenger_psids').doc(sender_psid).set({ active_complaint_id: newComplaintRef.id }, { merge: true });
+        } catch(e) {
+            console.error("Error creating AI ticket:", e);
+        }
+    };
 
     try {
         console.log(`📸 Background scanning image receipt for ${sender_psid}...`);
@@ -2168,9 +2362,6 @@ async function processImageAttachmentLogic(localPath, sender_psid, accountNum, l
             "gemini-2.0-flash",
             "gemini-2.0-flash-lite"
         ];
-
-        const buffer = fs.readFileSync(localPath);
-        const base64Data = Buffer.from(buffer).toString("base64");
 
         const imagePart = {
             inlineData: {
@@ -2219,6 +2410,7 @@ If it IS a receipt, extract:
 
         if (!result) {
             console.error("Failed to process receipt after trying all fallback models.");
+            await createErrorTicket("AI Failed to Analyze Image");
             return false;
         }
 
@@ -2227,13 +2419,16 @@ If it IS a receipt, extract:
         let extracted = JSON.parse(jsonStr);
 
         if (extracted.error === "NOT_A_RECEIPT") {
-            console.log("❌ Image is not a receipt. Silently dropping.");
+            console.log("❌ Image is not a receipt. Creating error ticket instead of dropping.");
+            await createErrorTicket("Image Not Recognized As Receipt");
             return false;
         }
 
-        const refNo = extracted.referenceNumber ? String(extracted.referenceNumber).replace(/[^0-9]/g, '') : '';
-        if (refNo.length !== 13) {
-            console.log(`🚨 FRAUD DETECTED 🚨 Invalid GCash Reference Number length: ${refNo}`);
+        // Allow alphanumeric characters for UnionBank and variable lengths (6-16)
+        const refNo = extracted.referenceNumber ? String(extracted.referenceNumber).replace(/[^A-Z0-9]/ig, '').toUpperCase() : '';
+        if (refNo.length < 6 || refNo.length > 16) {
+            console.log(`🚨 FRAUD DETECTED 🚨 Invalid Reference Number length: ${refNo}`);
+            await createErrorTicket(`Invalid Reference Number (${refNo})`);
             return false;
         }
 
@@ -2277,7 +2472,20 @@ If it IS a receipt, extract:
             const unpaidCount = unpaidBillsList.length;
 
             if (unpaidCount === 0) {
-                console.log(`No unpaid bills found for ${accountNum}. Silently dropping receipt.`);
+                console.log(`No unpaid bills found for ${accountNum}. Sending 'no bills' message.`);
+                
+                let textMsg = "";
+                if (waitingCount > 0) {
+                    textMsg = tl ? 
+                        "Na-scan na namin ang iyong resibo, ngunit wala ka nang unpaid billing statement ngayon. Mayroon kang payment na kasalukuyang naghihintay ng admin approval." :
+                        "We have scanned your receipt, but you currently have no unpaid billing statements. You do have a payment currently waiting for admin approval.";
+                } else {
+                    textMsg = tl ? 
+                        "Na-scan na namin ang iyong resibo, ngunit wala ka nang unpaid billing statement sa iyong account ngayon." :
+                        "We have scanned your receipt, but you currently have no unpaid billing statements on your account.";
+                }
+                
+                callSendAPI(sender_psid, { text: textMsg }).catch(err => console.error("Error sending no bills message:", err));
                 return false;
             }
 
