@@ -1895,7 +1895,15 @@ export const adminViews = {
           <div style="text-align: center; color: #64748b; font-size: 0.8rem; margin-top: auto; margin-bottom: 1rem;">Simulation started. Say hi to begin.</div>
         </div>
 
-        <div style="padding: 1rem; background: #0f131f; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 0.5rem;">
+        <div style="padding: 0.5rem 1rem; background: #0b0f19; display: flex; gap: 0.5rem; overflow-x: auto; border-top: 1px solid rgba(255,255,255,0.05);">
+          <button onclick="window.sendSimulatorPayload('GET_STARTED_APPLY')" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">Apply Now</button>
+          <button onclick="window.sendSimulatorPayload('CHANGE_LANGUAGE')" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">Language</button>
+          <button onclick="window.sendSimulatorPayload('TALK_TO_AGENT')" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">Agent</button>
+          <button onclick="window.sendSimulatorPayload('CHECK_INTERNET_STATUS')" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">Internet Status</button>
+        </div>
+        <div style="padding: 1rem; background: #0f131f; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 0.5rem; align-items: stretch;">
+          <input type="file" id="simulator-image-upload" accept="image/*" style="display: none;" onchange="window.handleSimulatorImageUpload(event)" />
+          <button onclick="document.getElementById('simulator-image-upload').click()" style="background: transparent; color: #94a3b8; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 0.5rem;" title="Attach Image">📎</button>
           <input type="text" id="simulator-input" placeholder="Type a message..." style="flex: 1; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.95rem; outline: none;" onkeypress="if(event.key === 'Enter') window.sendSimulatorMessage()" />
           <button onclick="window.sendSimulatorMessage()" style="background: #3b82f6; color: #fff; border: none; padding: 0 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">Send</button>
         </div>
@@ -5467,6 +5475,49 @@ window.sendSimulatorMessage = async function() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
+};
+
+window.handleSimulatorImageUpload = async function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const dataUrl = e.target.result;
+    
+    const { db, firestore } = await window._getAdminDb();
+    await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
+      sender: 'user',
+      text: '📎 Sent an image',
+      timestamp: firestore.serverTimestamp()
+    });
+
+    const body = {
+      object: "page",
+      entry: [{
+        messaging: [{
+          sender: { id: "SIMULATOR_TEST" },
+          recipient: { id: "SIMULATOR_PAGE" },
+          timestamp: Date.now(),
+          message: {
+            attachments: [{
+              type: "image",
+              payload: { url: dataUrl }
+            }]
+          }
+        }]
+      }]
+    };
+    
+    const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
+    await fetch(`${BACKEND_URL}/webhook`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  };
+  reader.readAsDataURL(file);
 };
 
 window.resetSimulator = async function() {
