@@ -5330,8 +5330,7 @@ window.chatboxSendClient = async function (clientId) {
 };
 
 window.initSimulator = async function() {
-  const db = await window._getAdminDb();
-  const firestore = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+  const { db, firestore } = await window._getAdminDb();
   
   if (window._simUnsubscribe) window._simUnsubscribe();
   
@@ -5408,8 +5407,7 @@ window.initSimulator = async function() {
 };
 
 window.sendSimulatorPayload = async function(payloadText) {
-  const db = await window._getAdminDb();
-  const firestore = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+  const { db, firestore } = await window._getAdminDb();
   
   await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
     sender: 'user',
@@ -5443,8 +5441,7 @@ window.sendSimulatorMessage = async function() {
   const text = input.value.trim();
   input.value = '';
   
-  const db = await window._getAdminDb();
-  const firestore = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+  const { db, firestore } = await window._getAdminDb();
   
   await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
     sender: 'user',
