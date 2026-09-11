@@ -1895,11 +1895,7 @@ export const adminViews = {
           <div style="text-align: center; color: #64748b; font-size: 0.8rem; margin-top: auto; margin-bottom: 1rem;">Simulation started. Say hi to begin.</div>
         </div>
 
-        <div style="padding: 0.5rem 1rem; background: #0b0f19; display: flex; gap: 0.5rem; overflow-x: auto; border-top: 1px solid rgba(255,255,255,0.05);">
-          <button onclick="window.sendSimulatorPayload('GET_STARTED_APPLY')" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">Apply Now</button>
-          <button onclick="window.sendSimulatorPayload('CHANGE_LANGUAGE')" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">Language</button>
-          <button onclick="window.sendSimulatorPayload('TALK_TO_AGENT')" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">Agent</button>
-          <button onclick="window.sendSimulatorPayload('CHECK_INTERNET_STATUS')" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">Internet Status</button>
+        <div id="simulator-quick-replies" style="padding: 0.5rem 1rem; background: #0b0f19; display: none; gap: 0.5rem; overflow-x: auto; border-top: 1px solid rgba(255,255,255,0.05);">
         </div>
         <div style="padding: 1rem; background: #0f131f; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 0.5rem; align-items: stretch;">
           <input type="file" id="simulator-image-upload" accept="image/*" style="display: none;" onchange="window.handleSimulatorImageUpload(event)" />
@@ -5349,13 +5345,16 @@ window.initSimulator = async function() {
     
     let html = '';
     let isTyping = false;
+    let latestQuickReplies = null;
     
     snapshot.docs.forEach(doc => {
       const data = doc.data();
       if (data.sender === 'user') {
+        latestQuickReplies = null;
+        let msgDisplay = data.text || data.payload || '';
         html += `
           <div style="background: #3b82f6; color: #fff; padding: 0.75rem 1rem; border-radius: 12px; align-self: flex-end; max-width: 75%; font-size: 0.95rem;">
-            ${data.text || data.payload || 'Attachment'}
+            ${msgDisplay.replace(/\n/g, '<br/>')}
           </div>
         `;
         isTyping = false;
@@ -5368,9 +5367,11 @@ window.initSimulator = async function() {
            html += `
              <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 0.75rem 1rem; border-radius: 12px; align-self: flex-start; max-width: 75%; font-size: 0.95rem;">
                ${response.text.replace(/\n/g, '<br/>')}
-               ${response.quick_replies ? `<div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem;">` + response.quick_replies.map(qr => `<button onclick="window.sendSimulatorPayload('${qr.payload}')" style="background: #1e293b; border: 1px solid #3b82f6; color: #60a5fa; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">${qr.title}</button>`).join('') + `</div>` : ''}
              </div>
            `;
+           if (response.quick_replies) {
+             latestQuickReplies = response.quick_replies;
+           }
         }
         if (response.attachment) {
            const elements = response.attachment.payload.elements;
@@ -5394,12 +5395,10 @@ window.initSimulator = async function() {
     
     if (isTyping) {
       html += `
-        <div style="align-self: flex-start; color: #64748b; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem;">
-          <div style="display:flex; gap:3px;">
-            <div style="width:6px; height:6px; background:#64748b; border-radius:50%; animation: blink 1.4s infinite .2s;"></div>
-            <div style="width:6px; height:6px; background:#64748b; border-radius:50%; animation: blink 1.4s infinite .4s;"></div>
-            <div style="width:6px; height:6px; background:#64748b; border-radius:50%; animation: blink 1.4s infinite .6s;"></div>
-          </div>
+        <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 0.75rem 1rem; border-radius: 12px; align-self: flex-start; max-width: 75%; font-size: 0.95rem; display: flex; gap: 0.25rem; align-items: center;">
+          <div style="width: 6px; height: 6px; background: #94a3b8; border-radius: 50%; animation: blink 1.4s infinite both;"></div>
+          <div style="width: 6px; height: 6px; background: #94a3b8; border-radius: 50%; animation: blink 1.4s infinite both; animation-delay: 0.2s;"></div>
+          <div style="width: 6px; height: 6px; background: #94a3b8; border-radius: 50%; animation: blink 1.4s infinite both; animation-delay: 0.4s;"></div>
           <style>@keyframes blink { 0% { opacity: .2; } 20% { opacity: 1; } 100% { opacity: .2; } }</style>
         </div>
       `;
@@ -5411,6 +5410,17 @@ window.initSimulator = async function() {
     
     chatWin.innerHTML = html;
     chatWin.scrollTop = chatWin.scrollHeight;
+
+    const qrContainer = document.getElementById('simulator-quick-replies');
+    if (qrContainer) {
+      if (latestQuickReplies && latestQuickReplies.length > 0) {
+        qrContainer.style.display = 'flex';
+        qrContainer.innerHTML = latestQuickReplies.map(qr => `<button onclick="window.sendSimulatorPayload('${qr.payload}')" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid #3b82f6; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">${qr.title}</button>`).join('');
+      } else {
+        qrContainer.style.display = 'none';
+        qrContainer.innerHTML = '';
+      }
+    }
   });
 };
 
