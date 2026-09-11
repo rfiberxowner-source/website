@@ -5493,39 +5493,62 @@ window.handleSimulatorImageUpload = async function(event) {
   event.target.value = '';
 
   const reader = new FileReader();
-  reader.onload = async function(e) {
-    const dataUrl = e.target.result;
-    
-    const { db, firestore } = await window._getAdminDb();
-    await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
-      sender: 'user',
-      text: '📎 Sent an image',
-      timestamp: firestore.serverTimestamp()
-    });
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = async function() {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+      
+      const MAX_SIZE = 800;
+      if (width > height && width > MAX_SIZE) {
+        height *= MAX_SIZE / width;
+        width = MAX_SIZE;
+      } else if (height > MAX_SIZE) {
+        width *= MAX_SIZE / height;
+        height = MAX_SIZE;
+      }
+      
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      
+      // Compress to JPEG to keep size well under 1MB
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+      
+      const { db, firestore } = await window._getAdminDb();
+      await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
+        sender: 'user',
+        text: '📎 Sent an image',
+        timestamp: firestore.serverTimestamp()
+      });
 
-    const body = {
-      object: "page",
-      entry: [{
-        messaging: [{
-          sender: { id: "SIMULATOR_TEST" },
-          recipient: { id: "SIMULATOR_PAGE" },
-          timestamp: Date.now(),
-          message: {
-            attachments: [{
-              type: "image",
-              payload: { url: dataUrl }
-            }]
-          }
+      const body = {
+        object: "page",
+        entry: [{
+          messaging: [{
+            sender: { id: "SIMULATOR_TEST" },
+            recipient: { id: "SIMULATOR_PAGE" },
+            timestamp: Date.now(),
+            message: {
+              attachments: [{
+                type: "image",
+                payload: { url: dataUrl }
+              }]
+            }
+          }]
         }]
-      }]
+      };
+      
+      const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
+      await fetch(`${BACKEND_URL}/webhook`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
     };
-    
-    const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
-    await fetch(`${BACKEND_URL}/webhook`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 };
