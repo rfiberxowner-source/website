@@ -5412,7 +5412,7 @@ window.sendSimulatorPayload = async function(payloadText) {
   await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
     sender: 'user',
     payload: payloadText,
-    timestamp: firestore.FieldValue.serverTimestamp()
+    timestamp: firestore.serverTimestamp()
   });
 
   const body = {
@@ -5446,7 +5446,7 @@ window.sendSimulatorMessage = async function() {
   await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
     sender: 'user',
     text: text,
-    timestamp: firestore.FieldValue.serverTimestamp()
+    timestamp: firestore.serverTimestamp()
   });
 
   const body = {
