@@ -35,7 +35,7 @@ accountRecoveryData.set = function (key, value) {
 };
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
 // Enable CORS for frontend Admin Portal requests
 app.use((req, res, next) => {
