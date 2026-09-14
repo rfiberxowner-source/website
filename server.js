@@ -2157,6 +2157,13 @@ db.collection('payments').onSnapshot((snapshot) => {
                                         { content_type: "text", title: "Cancel", payload: "Cancel" }
                                     ]
                                 });
+
+                                // Unpause the user so they can actually click the quick replies
+                                await db.collection('messenger_psids').doc(psid).set({
+                                    is_paused: false,
+                                    active_complaint_id: null,
+                                    active_apply_id: null
+                                }, { merge: true });
                             }
 
                             // Mark as notified so it doesn't spam
