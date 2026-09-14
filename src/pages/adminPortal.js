@@ -5572,3 +5572,127 @@ window.resetSimulator = async function() {
     alert("Connection error: " + e.message);
   }
 };
+
+window.exportBillingExcel = async function(event) {
+  try {
+    const selectedMonth = document.getElementById('ph-month')?.value || '';
+    
+    const btn = event ? event.currentTarget : document.querySelector('button[onclick="window.exportBillingExcel()"]');
+    const oldText = btn ? btn.innerHTML : 'Export to Excel';
+    if (btn) {
+      btn.innerHTML = 'Exporting...';
+      btn.disabled = true;
+    }
+
+    if (typeof window.XLSX === 'undefined') {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    const { db, firestore } = await window._getAdminDb();
+    
+    const usersSnap = await firestore.getDocs(firestore.collection(db, "users"));
+    const usersMap = {};
+    usersSnap.forEach(doc => {
+      usersMap[doc.id] = doc.data();
+    });
+
+    const excelData = [];
+
+    for (const userId of Object.keys(usersMap)) {
+      const u = usersMap[userId];
+      const billsSnap = await firestore.getDocs(firestore.collection(db, `users/${userId}/billing_emails`));
+      billsSnap.forEach(bDoc => {
+        const b = bDoc.data();
+        if (selectedMonth && b.month !== selectedMonth) return;
+        if ((b.status || '').toLowerCase() === 'paid' || (b.status || '').toLowerCase() === 'completed') return;
+
+        excelData.push({
+          "Account Number": u.accountNumber || u.account || '',
+          "Client Name": u.fullName || u.name || '',
+          "Phone": u.phone || u.contactNumber || '',
+          "Email": u.email || '',
+          "Facebook": u.facebook || u.fb || '',
+          "Address": u.address || '',
+          "Location": u.Location || u.location || '',
+          "Plan": u.plan || u.Plan || '',
+          "Billing Month": b.month || '',
+          "Amount": b.amount || b.totalAmount || '',
+          "Status": "UNPAID",
+          "Payment Channel": b.paymentMethod || b.method || '-',
+          "Date Paid": '-'
+        });
+      });
+    }
+
+    const paymentsSnap = await firestore.getDocs(firestore.collection(db, "payments"));
+    paymentsSnap.forEach(pDoc => {
+      const p = pDoc.data();
+      if (selectedMonth && p.billingMonth !== selectedMonth && p.month !== selectedMonth) return;
+      
+      let u = usersMap[p.userId];
+      if (!u) {
+        const matchedUserId = Object.keys(usersMap).find(id => (usersMap[id].accountNumber === p.accountNumber || usersMap[id].account === p.accountNumber));
+        if (matchedUserId) u = usersMap[matchedUserId];
+      }
+      
+      excelData.push({
+        "Account Number": p.accountNumber || (u ? (u.accountNumber || u.account) : ''),
+        "Client Name": p.customerName || (u ? (u.fullName || u.name) : ''),
+        "Phone": u ? (u.phone || u.contactNumber) : '',
+        "Email": u ? (u.email) : '',
+        "Facebook": u ? (u.facebook || u.fb) : '',
+        "Address": u ? u.address : '',
+        "Location": u ? (u.Location || u.location) : '',
+        "Plan": p.plan || (u ? (u.plan || u.Plan) : ''),
+        "Billing Month": p.billingMonth || p.month || '',
+        "Amount": p.amount || p.totalAmount || '',
+        "Status": "PAID",
+        "Payment Channel": p.paymentMethod || p.method || 'CASH',
+        "Date Paid": p.datePaid ? new Date(p.datePaid).toLocaleDateString() : (p.timestamp ? new Date(p.timestamp.toMillis()).toLocaleDateString() : '')
+      });
+    });
+
+    if (excelData.length === 0) {
+      alert("No billing records found for the selected month.");
+      if (btn) {
+        btn.innerHTML = oldText;
+        btn.disabled = false;
+      }
+      return;
+    }
+
+    const worksheet = window.XLSX.utils.json_to_sheet(excelData);
+    const colWidths = [
+      { wch: 15 }, { wch: 25 }, { wch: 15 }, { wch: 25 }, { wch: 25 }, 
+      { wch: 30 }, { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 15 }, 
+      { wch: 15 }, { wch: 20 }, { wch: 15 }
+    ];
+    worksheet['!cols'] = colWidths;
+
+    const workbook = window.XLSX.utils.book_new();
+    window.XLSX.utils.book_append_sheet(workbook, worksheet, "Billing Data");
+    
+    const fileName = selectedMonth ? `Billing_Report_${selectedMonth.replace(/\s+/g, '_')}.xlsx` : `Billing_Report_All_Months.xlsx`;
+    window.XLSX.writeFile(workbook, fileName);
+
+    if (btn) {
+      btn.innerHTML = oldText;
+      btn.disabled = false;
+    }
+
+  } catch(e) {
+    console.error("Export Excel Error: ", e);
+    alert("Error exporting Excel: " + e.message);
+    const btn = event ? event.currentTarget : document.querySelector('button[onclick="window.exportBillingExcel()"]');
+    if (btn) {
+      btn.innerHTML = 'Export Failed';
+      btn.disabled = false;
+    }
+  }
+};
