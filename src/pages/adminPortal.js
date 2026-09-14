@@ -5604,31 +5604,33 @@ window.exportBillingExcel = async function(event) {
 
     const excelData = [];
 
-    for (const userId of Object.keys(usersMap)) {
+    // 4. Fetch Unpaid Bills (single optimized query)
+    const billsSnap = await firestore.getDocs(firestore.collectionGroup(db, 'billing_emails'));
+    billsSnap.forEach(bDoc => {
+      const b = bDoc.data();
+      const userId = bDoc.ref.parent.parent.id;
       const u = usersMap[userId];
-      const billsSnap = await firestore.getDocs(firestore.collection(db, `users/${userId}/billing_emails`));
-      billsSnap.forEach(bDoc => {
-        const b = bDoc.data();
-        if (selectedMonth && b.month !== selectedMonth) return;
-        if ((b.status || '').toLowerCase() === 'paid' || (b.status || '').toLowerCase() === 'completed') return;
+      
+      if (!u) return;
+      if (selectedMonth && b.month !== selectedMonth) return;
+      if ((b.status || '').toLowerCase() === 'paid' || (b.status || '').toLowerCase() === 'completed') return;
 
-        excelData.push({
-          "Account Number": u.accountNumber || u.account || '',
-          "Client Name": u.fullName || u.name || '',
-          "Phone": u.phone || u.contactNumber || '',
-          "Email": u.email || '',
-          "Facebook": u.facebook || u.fb || '',
-          "Address": u.address || '',
-          "Location": u.Location || u.location || '',
-          "Plan": u.plan || u.Plan || '',
-          "Billing Month": b.month || '',
-          "Amount": b.amount || b.totalAmount || '',
-          "Status": "UNPAID",
-          "Payment Channel": b.paymentMethod || b.method || '-',
-          "Date Paid": '-'
-        });
+      excelData.push({
+        "Account Number": u.accountNumber || u.account || '',
+        "Client Name": u.fullName || u.name || '',
+        "Phone": u.phone || u.contactNumber || '',
+        "Email": u.email || '',
+        "Facebook": u.facebook || u.fb || '',
+        "Address": u.address || '',
+        "Location": u.Location || u.location || '',
+        "Plan": u.plan || u.Plan || '',
+        "Billing Month": b.month || '',
+        "Amount": b.amount || b.totalAmount || '',
+        "Status": "UNPAID",
+        "Payment Channel": b.paymentMethod || b.method || '-',
+        "Date Paid": '-'
       });
-    }
+    });
 
     const paymentsSnap = await firestore.getDocs(firestore.collection(db, "payments"));
     paymentsSnap.forEach(pDoc => {
