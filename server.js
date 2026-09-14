@@ -2125,37 +2125,39 @@ db.collection('payments').onSnapshot((snapshot) => {
                     }
 
                     if (acct) {
-                        const psidSnap = await db.collection('messenger_psids').where('account', '==', acct).limit(1).get();
+                        const psidSnap = await db.collection('messenger_psids').where('account', '==', acct).get();
                         if (!psidSnap.empty) {
-                            const psid = psidSnap.docs[0].id;
+                            for (const psidDoc of psidSnap.docs) {
+                                const psid = psidDoc.id;
 
-                            // Build specific details
-                            // Date calculations for exact coverage output (e.g. "14-30")
-                            const phTime = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
-                            const paymentDay = phTime.getDate();
-                            const lastDayOfMonth = new Date(phTime.getFullYear(), phTime.getMonth() + 1, 0).getDate();
-                            const paymentMonthName = phTime.toLocaleDateString('en-PH', { month: 'long' });
-                            const coverageText = `${paymentDay}-${lastDayOfMonth}`;
+                                // Build specific details
+                                // Date calculations for exact coverage output (e.g. "14-30")
+                                const phTime = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+                                const paymentDay = phTime.getDate();
+                                const lastDayOfMonth = new Date(phTime.getFullYear(), phTime.getMonth() + 1, 0).getDate();
+                                const paymentMonthName = phTime.toLocaleDateString('en-PH', { month: 'long' });
+                                const coverageText = `${paymentDay}-${lastDayOfMonth}`;
 
-                            let message = `Payment Approved: Your account has been credited and recorded for the month of ${paymentMonthName} (${coverageText}). Thank you for choosing RFiberX!`;
+                                let message = `Payment Approved: Your account has been credited and recorded for the month of ${paymentMonthName} (${coverageText}). Thank you for choosing RFiberX!`;
 
-                            // Send proactive message
-                            await callSendAPI(psid, {
-                                text: message,
-                                quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
-                                    { content_type: "text", title: "Technical Support", payload: "Technical Support" },
-                                    { content_type: "text", title: "Billing", payload: "Billing" },
-                                    { content_type: "text", title: "Apply Now", payload: "Apply Now" },
-                                    { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                                    { content_type: "text", title: "Change Password", payload: "Change Password" },
-                                    { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
-                                    { content_type: "text", title: "Relocation", payload: "Relocation" },
-                                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
-                                    { content_type: "text", title: "Mobile App", payload: "Mobile App" },
-                                    { content_type: "text", title: "Contacts", payload: "Contacts" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" }
-                                ]
-                            });
+                                // Send proactive message
+                                await callSendAPI(psid, {
+                                    text: message,
+                                    quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
+                                        { content_type: "text", title: "Technical Support", payload: "Technical Support" },
+                                        { content_type: "text", title: "Billing", payload: "Billing" },
+                                        { content_type: "text", title: "Apply Now", payload: "Apply Now" },
+                                        { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
+                                        { content_type: "text", title: "Change Password", payload: "Change Password" },
+                                        { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
+                                        { content_type: "text", title: "Relocation", payload: "Relocation" },
+                                        { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
+                                        { content_type: "text", title: "Mobile App", payload: "Mobile App" },
+                                        { content_type: "text", title: "Contacts", payload: "Contacts" },
+                                        { content_type: "text", title: "Cancel", payload: "Cancel" }
+                                    ]
+                                });
+                            }
 
                             // Mark as notified so it doesn't spam
                             await change.doc.ref.update({ botNotifiedPaid: true });
