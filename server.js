@@ -2130,19 +2130,16 @@ db.collection('payments').onSnapshot((snapshot) => {
                             const psid = psidSnap.docs[0].id;
 
                             // Build specific details
-                            const billMonth = data.month || data.billingMonth || data.period || 'your recent billing';
-                            const billAmount = data.amount ? `₱${parseFloat(String(data.amount).replace(/[^0-9.-]/g, '')).toLocaleString()}` : '';
-                            const approvedDate = new Date().toLocaleDateString('en-PH', { timeZone: 'Asia/Manila', month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+                            // Date calculations for exact coverage output (e.g. "14-30")
+                            const phTime = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+                            const paymentDay = phTime.getDate();
+                            const lastDayOfMonth = new Date(phTime.getFullYear(), phTime.getMonth() + 1, 0).getDate();
+                            const paymentMonthName = phTime.toLocaleDateString('en-PH', { month: 'long' });
+                            const coverageText = `${paymentDay}-${lastDayOfMonth}`;
 
-                            let message = `🎉 Great news! Your payment for ${billMonth}`;
-                            if (billAmount) {
-                                message += ` (${billAmount})`;
-                            }
-                            message += ` has been verified and approved by the admin on ${approvedDate}.`;
-                            message += `\n\nYour billing statement is now officially marked as ✅ Paid. Thank you for your prompt payment!`;
+                            let message = `Payment Approved: Your account has been credited and recorded for the month of ${paymentMonthName} (${coverageText}). Thank you for choosing RFiberX!`;
 
                             // Send proactive message
-                            /* 
                             await callSendAPI(psid, {
                                 text: message,
                                 quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
@@ -2159,7 +2156,6 @@ db.collection('payments').onSnapshot((snapshot) => {
                                     { content_type: "text", title: "Cancel", payload: "Cancel" }
                                 ]
                             });
-                            */
 
                             // Mark as notified so it doesn't spam
                             await change.doc.ref.update({ botNotifiedPaid: true });
