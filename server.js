@@ -2310,15 +2310,20 @@ async function queueImageAttachment(imageUrl, sender_psid, language, shouldReply
         isHandover: true
     };
 
-    if (!process.env.ENABLE_AI_RECEIPT) {
+    if (!process.env.ENABLE_AI_RECEIPT || String(process.env.ENABLE_AI_RECEIPT).trim().toLowerCase() !== "true") {
         console.log("📸 Image received from PSID: " + sender_psid + ". Transferring to agent (AI receipt scanner disabled).");
         return shouldReply ? defaultReply : null;
     }
 
     try {
-        const imageResp = await fetch(imageUrl);
-        const buffer = await imageResp.arrayBuffer();
-        const base64Data = Buffer.from(buffer).toString("base64");
+        let base64Data;
+        if (imageUrl.startsWith('data:image/')) {
+            base64Data = imageUrl.split(',')[1];
+        } else {
+            const imageResp = await fetch(imageUrl);
+            const buffer = await imageResp.arrayBuffer();
+            base64Data = Buffer.from(buffer).toString("base64");
+        }
         
         receiptQueue.push({
             psid: sender_psid,
@@ -2332,7 +2337,15 @@ async function queueImageAttachment(imageUrl, sender_psid, language, shouldReply
         console.error("Failed to queue image:", e);
     }
     
-    return shouldReply ? defaultReply : null;
+    if (shouldReply) {
+        return {
+            text: T(
+                "We are checking your payment via our AI Receipt Analyzer. This may take up to 30 seconds, please wait...",
+                "Chine-check namin ang iyong payment gamit ang aming AI Receipt Analyzer. Maaaring tumagal ito ng 30 segundo, mangyaring maghintay..."
+            )
+        };
+    }
+    return null;
 }
 
 async function processImageAttachmentLogic(base64Data, sender_psid, accountNum, language, imageUrl) {
