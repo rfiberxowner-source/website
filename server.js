@@ -2337,15 +2337,7 @@ async function queueImageAttachment(imageUrl, sender_psid, language, shouldReply
         console.error("Failed to queue image:", e);
     }
     
-    if (shouldReply) {
-        return {
-            text: T(
-                "We are checking your payment via our AI Receipt Analyzer. This may take up to 30 seconds, please wait...",
-                "Chine-check namin ang iyong payment gamit ang aming AI Receipt Analyzer. Maaaring tumagal ito ng 30 segundo, mangyaring maghintay..."
-            )
-        };
-    }
-    return null;
+    return shouldReply ? defaultReply : null;
 }
 
 async function processImageAttachmentLogic(base64Data, sender_psid, accountNum, language, imageUrl) {
