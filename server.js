@@ -80,13 +80,24 @@ setInterval(() => processedMessages.clear(), 10 * 60 * 1000); // Clear every 10 
 setInterval(async () => {
     try {
         const now = Date.now();
-        const TIMEOUT_MS = 60 * 60 * 1000; // 1 Hour
+        const TIMEOUT_MS = 30 * 1000; // 30 seconds for testing
 
         // Query all paused users
         const pausedUsers = await db.collection('messenger_psids').where('is_paused', '==', true).get();
         if (pausedUsers.empty) return;
 
         pausedUsers.forEach(async (doc) => {
+            // ONLY ALLOW WHITELISTED TESTERS (Live clients are ignored to prevent annoyance)
+            const ALLOWED_TESTERS = [
+                '28146825618339223', // Rfiberx Blanco
+                '27076770378611516', // Jasper Mangulabnan
+                '27846036101654635', // Angela Calubayan
+                '36533187462992743', // Francis Serrano Agosto
+                '27314329474875273', // Marc S. Cambel
+                'SIMULATOR_TEST'     // Admin Simulator
+            ];
+            if (!ALLOWED_TESTERS.includes(doc.id)) return;
+
             const data = doc.data();
             if (data.lastInteraction) {
                 const lastTime = data.lastInteraction.toMillis();
