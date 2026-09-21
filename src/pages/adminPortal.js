@@ -5378,7 +5378,26 @@ window.initSimulator = async function() {
            }
         }
         if (response.attachment) {
-           const elements = response.attachment.payload.elements;
+           const payload = response.attachment.payload || {};
+           
+           if (payload.template_type === 'button') {
+             html += `
+               <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 0.75rem 1rem; border-radius: 12px; align-self: flex-start; max-width: 75%; font-size: 0.95rem;">
+                 ${(payload.text || '').replace(/\n/g, '<br/>')}
+                 <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                   ${(payload.buttons || []).map(b => {
+                     if (b.type === 'web_url') {
+                       return `<a href="${b.url}" target="_blank" style="display:block; text-align:center; background: #3b82f6; border: none; color: #fff; padding: 0.6rem; border-radius: 4px; font-size: 0.85rem; cursor: pointer; text-decoration: none; font-weight: 600;">${b.title}</a>`;
+                     } else {
+                       return `<button onclick="window.sendSimulatorPayload('${b.payload}')" style="background: #3b82f6; border: none; color: #fff; padding: 0.6rem; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: 600;">${b.title}</button>`;
+                     }
+                   }).join('')}
+                 </div>
+               </div>
+             `;
+           }
+           
+           const elements = payload.elements;
            if (elements) {
              html += `
                <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-self: flex-start; max-width: 90%;">
@@ -5387,7 +5406,13 @@ window.initSimulator = async function() {
                      ${el.image_url ? `<img src="${el.image_url}" style="width:100%; border-radius:4px; margin-bottom:0.5rem;" />` : ''}
                      <div style="font-weight: 600; color: #fff;">${el.title}</div>
                      <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem;">${el.subtitle || ''}</div>
-                     ${el.buttons ? el.buttons.map(b => `<button onclick="window.sendSimulatorPayload('${b.payload}')" style="background: #3b82f6; border: none; color: #fff; padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; width: 100%; margin-top: 0.25rem;">${b.title}</button>`).join('') : ''}
+                     ${el.buttons ? el.buttons.map(b => {
+                       if (b.type === 'web_url') {
+                         return `<a href="${b.url}" target="_blank" style="display:block; text-align:center; background: #3b82f6; border: none; color: #fff; padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; width: 100%; margin-top: 0.25rem; box-sizing: border-box; text-decoration: none;">${b.title}</a>`;
+                       } else {
+                         return `<button onclick="window.sendSimulatorPayload('${b.payload}')" style="background: #3b82f6; border: none; color: #fff; padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; width: 100%; margin-top: 0.25rem;">${b.title}</button>`;
+                       }
+                     }).join('') : ''}
                    </div>
                  `).join('')}
                </div>
