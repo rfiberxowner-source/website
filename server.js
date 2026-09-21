@@ -80,23 +80,13 @@ setInterval(() => processedMessages.clear(), 10 * 60 * 1000); // Clear every 10 
 setInterval(async () => {
     try {
         const now = Date.now();
-        const TIMEOUT_MS = 10 * 1000; 
+        const TIMEOUT_MS = 60 * 60 * 1000; // 1 Hour
 
         // Query all paused users
         const pausedUsers = await db.collection('messenger_psids').where('is_paused', '==', true).get();
         if (pausedUsers.empty) return;
 
         pausedUsers.forEach(async (doc) => {
-            // ONLY ALLOW WHITELISTED TESTERS FOR THE 10-SECOND TEST
-            const ALLOWED_TESTERS = [
-                '28146825618339223', // Rfiberx Blanco
-                '27076770378611516', // Jasper Mangulabnan
-                '27846036101654635', // Angela Calubayan
-                '36533187462992743', // Francis Serrano Agosto
-                '27314329474875273'  // Marc S. Cambel
-            ];
-            if (!ALLOWED_TESTERS.includes(doc.id)) return;
-
             const data = doc.data();
             if (data.lastInteraction) {
                 const lastTime = data.lastInteraction.toMillis();
@@ -952,11 +942,41 @@ Our team will check if your area is serviceable and contact you for installation
             }
         } else if (userSessions.get(sender_psid) === 'CHANGE_PASSWORD_STEP_1') {
             if (msg.includes('192.168.1.1')) {
-                return { text: "Here is the tutorial for 192.168.1.1:\n\n1. Login with user/user.\n2. Go to WLAN > Security.\n3. Change WPA Passphrase and Apply.\n\n*(Note: Some modem models might have slightly different menus. Try to find the same keywords or steps shown in the tutorial!)*\n\n▶️ Watch Video Tutorial here:\nhttps://rfiberx.net/videos/192.168.1.1.mp4\n\n(If this was the wrong gateway, you can reply 'Cancel')." };
+                return {
+                    attachment: {
+                        type: "template",
+                        payload: {
+                            template_type: "button",
+                            text: "Here is the tutorial for 192.168.1.1:\n\n1. Login with user/user.\n2. Go to WLAN > Security.\n3. Change WPA Passphrase and Apply.\n\n*(Note: Some modem models might have slightly different menus. Try to find the same keywords or steps shown in the tutorial!)*\n\n(If this was the wrong gateway, you can reply 'Cancel').",
+                            buttons: [
+                                {
+                                    type: "web_url",
+                                    url: "https://rfiberx.net/videos/192.168.1.1.mp4",
+                                    title: "▶️ Watch Video Tutorial"
+                                }
+                            ]
+                        }
+                    }
+                };
             } else if (msg.includes('192.168.100.1')) {
                 return { text: "Here is the tutorial for 192.168.100.1:\n\n1. Login with telecomadmin/admintelecom.\n2. Go to WLAN > Security.\n3. Change WPA Passphrase and Apply.\n\n*(Note: Some modem models might have slightly different menus. Try to find the same keywords or steps shown in the tutorial!)*\n\n(If this was the wrong gateway, you can reply with a different one, or reply 'Cancel' to stop)." };
             } else if (msg.includes('192.168.8.1')) {
-                return { text: "Here is the tutorial for 192.168.8.1:\n\n1. Login with user/user.\n2. Go to Wi-Fi Basic Settings.\n3. Change Wi-Fi Password and Save.\n\n*(Note: Some modem models might have slightly different menus. Try to find the same keywords or steps shown in the tutorial!)*\n\n▶️ Watch Video Tutorial here:\nhttps://rfiberx.net/videos/192.168.8.1.mp4\n\n(If this was the wrong gateway, you can reply with a different one, or reply 'Cancel' to stop)." };
+                return {
+                    attachment: {
+                        type: "template",
+                        payload: {
+                            template_type: "button",
+                            text: "Here is the tutorial for 192.168.8.1:\n\n1. Login with user/user.\n2. Go to Wi-Fi Basic Settings.\n3. Change Wi-Fi Password and Save.\n\n*(Note: Some modem models might have slightly different menus. Try to find the same keywords or steps shown in the tutorial!)*\n\n(If this was the wrong gateway, you can reply with a different one, or reply 'Cancel' to stop).",
+                            buttons: [
+                                {
+                                    type: "web_url",
+                                    url: "https://rfiberx.net/videos/192.168.8.1.mp4",
+                                    title: "▶️ Watch Video Tutorial"
+                                }
+                            ]
+                        }
+                    }
+                };
             } else {
                 return { text: "Please reply with your exact gateway URL (e.g. '192.168.1.1', '192.168.100.1', or '192.168.8.1') so I can send the tutorial." };
             }
