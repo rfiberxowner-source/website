@@ -169,6 +169,14 @@ async function processReceiptQueue() {
     // Peek at the first task
     const task = receiptQueue[0];
     
+    // Check if the image has expired (been in queue for > 30 minutes)
+    if (task.timestamp && (Date.now() - task.timestamp > 1800000)) {
+        console.log(`[Queue] Dropping image for PSID ${task.psid} (Expired after 30 minutes in standby)`);
+        receiptQueue.shift();
+        isProcessingQueue = false;
+        return;
+    }
+    
     try {
         console.log(`[Queue] Processing receipt for PSID: ${task.psid}`);
         // 1. Check if the user has an account connected
@@ -804,8 +812,13 @@ async function getAutoReply(text, sender_psid, language, isQuickReply = false) {
                 topic = "internet plans";
             }
 
+            let handoverText = `You are transferred to the agent if you want to talk about ${topic}. Please wait for our team to be with you shortly.`;
+            if (topic === "wifi password" || topic === "technical support" || topic === "no internet or red light flashing" || topic === "slow internet") {
+                handoverText += `\n\nPlease provide the following details so we can assist you faster:\n- Full Name\n- Full Address\n- Phone Number\n\nYou can always call the support using the phone number: 09913746474, email at support@rfiberx.net, or message the owner (Rendell Blanco).`;
+            }
+
             return {
-                text: `You are transferred to the agent if you want to talk about ${topic}. Please wait for our team to be with you shortly.`,
+                text: handoverText,
                 isHandover: true
             };
         }
@@ -838,8 +851,8 @@ async function getAutoReply(text, sender_psid, language, isQuickReply = false) {
             if (msg.match(/^(slow|mabagal|bagal|slow internet)$/i)) {
                 return {
                     text: T(`Hi ${clientName},\n\nThank you for reaching out. I am sorry to hear you are experiencing slow internet speeds, and I am happy to help get this sorted out for you.\n\nIn most cases, a quick restart of your equipment will refresh the connection and restore your normal speeds. Could you please try this quick step?\n\nRestart your equipment: Unplug the power cable from both your modem and your router. Wait for about 10 seconds, then plug them both back in. It will take a few minutes for the lights to stabilize and the connection to return.\n\nIf your internet is still running slow after doing this, please let me know if you wanna try another way to resolve the problem. Tell me if you wanna change the wifi password or wanna contact the support. If you choose to contact support, please provide the following details so we can assist you faster:\n\n- Full Name\n- Full Address\n- Phone Number\n\nYou can always call the support using the phone number: 09913746474, email at support@rfiberx.net, or message the owner (Rendell Blanco).`, `Hi ${clientName},\n\nSalamat sa pag-reach out. Nakakalungkot malaman na nakakaranas ka ng slow internet, tutulungan kita na maayos ito.\n\nKadalasan, ang pag-restart ng equipment ay makakabalik sa normal na speed. Pwede mo bang subukan ang quick step na ito?\n\nI-restart ang equipment: Tanggalin sa saksakan ang modem at router. Maghintay ng 10 segundo bago isaksak ulit. Maghihintay ng ilang minuto para bumalik ang connection at umilaw ng tama ang ilaw.\n\nKung mabagal pa rin ang internet mo pagkatapos gawin ito, sabihin lang sa akin. Kung gusto mong palitan ang wifi password o tawagan ang support, pakibigay ang sumusunod na detalye para mas mabilis ka naming matulungan:\n\n- Buong Pangalan\n- Buong Address\n- Phone Number\n\nPwede kang tumawag sa 09913746474, mag-email sa support@rfiberx.net, o mag-message sa owner (Rendell Blanco).`),
-                    quick_replies: [{ content_type: "text", title: "Change Password", payload: "CHANGE_PASSWORD" },
-                        { content_type: "text", title: "Agent", payload: "AGENT_SLOW_INTERNET" },
+                    quick_replies: [{ content_type: "text", title: "Change Password", payload: "Change Password" },
+                        { content_type: "text", title: "Agent", payload: "Agent" },
                         { content_type: "text", title: "Stop", payload: "Stop" },
                                     { content_type: "text", title: "Cancel", payload: "Cancel" }
                                 ]
@@ -848,7 +861,7 @@ async function getAutoReply(text, sender_psid, language, isQuickReply = false) {
                 return {
                     text: T(`Hi ${clientName},\n\nI am sorry to hear that your internet is completely down. I know how disruptive it is to lose your connection, and I am here to help get you back online as quickly as possible.\n\nTo help restore your service, please try the following steps:\n\nUnplug the power cord from both your modem and your router. Leave them unplugged for a full 10 seconds, then plug them back in. Wait about 3 to 5 minutes for the devices to fully reboot and establish a connection.\n\nAfter restarting, take a look at the lights on your modem. If the "Internet" or "Online" light is completely off or flashing red, it indicates the signal is not reaching your home.\n\nIf your internet is still down or the lights are showing an error after trying these steps, tap "Agent" and I will redirect you to our agent team to further solve the problem. Please also provide the following details so we can assist you faster:\n\n- Full Name\n- Full Address\n- Phone Number\n\nYou can always call the support using the phone number: 09913746474, email at support@rfiberx.net, or message the owner (Rendell Blanco).`, `Hi ${clientName},\n\nSalamat sa pag-reach out. Nakakalungkot malaman na nawalan ka ng internet connection. Nandito ako para tulungan kang maayos ito nang mabilis.\n\nPara ma-restore ang service mo, paki-try itong mga steps:\n\nTanggalin sa saksakan ang modem at router. Maghintay ng 10 segundo bago isaksak ulit. Maghintay ng 3 hanggang 5 minuto para mag-reboot nang maayos.\n\nPagkatapos mag-restart, tignan ang ilaw sa modem. Kung nakapatay o nag-bliblink ng pula ang "Internet" o "Online" light, ibig sabihin walang signal na nakakarating sa inyo.\n\nKung down pa rin o may error sa ilaw, i-tap ang "Agent" para ma-redirect ka sa aming team. Pakibigay na rin ang sumusunod na detalye para mas mabilis ka naming matulungan:\n\n- Buong Pangalan\n- Buong Address\n- Phone Number\n\nPwede ka ring tumawag sa 09913746474, mag-email sa support@rfiberx.net, o mag-message sa owner (Rendell Blanco).`),
                     quick_replies: [
-                        { content_type: "text", title: "Agent", payload: "AGENT_NO_INTERNET" },
+                        { content_type: "text", title: "Agent", payload: "Agent" },
                         { content_type: "text", title: "Cancel", payload: "Cancel" }
                     ]
                 };
@@ -939,41 +952,11 @@ Our team will check if your area is serviceable and contact you for installation
             }
         } else if (userSessions.get(sender_psid) === 'CHANGE_PASSWORD_STEP_1') {
             if (msg.includes('192.168.1.1')) {
-                return {
-                    attachment: {
-                        type: "template",
-                        payload: {
-                            template_type: "button",
-                            text: "Here is the tutorial for 192.168.1.1:\n\n1. Login with user/user.\n2. Go to WLAN > Security.\n3. Change WPA Passphrase and Apply.\n\n*(Note: Some modem models might have slightly different menus. Try to find the same keywords or steps shown in the tutorial!)*\n\n(If this was the wrong gateway, you can reply 'Cancel').",
-                            buttons: [
-                                {
-                                    type: "web_url",
-                                    url: "https://rfiberx.net/videos/192.168.1.1.mp4",
-                                    title: "▶️ Watch Video Tutorial"
-                                }
-                            ]
-                        }
-                    }
-                };
+                return { text: "Here is the tutorial for 192.168.1.1:\n\n1. Login with user/user.\n2. Go to WLAN > Security.\n3. Change WPA Passphrase and Apply.\n\n*(Note: Some modem models might have slightly different menus. Try to find the same keywords or steps shown in the tutorial!)*\n\n▶️ Watch Video Tutorial here:\nhttps://rfiberx.net/videos/192.168.1.1.mp4\n\n(If this was the wrong gateway, you can reply 'Cancel')." };
             } else if (msg.includes('192.168.100.1')) {
                 return { text: "Here is the tutorial for 192.168.100.1:\n\n1. Login with telecomadmin/admintelecom.\n2. Go to WLAN > Security.\n3. Change WPA Passphrase and Apply.\n\n*(Note: Some modem models might have slightly different menus. Try to find the same keywords or steps shown in the tutorial!)*\n\n(If this was the wrong gateway, you can reply with a different one, or reply 'Cancel' to stop)." };
             } else if (msg.includes('192.168.8.1')) {
-                return {
-                    attachment: {
-                        type: "template",
-                        payload: {
-                            template_type: "button",
-                            text: "Here is the tutorial for 192.168.8.1:\n\n1. Login with user/user.\n2. Go to Wi-Fi Basic Settings.\n3. Change Wi-Fi Password and Save.\n\n*(Note: Some modem models might have slightly different menus. Try to find the same keywords or steps shown in the tutorial!)*\n\n(If this was the wrong gateway, you can reply with a different one, or reply 'Cancel' to stop).",
-                            buttons: [
-                                {
-                                    type: "web_url",
-                                    url: "https://rfiberx.net/videos/192.168.8.1.mp4",
-                                    title: "▶️ Watch Video Tutorial"
-                                }
-                            ]
-                        }
-                    }
-                };
+                return { text: "Here is the tutorial for 192.168.8.1:\n\n1. Login with user/user.\n2. Go to Wi-Fi Basic Settings.\n3. Change Wi-Fi Password and Save.\n\n*(Note: Some modem models might have slightly different menus. Try to find the same keywords or steps shown in the tutorial!)*\n\n▶️ Watch Video Tutorial here:\nhttps://rfiberx.net/videos/192.168.8.1.mp4\n\n(If this was the wrong gateway, you can reply with a different one, or reply 'Cancel' to stop)." };
             } else {
                 return { text: "Please reply with your exact gateway URL (e.g. '192.168.1.1', '192.168.100.1', or '192.168.8.1') so I can send the tutorial." };
             }
@@ -1798,7 +1781,7 @@ Our team will check if your area is serviceable and contact you for installation
                 quick_replies: [
                     { content_type: "text", title: "Yes", payload: "Yes" },
                     { content_type: "text", title: "Cancel", payload: "Cancel" },
-                    { content_type: "text", title: "Agent", payload: "URGENT_TECH_AGENT" }
+                    { content_type: "text", title: "Agent", payload: "Agent" }
                 ]
             };
 
@@ -1808,7 +1791,7 @@ Our team will check if your area is serviceable and contact you for installation
                 text: T("Good day! To apply for a new RFiberX internet connection, please provide the following details:\n• Full Name:\n• Complete Address:\n• Phone Number:\n• Plan or Speed you want:\n\nWould you like to see our available plans first?\n\nYou can also always call the support using the phone number: 09913746474, email at support@rfiberx.net, or message the owner (Rendell Blanco).", "Magandang araw! Para mag-apply ng bagong RFiberX connection, pakibigay ang sumusunod:\n• Full Name:\n• Complete Address:\n• Phone Number:\n• Plan o Speed na gusto mo:\n\nGusto mo bang makita muna ang aming available plans?\n\nPwede ka rin tumawag sa 09913746474, mag-email sa support@rfiberx.net, o mag-message sa owner (Rendell Blanco)."),
                 quick_replies: [{ content_type: "text", title: "Yes", payload: "Yes" },
                     { content_type: "text", title: "No", payload: "No" },
-                    { content_type: "text", title: "Agent", payload: "URGENT_TECH_AGENT" },
+                    { content_type: "text", title: "Agent", payload: "Agent" },
                                     { content_type: "text", title: "Cancel", payload: "Cancel" }
                                 ]
             };
