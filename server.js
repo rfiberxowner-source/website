@@ -2116,6 +2116,16 @@ getAutoReply = async function (text, sender_psid, language) {
     let reply = await originalGetAutoReply(text, sender_psid, language);
     if (!reply) return null;
 
+    // Ensure ALL handovers get the Chatbot unpause button
+    if (reply.isHandover) {
+        if (!reply.quick_replies) {
+            reply.quick_replies = [];
+        }
+        if (!reply.quick_replies.find(qr => qr.payload === 'Chatbot')) {
+            reply.quick_replies.push({ content_type: "text", title: "Chatbot", payload: "Chatbot" });
+        }
+    }
+
     // Check if they have a pending bill
     const recovery = accountRecoveryData.get(sender_psid);
     if (recovery && recovery.account) {
