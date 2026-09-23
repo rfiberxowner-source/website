@@ -80,7 +80,7 @@ setInterval(() => processedMessages.clear(), 10 * 60 * 1000); // Clear every 10 
 setInterval(async () => {
     try {
         const now = Date.now();
-        const TIMEOUT_MS = 30 * 1000; // 30 seconds for testing
+        const TIMEOUT_MS = 60 * 60 * 1000; // 1 Hour
 
         // Query all paused users
         const pausedUsers = await db.collection('messenger_psids').where('is_paused', '==', true).get();
