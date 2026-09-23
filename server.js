@@ -80,7 +80,7 @@ setInterval(() => processedMessages.clear(), 10 * 60 * 1000); // Clear every 10 
 setInterval(async () => {
     try {
         const now = Date.now();
-        const TIMEOUT_MS = 30 * 1000; // 30 seconds for testing
+        const TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 Hours
 
         // Query all paused users
         const pausedUsers = await db.collection('messenger_psids').where('is_paused', '==', true).get();
@@ -1649,7 +1649,9 @@ Our team will check if your area is serviceable and contact you for installation
         ai_decision = 'MOBILE_APP';
     } else if (msg.match(/^(contacts|contact support|phone number|email|call support)$/i)) {
         ai_decision = 'CONTACTS';
-    } else if (msg.match(/^(hello|hi|good morning|good afternoon|good evening|test|get started)$/i)) {
+    } else if (msg.match(/^(get started)$/i)) {
+        ai_decision = 'GET_STARTED';
+    } else if (msg.match(/^(hello|hi|good morning|good afternoon|good evening|test|menu)$/i)) {
         ai_decision = 'GREETING';
     } else if (msg.match(/^(plans|packages|magkano plan|internet plans|speeds|options)$/i)) {
         ai_decision = 'PLANS';
@@ -2009,6 +2011,25 @@ You can also always call the support using the phone number: 09913746474, email 
 
             userSessions.set(sender_psid, 'ACCOUNT_INQUIRY_NAME');
             return { text: T("To help you find your account details, please provide your Full Name or the name you remember for your account.", "Para mahanap ang iyong account details, pakibigay ang iyong Full Name o ang pangalang naaalala mo na nakarehistro sa iyong account.") };
+
+        case 'GET_STARTED':
+            return {
+                text: T(
+                    "Welcome to RFiberX! 🌐 I am your automated virtual assistant, here to make your internet experience seamless.\n\nI can instantly help you with:\n💳 Billing & Payments\n🛠️ Technical Support & Internet Issues\n📝 Applying for a New Connection\n🔒 Changing your WiFi Password\n\nHow can I assist you today? Please choose an option below, or type your specific question:",
+                    "Welcome sa RFiberX! 🌐 Ako ang iyong virtual assistant. Nandito ako para tumulong sa iyong internet connection!\n\nKaya kitang tulungan agad sa mga sumusunod:\n💳 Billing at Payments\n🛠️ Technical Support at Pag-troubleshoot\n📝 Pag-apply ng Bagong Connection\n🔒 Pagpalit ng iyong WiFi Password\n\nPaano kita matutulungan ngayon? Pumili lang sa mga options sa ibaba, o i-type ang iyong katanungan:"
+                ),
+                quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
+                    { content_type: "text", title: "Technical Support", payload: "Technical Support" },
+                    { content_type: "text", title: "Billing", payload: "Billing" },
+                    { content_type: "text", title: "Apply Now", payload: "Apply Now" },
+                    { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
+                    { content_type: "text", title: "Change Password", payload: "Change Password" },
+                    { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
+                    { content_type: "text", title: "Relocation", payload: "Relocation" },
+                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
+                    { content_type: "text", title: "Contacts", payload: "Contacts" }
+                ]
+            };
 
         case 'GREETING':
             return {
