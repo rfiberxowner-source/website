@@ -74,72 +74,6 @@ app.get('/webhook', (req, res) => {
 const processedMessages = new Set();
 setInterval(() => processedMessages.clear(), 10 * 60 * 1000); // Clear every 10 mins to prevent memory leak
 
-// =========================================================================
-// ⏱️ PROACTIVE AGENT TIMEOUT WORKER
-// =========================================================================
-setInterval(async () => {
-    try {
-        const now = Date.now();
-        const TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 Hours
-
-        // Query all paused users
-        const pausedUsers = await db.collection('messenger_psids').where('is_paused', '==', true).get();
-        if (pausedUsers.empty) return;
-
-        pausedUsers.forEach(async (doc) => {
-            // ONLY ALLOW WHITELISTED TESTERS (Live clients are ignored to prevent annoyance)
-            const ALLOWED_TESTERS = [
-                '28146825618339223', // Rfiberx Blanco
-                '27076770378611516', // Jasper Mangulabnan
-                '27846036101654635', // Angela Calubayan
-                '36533187462992743', // Francis Serrano Agosto
-                '27314329474875273', // Marc S. Cambel
-                'SIMULATOR_TEST'     // Admin Simulator
-            ];
-            if (!ALLOWED_TESTERS.includes(doc.id)) return;
-
-            const data = doc.data();
-            if (data.lastInteraction) {
-                const lastTime = data.lastInteraction.toMillis();
-                if (now - lastTime > TIMEOUT_MS) {
-                    console.log(`⏰ Proactive timeout detected for PSID ${doc.id}. Unpausing and sending main menu.`);
-                    
-                    // Unpause them
-                    await db.collection('messenger_psids').doc(doc.id).set({
-                        is_paused: false,
-                        active_complaint_id: null,
-                        active_apply_id: null
-                    }, { merge: true });
-
-                    // Send the Main Menu (GREETING)
-                    const language = data.language || 'en';
-                    const tl = language === 'tl';
-                    const T = (en, tag) => tl ? tag : en;
-                    
-                    await callSendAPI(doc.id, {
-                        text: T("Hello! I am the RFiberX Auto-Bot. How can I help you today? Please choose from the options below, or type your specific question:", "Hello! Ako ang RFiberX Auto-Bot. Paano kita matutulungan ngayon? Pumili lang sa mga options sa ibaba, o i-type ang iyong katanungan:"),
-                        quick_replies: [
-                    { content_type: "text", title: "Technical Support", payload: "Technical Support" },
-                    { content_type: "text", title: "Billing", payload: "Billing" },
-                    { content_type: "text", title: "Change Password", payload: "Change Password" },
-                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
-                    { content_type: "text", title: "Apply Now", payload: "Apply Now" },
-                    { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                    { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
-                    { content_type: "text", title: "Relocation", payload: "Relocation" },
-                    { content_type: "text", title: "Mobile App", payload: "Mobile App" },
-                    { content_type: "text", title: "Contacts", payload: "Contacts" },
-                    { content_type: "text", title: "Cancel", payload: "Cancel" }
-
-                        ]
-                    });
-                }
-            }
-        });
-    } catch (err) {
-        console.error("Error in proactive timeout worker:", err);
-    }
-}, 5000); // Check every 5 seconds
 
 
 // =========================================================================
@@ -379,14 +313,6 @@ app.post('/webhook', (req, res) => {
 
                     const now = Date.now();
                     let shouldProcessMessage = true;
-
-                    const ONE_HOUR_MS = 60 * 60 * 1000; // 1 hour inactivity timer
-                    if (is_paused && lastInteractionTime && (now - lastInteractionTime > ONE_HOUR_MS)) {
-                        console.log(`⏰ 1 hour of silence detected for PSID ${sender_psid}. Auto-resuming chatbot and clearing old tickets.`);
-                        is_paused = false;
-                        active_complaint_id = null;
-                        active_apply_id = null;
-                    }
 
                     // Reset complaint tracking if global stopper used
                     const incomingText = webhook_event.message?.text || "";
