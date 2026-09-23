@@ -119,18 +119,18 @@ setInterval(async () => {
                     await callSendAPI(doc.id, {
                         text: T("Hello! I am the RFiberX Auto-Bot. How can I help you today? Please choose from the options below, or type your specific question:", "Hello! Ako ang RFiberX Auto-Bot. Paano kita matutulungan ngayon? Pumili lang sa mga options sa ibaba, o i-type ang iyong katanungan:"),
                         quick_replies: [
-                            { content_type: "text", title: "Agent", payload: "Agent" },
-                            { content_type: "text", title: "Technical Support", payload: "Technical Support" },
-                            { content_type: "text", title: "Billing", payload: "Billing" },
-                            { content_type: "text", title: "Apply Now", payload: "Apply Now" },
-                            { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                            { content_type: "text", title: "Change Password", payload: "Change Password" },
-                            { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
-                            { content_type: "text", title: "Relocation", payload: "Relocation" },
-                            { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
-                            { content_type: "text", title: "Mobile App", payload: "Mobile App" },
-                            { content_type: "text", title: "Contacts", payload: "Contacts" },
-                            { content_type: "text", title: "Cancel", payload: "Cancel" }
+                    { content_type: "text", title: "Technical Support", payload: "Technical Support" },
+                    { content_type: "text", title: "Billing", payload: "Billing" },
+                    { content_type: "text", title: "Change Password", payload: "Change Password" },
+                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
+                    { content_type: "text", title: "Apply Now", payload: "Apply Now" },
+                    { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
+                    { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
+                    { content_type: "text", title: "Relocation", payload: "Relocation" },
+                    { content_type: "text", title: "Mobile App", payload: "Mobile App" },
+                    { content_type: "text", title: "Contacts", payload: "Contacts" },
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+
                         ]
                     });
                 }
@@ -522,9 +522,7 @@ app.post('/webhook', (req, res) => {
                                         text: "Welcome to RFiberX! To serve you better, please choose your preferred language.\n\nMaligayang pagdating sa RFiberX! Upang mas mapaglingkuran ka namin, mangyaring piliin ang iyong wika.",
                                         quick_replies: [{ content_type: "text", title: "English", payload: "LANG_EN" },
                                             { content_type: "text", title: "Tagalog", payload: "LANG_TL" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                                     });
                                     return; // Stop processing, wait for their choice
                                 }
@@ -742,9 +740,7 @@ function returnBillingMenuOrReceipt(sender_psid, prefixText) {
         quick_replies: [
             { content_type: "text", title: "Balance", payload: "Balance" },
             { content_type: "text", title: "Payment", payload: "Payment" },
-            { content_type: "text", title: "Cancel", payload: "Cancel" },
-            { content_type: "text", title: "Agent", payload: "Agent" }
-        ]
+            { content_type: "text", title: "Cancel", payload: "Cancel" }]
     };
 }
 async function getAutoReply(text, sender_psid, language, isQuickReply = false) {
@@ -830,18 +826,19 @@ async function getAutoReply(text, sender_psid, language, isQuickReply = false) {
             accountRecoveryData.delete(sender_psid);
             return {
                 text: T("Okay, we've cancelled that request. How else can I help you today?", "Okay, na-cancel na namin ang request na iyon. Paano pa kita matutulungan ngayon?"),
-                quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
+                quick_replies: [
                     { content_type: "text", title: "Technical Support", payload: "Technical Support" },
                     { content_type: "text", title: "Billing", payload: "Billing" },
+                    { content_type: "text", title: "Change Password", payload: "Change Password" },
+                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
                     { content_type: "text", title: "Apply Now", payload: "Apply Now" },
                     { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                    { content_type: "text", title: "Change Password", payload: "Change Password" },
                     { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
                     { content_type: "text", title: "Relocation", payload: "Relocation" },
-                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
                     { content_type: "text", title: "Mobile App", payload: "Mobile App" },
                     { content_type: "text", title: "Contacts", payload: "Contacts" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+
                                 ]
             };
         }
@@ -853,7 +850,7 @@ async function getAutoReply(text, sender_psid, language, isQuickReply = false) {
                 return {
                     text: T(`Hi ${clientName},\n\nThank you for reaching out. I am sorry to hear you are experiencing slow internet speeds, and I am happy to help get this sorted out for you.\n\nIn most cases, a quick restart of your equipment will refresh the connection and restore your normal speeds. Could you please try this quick step?\n\nRestart your equipment: Unplug the power cable from both your modem and your router. Wait for about 10 seconds, then plug them both back in. It will take a few minutes for the lights to stabilize and the connection to return.\n\nIf your internet is still running slow after doing this, please let me know if you wanna try another way to resolve the problem. Tell me if you wanna change the wifi password or wanna contact the support. If you choose to contact support, please provide the following details so we can assist you faster:\n\n- Full Name\n- Full Address\n- Phone Number\n\nYou can always call the support using the phone number: 09913746474, email at support@rfiberx.net, or message the owner (Rendell Blanco).`, `Hi ${clientName},\n\nSalamat sa pag-reach out. Nakakalungkot malaman na nakakaranas ka ng slow internet, tutulungan kita na maayos ito.\n\nKadalasan, ang pag-restart ng equipment ay makakabalik sa normal na speed. Pwede mo bang subukan ang quick step na ito?\n\nI-restart ang equipment: Tanggalin sa saksakan ang modem at router. Maghintay ng 10 segundo bago isaksak ulit. Maghihintay ng ilang minuto para bumalik ang connection at umilaw ng tama ang ilaw.\n\nKung mabagal pa rin ang internet mo pagkatapos gawin ito, sabihin lang sa akin. Kung gusto mong palitan ang wifi password o tawagan ang support, pakibigay ang sumusunod na detalye para mas mabilis ka naming matulungan:\n\n- Buong Pangalan\n- Buong Address\n- Phone Number\n\nPwede kang tumawag sa 09913746474, mag-email sa support@rfiberx.net, o mag-message sa owner (Rendell Blanco).`),
                     quick_replies: [{ content_type: "text", title: "Change Password", payload: "Change Password" },
-                        { content_type: "text", title: "Agent", payload: "Agent" },
+                        
                         { content_type: "text", title: "Stop", payload: "Stop" },
                                     { content_type: "text", title: "Cancel", payload: "Cancel" }
                                 ]
@@ -862,7 +859,7 @@ async function getAutoReply(text, sender_psid, language, isQuickReply = false) {
                 return {
                     text: T(`Hi ${clientName},\n\nI am sorry to hear that your internet is completely down. I know how disruptive it is to lose your connection, and I am here to help get you back online as quickly as possible.\n\nTo help restore your service, please try the following steps:\n\nUnplug the power cord from both your modem and your router. Leave them unplugged for a full 10 seconds, then plug them back in. Wait about 3 to 5 minutes for the devices to fully reboot and establish a connection.\n\nAfter restarting, take a look at the lights on your modem. If the "Internet" or "Online" light is completely off or flashing red, it indicates the signal is not reaching your home.\n\nIf your internet is still down or the lights are showing an error after trying these steps, tap "Agent" and I will redirect you to our agent team to further solve the problem. Please also provide the following details so we can assist you faster:\n\n- Full Name\n- Full Address\n- Phone Number\n\nYou can always call the support using the phone number: 09913746474, email at support@rfiberx.net, or message the owner (Rendell Blanco).`, `Hi ${clientName},\n\nSalamat sa pag-reach out. Nakakalungkot malaman na nawalan ka ng internet connection. Nandito ako para tulungan kang maayos ito nang mabilis.\n\nPara ma-restore ang service mo, paki-try itong mga steps:\n\nTanggalin sa saksakan ang modem at router. Maghintay ng 10 segundo bago isaksak ulit. Maghintay ng 3 hanggang 5 minuto para mag-reboot nang maayos.\n\nPagkatapos mag-restart, tignan ang ilaw sa modem. Kung nakapatay o nag-bliblink ng pula ang "Internet" o "Online" light, ibig sabihin walang signal na nakakarating sa inyo.\n\nKung down pa rin o may error sa ilaw, i-tap ang "Agent" para ma-redirect ka sa aming team. Pakibigay na rin ang sumusunod na detalye para mas mabilis ka naming matulungan:\n\n- Buong Pangalan\n- Buong Address\n- Phone Number\n\nPwede ka ring tumawag sa 09913746474, mag-email sa support@rfiberx.net, o mag-message sa owner (Rendell Blanco).`),
                     quick_replies: [
-                        { content_type: "text", title: "Agent", payload: "Agent" },
+                        
                         { content_type: "text", title: "Cancel", payload: "Cancel" }
                     ]
                 };
@@ -923,9 +920,7 @@ Our team will check if your area is serviceable and contact you for installation
                 userSessions.delete(sender_psid);
                 return {
                     text: "Thank you for applying for a new connection! Your details have been received. Please wait for an agent to respond to your application and discuss the next steps.\n\nIf you want to cancel this application or start a new topic, you can click the 'Cancel' button below or type 'Cancel'.",
-                    quick_replies: [{ content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ],
+                    quick_replies: [{ content_type: "text", title: "Cancel", payload: "Cancel" }],
                     isHandover: true
                 };
             } else {
@@ -935,9 +930,7 @@ Our team will check if your area is serviceable and contact you for installation
             userSessions.delete(sender_psid); // Clear memory state
             return {
                 text: "Thank you for applying for a new connection! Your details have been received. Please wait for an agent to respond to your application and discuss the next steps.\n\nIf you want to cancel this application or start a new topic, you can click the 'Cancel' button below or type 'Cancel'.",
-                quick_replies: [{ content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ],
+                quick_replies: [{ content_type: "text", title: "Cancel", payload: "Cancel" }],
                 isHandover: true
             };
         } else if (userSessions.get(sender_psid) === 'AREA_INQUIRY_STEP_1') {
@@ -1019,9 +1012,7 @@ Our team will check if your area is serviceable and contact you for installation
                             text: "Thank you.\n\nBy the way, we now have a mobile app! You can download it here:\nhttps://expo.dev/accounts/lyntester2000/projects/rfiberx/builds/967ad66c-2ecb-4133-a608-28a72ca2600d\n\nOr scan the QR code above.\n\nHave you already downloaded our mobile app?",
                             quick_replies: [{ content_type: "text", title: "Yes, I have it", payload: "Yes" },
                                 { content_type: "text", title: "No, not yet", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                         };
                     }
                 } catch (e) { }
@@ -1053,9 +1044,7 @@ Our team will check if your area is serviceable and contact you for installation
                         quick_replies: [
                             { content_type: "text", title: "Yes", payload: "Yes" },
                             { content_type: "text", title: "No", payload: "No" },
-                            { content_type: "text", title: "Cancel", payload: "Cancel" },
-                            { content_type: "text", title: "Agent", payload: "Agent" }
-                        ]
+                            { content_type: "text", title: "Cancel", payload: "Cancel" }]
                     };
                 } else {
                     return { text: "We couldn't find an account with that name. Please try another name or type 'Cancel' to stop." };
@@ -1098,9 +1087,7 @@ Our team will check if your area is serviceable and contact you for installation
                             text: `Great! Your Account Number is ${accountNum}.\n\nBy the way, we now have a mobile app! You can download it here:\nhttps://expo.dev/accounts/lyntester2000/projects/rfiberx/builds/967ad66c-2ecb-4133-a608-28a72ca2600d\n\nOr scan the QR code above.\n\nHave you already downloaded our mobile app?`,
                             quick_replies: [{ content_type: "text", title: "Yes, I have it", payload: "Yes" },
                                 { content_type: "text", title: "No, not yet", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                         };
                     }
                 } catch (e) { }
@@ -1116,9 +1103,7 @@ Our team will check if your area is serviceable and contact you for installation
                         quick_replies: [
                             { content_type: "text", title: "Yes", payload: "Yes" },
                             { content_type: "text", title: "No", payload: "No" },
-                            { content_type: "text", title: "Cancel", payload: "Cancel" },
-                            { content_type: "text", title: "Agent", payload: "Agent" }
-                        ]
+                            { content_type: "text", title: "Cancel", payload: "Cancel" }]
                     };
                 } else {
                     userSessions.set(sender_psid, 'ACCOUNT_RECOVERY_NAME');
@@ -1154,9 +1139,7 @@ Our team will check if your area is serviceable and contact you for installation
                             text: `Verification successful!\n\nBy the way, we now have a mobile app! You can download it here:\nhttps://expo.dev/accounts/lyntester2000/projects/rfiberx/builds/967ad66c-2ecb-4133-a608-28a72ca2600d\n\nOr scan the QR code above.\n\nHave you already downloaded our mobile app?`,
                             quick_replies: [{ content_type: "text", title: "Yes, I have it", payload: "Yes" },
                                 { content_type: "text", title: "No, not yet", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                         };
                     }
                 } catch (e) { }
@@ -1191,9 +1174,7 @@ Our team will check if your area is serviceable and contact you for installation
                 text: `${replyText}\n\n${nextText}\n\nWould you also like to see your password?`,
                 quick_replies: [{ content_type: "text", title: "Yes", payload: "Yes" },
                     { content_type: "text", title: "No", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
             };
         } else if (userSessions.get(sender_psid) === 'ASK_DOWNLOAD_APP') {
             let replyText = "Awesome! Let's continue.";
@@ -1251,9 +1232,7 @@ Our team will check if your area is serviceable and contact you for installation
                         text: T("To check your balance, please provide your Account Number. If you forgot your account number, please tap 'Forgot'.", "Para ma-check ang iyong balanse, pakibigay ang iyong Account Number. Kung nakalimutan mo ito, i-tap lang ang 'Forgot'."),
                         quick_replies: [
                             { content_type: "text", title: "Forgot", payload: "Forgot" },
-                            { content_type: "text", title: "Cancel", payload: "Cancel" },
-                            { content_type: "text", title: "Agent", payload: "Agent" }
-                        ]
+                            { content_type: "text", title: "Cancel", payload: "Cancel" }]
                     };
                 }
 
@@ -1351,9 +1330,7 @@ Our team will check if your area is serviceable and contact you for installation
                         quick_replies: [
                             { content_type: "text", title: "Yes", payload: "Yes" },
                             { content_type: "text", title: "No", payload: "No" },
-                            { content_type: "text", title: "Cancel", payload: "Cancel" },
-                            { content_type: "text", title: "Agent", payload: "Agent" }
-                        ]
+                            { content_type: "text", title: "Cancel", payload: "Cancel" }]
                     };
                 } else {
                     return { text: "We couldn't find an account with that name. Please try another name or type 'Cancel' to stop." };
@@ -1393,9 +1370,7 @@ Our team will check if your area is serviceable and contact you for installation
                                 text: "By the way, we now have a mobile app! You can download it here:\nhttps://expo.dev/accounts/lyntester2000/projects/rfiberx/builds/967ad66c-2ecb-4133-a608-28a72ca2600d\n\nOr scan the QR code above.\n\nHave you already downloaded our mobile app?",
                                 quick_replies: [{ content_type: "text", title: "Yes, I have it", payload: "Yes" },
                                     { content_type: "text", title: "No, not yet", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                             };
                         }
                     } catch (e) { }
@@ -1405,9 +1380,7 @@ Our team will check if your area is serviceable and contact you for installation
                         text: `${nextText}\n\nWould you also like to see your password?`,
                         quick_replies: [{ content_type: "text", title: "Yes", payload: "Yes" },
                             { content_type: "text", title: "No", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                     };
                 } else {
                     accountRecoveryData.set(sender_psid, { pendingAccount: accountNum, password: pass, plan: plan, lastActive: match.lastActive });
@@ -1420,9 +1393,7 @@ Our team will check if your area is serviceable and contact you for installation
                             { content_type: "text", title: "100Mbps", payload: "100Mbps" },
                             { content_type: "text", title: "200Mbps", payload: "200Mbps" },
                             { content_type: "text", title: "500Mbps", payload: "500Mbps" },
-                            { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                            { content_type: "text", title: "Cancel", payload: "Cancel" }]
                     };
                 }
             } else if (msg.match(/^(no|hindi)$/i)) {
@@ -1436,9 +1407,7 @@ Our team will check if your area is serviceable and contact you for installation
                         quick_replies: [
                             { content_type: "text", title: "Yes", payload: "Yes" },
                             { content_type: "text", title: "No", payload: "No" },
-                            { content_type: "text", title: "Cancel", payload: "Cancel" },
-                            { content_type: "text", title: "Agent", payload: "Agent" }
-                        ]
+                            { content_type: "text", title: "Cancel", payload: "Cancel" }]
                     };
                 } else {
                     userSessions.set(sender_psid, 'ACCOUNT_INQUIRY_NAME');
@@ -1477,9 +1446,7 @@ Our team will check if your area is serviceable and contact you for installation
                             text: "By the way, we now have a mobile app! You can download it here:\nhttps://expo.dev/accounts/lyntester2000/projects/rfiberx/builds/967ad66c-2ecb-4133-a608-28a72ca2600d\n\nOr scan the QR code above.\n\nHave you already downloaded our mobile app?",
                             quick_replies: [{ content_type: "text", title: "Yes, I have it", payload: "Yes" },
                                 { content_type: "text", title: "No, not yet", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                         };
                     }
                 } catch (e) { }
@@ -1489,9 +1456,7 @@ Our team will check if your area is serviceable and contact you for installation
                     text: `${nextText}\n\nWould you also like to see your password?`,
                     quick_replies: [{ content_type: "text", title: "Yes", payload: "Yes" },
                         { content_type: "text", title: "No", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                 };
             } else {
                 userSessions.delete(sender_psid);
@@ -1509,18 +1474,19 @@ Our team will check if your area is serviceable and contact you for installation
                 accountRecoveryData.delete(sender_psid);
                 return {
                     text: T(`Your password is: ${pass}\n\nThank you for choosing RFiberX! How else can I help you today?`, `Ang password mo ay: ${pass}\n\nSalamat sa pagpili sa RFiberX! Paano pa kita matutulungan ngayon?`),
-                    quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
-                        { content_type: "text", title: "Technical Support", payload: "Technical Support" },
-                        { content_type: "text", title: "Billing", payload: "Billing" },
-                        { content_type: "text", title: "Apply Now", payload: "Apply Now" },
-                        { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                        { content_type: "text", title: "Change Password", payload: "Change Password" },
-                        { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
-                        { content_type: "text", title: "Relocation", payload: "Relocation" },
-                        { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
-                        { content_type: "text", title: "Mobile App", payload: "Mobile App" },
-                        { content_type: "text", title: "Contacts", payload: "Contacts" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+                    quick_replies: [
+                    { content_type: "text", title: "Technical Support", payload: "Technical Support" },
+                    { content_type: "text", title: "Billing", payload: "Billing" },
+                    { content_type: "text", title: "Change Password", payload: "Change Password" },
+                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
+                    { content_type: "text", title: "Apply Now", payload: "Apply Now" },
+                    { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
+                    { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
+                    { content_type: "text", title: "Relocation", payload: "Relocation" },
+                    { content_type: "text", title: "Mobile App", payload: "Mobile App" },
+                    { content_type: "text", title: "Contacts", payload: "Contacts" },
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+
                                 ]
                 };
             } else if (msg.match(/^(no|hindi)$/i)) {
@@ -1528,18 +1494,19 @@ Our team will check if your area is serviceable and contact you for installation
                 accountRecoveryData.delete(sender_psid);
                 return {
                     text: T("Okay, we've cancelled that request. How else can I help you today?", "Okay, na-cancel na namin ang request na iyon. Paano pa kita matutulungan ngayon?"),
-                    quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
-                        { content_type: "text", title: "Technical Support", payload: "Technical Support" },
-                        { content_type: "text", title: "Billing", payload: "Billing" },
-                        { content_type: "text", title: "Apply Now", payload: "Apply Now" },
-                        { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                        { content_type: "text", title: "Change Password", payload: "Change Password" },
-                        { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
-                        { content_type: "text", title: "Relocation", payload: "Relocation" },
-                        { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
-                        { content_type: "text", title: "Mobile App", payload: "Mobile App" },
-                        { content_type: "text", title: "Contacts", payload: "Contacts" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+                    quick_replies: [
+                    { content_type: "text", title: "Technical Support", payload: "Technical Support" },
+                    { content_type: "text", title: "Billing", payload: "Billing" },
+                    { content_type: "text", title: "Change Password", payload: "Change Password" },
+                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
+                    { content_type: "text", title: "Apply Now", payload: "Apply Now" },
+                    { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
+                    { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
+                    { content_type: "text", title: "Relocation", payload: "Relocation" },
+                    { content_type: "text", title: "Mobile App", payload: "Mobile App" },
+                    { content_type: "text", title: "Contacts", payload: "Contacts" },
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+
                                 ]
                 };
             } else {
@@ -1580,18 +1547,19 @@ Our team will check if your area is serviceable and contact you for installation
                     accountRecoveryData.delete(sender_psid);
                     return {
                         text: T("Success! The account has been removed from your profile. What would you like to do next?", "Success! Na-remove na ang account sa iyong profile. Ano ang gusto mong gawin susunod?"),
-                        quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
-                            { content_type: "text", title: "Technical Support", payload: "Technical Support" },
-                            { content_type: "text", title: "Billing", payload: "Billing" },
-                            { content_type: "text", title: "Apply Now", payload: "Apply Now" },
-                            { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                            { content_type: "text", title: "Change Password", payload: "Change Password" },
-                            { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
-                            { content_type: "text", title: "Relocation", payload: "Relocation" },
-                            { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
-                            { content_type: "text", title: "Mobile App", payload: "Mobile App" },
-                            { content_type: "text", title: "Contacts", payload: "Contacts" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+                        quick_replies: [
+                    { content_type: "text", title: "Technical Support", payload: "Technical Support" },
+                    { content_type: "text", title: "Billing", payload: "Billing" },
+                    { content_type: "text", title: "Change Password", payload: "Change Password" },
+                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
+                    { content_type: "text", title: "Apply Now", payload: "Apply Now" },
+                    { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
+                    { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
+                    { content_type: "text", title: "Relocation", payload: "Relocation" },
+                    { content_type: "text", title: "Mobile App", payload: "Mobile App" },
+                    { content_type: "text", title: "Contacts", payload: "Contacts" },
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+
                                 ]
                     };
                 } catch (e) {
@@ -1767,7 +1735,7 @@ Our team will check if your area is serviceable and contact you for installation
             return {
                 text: T("Here are our contact details:\n\n📞 Phone number: 09913746474\n📧 Email: support@rfiberx.net\n💬 Messenger / Facebook: Rendell Blanco (Owner)\n\nYou can contact our agent directly through these channels.", "Narito ang aming contact details:\n\n📞 Phone number: 09913746474\n📧 Email: support@rfiberx.net\n💬 Messenger / Facebook: Rendell Blanco (Owner)\n\nPwede mo rin i-contact ang aming agent directly dito."),
                 quick_replies: [
-                    { content_type: "text", title: "Agent", payload: "Agent" },
+                    
                     { content_type: "text", title: "Cancel", payload: "Cancel" }
                 ]
             };
@@ -1779,18 +1747,19 @@ Our team will check if your area is serviceable and contact you for installation
 
             return {
                 text: T("Here is our mobile app! You can download it via this link:\nhttps://expo.dev/accounts/lyntester2000/projects/rfiberx/builds/967ad66c-2ecb-4133-a608-28a72ca2600d\n\nOr scan the QR code above.\n\nHow else can I help you today?", "Heto ang aming mobile app! Pwede mo itong i-download gamit ang link na ito:\nhttps://expo.dev/accounts/lyntester2000/projects/rfiberx/builds/967ad66c-2ecb-4133-a608-28a72ca2600d\n\nO i-scan ang QR code sa taas.\n\nPaano pa kita matutulungan ngayon?"),
-                quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
+                quick_replies: [
                     { content_type: "text", title: "Technical Support", payload: "Technical Support" },
                     { content_type: "text", title: "Billing", payload: "Billing" },
+                    { content_type: "text", title: "Change Password", payload: "Change Password" },
+                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
                     { content_type: "text", title: "Apply Now", payload: "Apply Now" },
                     { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                    { content_type: "text", title: "Change Password", payload: "Change Password" },
                     { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
                     { content_type: "text", title: "Relocation", payload: "Relocation" },
-                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
                     { content_type: "text", title: "Mobile App", payload: "Mobile App" },
                     { content_type: "text", title: "Contacts", payload: "Contacts" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+
                                 ]
             };
 
@@ -1802,7 +1771,7 @@ Our team will check if your area is serviceable and contact you for installation
                     { content_type: "text", title: "Slow Internet", payload: "Slow Internet" },
                     { content_type: "text", title: "No Internet", payload: "No Internet" },
                     { content_type: "text", title: "Red Light Flashing", payload: "Red Light Flashing" },
-                    { content_type: "text", title: "Agent", payload: "Agent" },
+                    
                     { content_type: "text", title: "Cancel", payload: "Cancel" }
                 ]
             };
@@ -1813,9 +1782,7 @@ Our team will check if your area is serviceable and contact you for installation
                 text: T("Good day! Relocating your internet connection requires a relocation fee. Would you like to proceed with the relocation request? Please reply with 'Yes' to proceed, or 'Cancel' to stop.\n\n*(Note: If you need to speak with a human agent to discuss this, just tap \"Agent\".)*", "Magandang araw! May relocation fee ang paglipat ng internet connection. Gusto mo bang ituloy ang request? Mag-reply ng 'Yes' para ituloy, o 'Cancel' para i-stop.\n\n*(Note: Kung kailangan mo makausap ang agent tungkol dito, i-tap lang ang \"Agent\".)*"),
                 quick_replies: [
                     { content_type: "text", title: "Yes", payload: "Yes" },
-                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                    { content_type: "text", title: "Agent", payload: "Agent" }
-                ]
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
             };
 
         case 'APPLICATION':
@@ -1824,7 +1791,7 @@ Our team will check if your area is serviceable and contact you for installation
                 text: T("Good day! To apply for a new RFiberX internet connection, please provide the following details:\n• Full Name:\n• Complete Address:\n• Phone Number:\n• Plan or Speed you want:\n\nWould you like to see our available plans first?\n\nYou can also always call the support using the phone number: 09913746474, email at support@rfiberx.net, or message the owner (Rendell Blanco).", "Magandang araw! Para mag-apply ng bagong RFiberX connection, pakibigay ang sumusunod:\n• Full Name:\n• Complete Address:\n• Phone Number:\n• Plan o Speed na gusto mo:\n\nGusto mo bang makita muna ang aming available plans?\n\nPwede ka rin tumawag sa 09913746474, mag-email sa support@rfiberx.net, o mag-message sa owner (Rendell Blanco)."),
                 quick_replies: [{ content_type: "text", title: "Yes", payload: "Yes" },
                     { content_type: "text", title: "No", payload: "No" },
-                    { content_type: "text", title: "Agent", payload: "Agent" },
+                    
                                     { content_type: "text", title: "Cancel", payload: "Cancel" }
                                 ]
             };
@@ -1855,9 +1822,7 @@ Our team will check if your area is serviceable and contact you for installation
                             text: T(`Welcome back! I see your Account Number is ${savedAccount}.\n\nBy the way, we now have a mobile app! You can download it here:\nhttps://expo.dev/accounts/lyntester2000/projects/rfiberx/builds/967ad66c-2ecb-4133-a608-28a72ca2600d\n\nOr scan the QR code above.\n\nHave you already downloaded our mobile app?`, `Welcome back! Nakita ko na ang Account Number mo ay ${savedAccount}.\n\nNga pala, may mobile app na kami! Pwede mo i-download dito:\nhttps://expo.dev/accounts/lyntester2000/projects/rfiberx/builds/967ad66c-2ecb-4133-a608-28a72ca2600d\n\nO i-scan ang QR code sa taas.\n\nNa-download mo na ba ang aming mobile app?`),
                             quick_replies: [{ content_type: "text", title: "Yes, I have it", payload: "Yes" },
                                 { content_type: "text", title: "No, not yet", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                         };
                     } else {
                         userSessions.set(sender_psid, 'BILLING_MENU');
@@ -1866,9 +1831,7 @@ Our team will check if your area is serviceable and contact you for installation
                             quick_replies: [
                                 { content_type: "text", title: "Balance", payload: "Balance" },
                                 { content_type: "text", title: "Payment", payload: "Payment" },
-                                { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                { content_type: "text", title: "Agent", payload: "Agent" }
-                            ]
+                                { content_type: "text", title: "Cancel", payload: "Cancel" }]
                         };
                     }
                 }
@@ -1882,9 +1845,7 @@ Our team will check if your area is serviceable and contact you for installation
                 quick_replies: [
                     { content_type: "text", title: "Balance", payload: "Balance" },
                     { content_type: "text", title: "Payment", payload: "Payment" },
-                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                    { content_type: "text", title: "Agent", payload: "Agent" }
-                ]
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
             };
 
         case 'PLANS':
@@ -1906,9 +1867,7 @@ For inquiries or applications, kindly provide your preferred plan and the follow
 
 You can also always call the support using the phone number: 09913746474, email at support@rfiberx.net, or message the owner (Rendell Blanco).`, `Magandang araw! Heto ang aming mga available na RFIBERX internet plans:\n• 30 Mbps – ₱800 (Best for light browsing & social media)\n• 50 Mbps – ₱1,000 (Ideal for work from home & HD streaming)\n• 70 Mbps – ₱1,300 (Great for multiple devices & gaming)\n• 100 Mbps – ₱1,500 (Perfect for heavy gaming & 4K streaming)\n• 200 Mbps – ₱2,000 (For large families & heavy downloads)\n• 500 Mbps – ₱4,500 (Ultra-fast for power users or small business)\n\nPara sa inquiries o applications, pakibigay ang plan na gusto mo at ang mga detalye:\n• Full Name:\n• Complete Address:\n• Phone Number:\n• Plan o Speed na gusto mo:\n\nPwede ka rin palaging tumawag sa support sa 09913746474, mag-email sa support@rfiberx.net, o mag-message sa owner (Rendell Blanco).`),
                 quick_replies: [
-                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                    { content_type: "text", title: "Agent", payload: "Agent" }
-                ]
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
             };
 
         case 'CHANGE_PASSWORD':
@@ -1945,9 +1904,7 @@ You can also always call the support using the phone number: 09913746474, email 
                     quick_replies: [{ content_type: "text", title: "192.168.1.1", payload: "192.168.1.1" },
                         { content_type: "text", title: "192.168.100.1", payload: "192.168.100.1" },
                         { content_type: "text", title: "192.168.8.1", payload: "192.168.8.1" },
-                        { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                        { content_type: "text", title: "Cancel", payload: "Cancel" }]
                 }
             ];
 
@@ -1957,9 +1914,7 @@ You can also always call the support using the phone number: 09913746474, email 
                 text: T(`Good day! To check if your location is covered by RFIBERX and available for installation, kindly provide:\n• Complete Name:\n• Phone Number:\n• Complete Address:\n• Location (e.g. Majayjay, Magdalena, or Sta. Cruz):\n• Email Address:\n\nRFIBERX service is currently available in selected areas, including Magdalena, Majayjay, and Sta. Cruz. Our team will verify the exact coverage, NAP/port availability, and installation feasibility at your address.\n\nWould you also like to see our internet plans?`, `Magandang araw! Para ma-check kung covered ng RFIBERX ang location mo para sa installation, pakibigay ang:\n• Complete Name:\n• Phone Number:\n• Complete Address:\n• Location (e.g. Majayjay, Magdalena, or Sta. Cruz):\n• Email Address:\n\nAng RFIBERX service ay available sa selected areas gaya ng Magdalena, Majayjay, at Sta. Cruz. Ive-verify ng aming team ang exact coverage at availability sa iyong address.\n\nGusto mo bang makita ang aming internet plans?`),
                 quick_replies: [
                     { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                    { content_type: "text", title: "Agent", payload: "Agent" }
-                ]
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
             };
 
         case 'ACCOUNT_INQUIRY':
@@ -1988,9 +1943,7 @@ You can also always call the support using the phone number: 09913746474, email 
                                 text: "By the way, we now have a mobile app! You can download it here:\nhttps://expo.dev/accounts/lyntester2000/projects/rfiberx/builds/967ad66c-2ecb-4133-a608-28a72ca2600d\n\nOr scan the QR code above.\n\nHave you already downloaded our mobile app?",
                                 quick_replies: [{ content_type: "text", title: "Yes, I have it", payload: "Yes" },
                                     { content_type: "text", title: "No, not yet", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                             };
                         } else {
                             userSessions.set(sender_psid, 'ACCOUNT_INQUIRY_PASSWORD');
@@ -1998,9 +1951,7 @@ You can also always call the support using the phone number: 09913746474, email 
                                 text: `${nextText}\n\nWould you also like to see your password?`,
                                 quick_replies: [{ content_type: "text", title: "Yes", payload: "Yes" },
                                     { content_type: "text", title: "No", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                             };
                         }
                     }
@@ -2018,34 +1969,36 @@ You can also always call the support using the phone number: 09913746474, email 
                     "Welcome to RFiberX! 🌐 I am your automated virtual assistant, here to make your internet experience seamless.\n\nI can instantly help you with:\n💳 Billing & Payments\n🛠️ Technical Support & Internet Issues\n📝 Applying for a New Connection\n🔒 Changing your WiFi Password\n\nHow can I assist you today? Please choose an option below, or type your specific question:",
                     "Welcome sa RFiberX! 🌐 Ako ang iyong virtual assistant. Nandito ako para tumulong sa iyong internet connection!\n\nKaya kitang tulungan agad sa mga sumusunod:\n💳 Billing at Payments\n🛠️ Technical Support at Pag-troubleshoot\n📝 Pag-apply ng Bagong Connection\n🔒 Pagpalit ng iyong WiFi Password\n\nPaano kita matutulungan ngayon? Pumili lang sa mga options sa ibaba, o i-type ang iyong katanungan:"
                 ),
-                quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
+                quick_replies: [
                     { content_type: "text", title: "Technical Support", payload: "Technical Support" },
                     { content_type: "text", title: "Billing", payload: "Billing" },
+                    { content_type: "text", title: "Change Password", payload: "Change Password" },
+                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
                     { content_type: "text", title: "Apply Now", payload: "Apply Now" },
                     { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                    { content_type: "text", title: "Change Password", payload: "Change Password" },
                     { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
                     { content_type: "text", title: "Relocation", payload: "Relocation" },
-                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
                     { content_type: "text", title: "Contacts", payload: "Contacts" }
+
                 ]
             };
 
         case 'GREETING':
             return {
                 text: T("Hello! I am the RFiberX Auto-Bot. How can I help you today? Please choose from the options below, or type your specific question:", "Hello! Ako ang RFiberX Auto-Bot. Paano kita matutulungan ngayon? Pumili lang sa mga options sa ibaba, o i-type ang iyong katanungan:"),
-                quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
+                quick_replies: [
                     { content_type: "text", title: "Technical Support", payload: "Technical Support" },
                     { content_type: "text", title: "Billing", payload: "Billing" },
+                    { content_type: "text", title: "Change Password", payload: "Change Password" },
+                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
                     { content_type: "text", title: "Apply Now", payload: "Apply Now" },
                     { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                    { content_type: "text", title: "Change Password", payload: "Change Password" },
                     { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
                     { content_type: "text", title: "Relocation", payload: "Relocation" },
-                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
                     { content_type: "text", title: "Mobile App", payload: "Mobile App" },
                     { content_type: "text", title: "Contacts", payload: "Contacts" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+
                                 ]
             };
 
@@ -2053,18 +2006,19 @@ You can also always call the support using the phone number: 09913746474, email 
             topicTracker.delete(sender_psid);
             return {
                 text: T("Okay, we've cancelled that request. How else can I help you today?", "Okay, na-cancel na namin ang request na iyon. Paano pa kita matutulungan ngayon?"),
-                quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
+                quick_replies: [
                     { content_type: "text", title: "Technical Support", payload: "Technical Support" },
                     { content_type: "text", title: "Billing", payload: "Billing" },
+                    { content_type: "text", title: "Change Password", payload: "Change Password" },
+                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
                     { content_type: "text", title: "Apply Now", payload: "Apply Now" },
                     { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                    { content_type: "text", title: "Change Password", payload: "Change Password" },
                     { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
                     { content_type: "text", title: "Relocation", payload: "Relocation" },
-                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
                     { content_type: "text", title: "Mobile App", payload: "Mobile App" },
                     { content_type: "text", title: "Contacts", payload: "Contacts" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+
                                 ]
             };
 
@@ -2093,9 +2047,7 @@ You can also always call the support using the phone number: 09913746474, email 
                     text: T(`Are you sure you want to remove the currently saved account (${accountName}) from your profile?`, `Sigurado ka bang gusto mong i-remove ang naka-save na account (${accountName}) mula sa iyong profile?`),
                     quick_replies: [{ content_type: "text", title: "Yes", payload: "Yes" },
                         { content_type: "text", title: "No", payload: "No" },
-                                    { content_type: "text", title: "Cancel", payload: "Cancel" },
-                                    { content_type: "text", title: "Agent", payload: "Agent" }
-                                ]
+                                    { content_type: "text", title: "Cancel", payload: "Cancel" }]
                 };
             } catch (err) {
                 console.error("Error fetching account for removal:", err);
@@ -2189,18 +2141,19 @@ db.collection('payments').onSnapshot((snapshot) => {
                                 // Send proactive message
                                 await callSendAPI(psid, {
                                     text: message,
-                                    quick_replies: [{ content_type: "text", title: "Agent", payload: "Agent" },
-                                        { content_type: "text", title: "Technical Support", payload: "Technical Support" },
-                                        { content_type: "text", title: "Billing", payload: "Billing" },
-                                        { content_type: "text", title: "Apply Now", payload: "Apply Now" },
-                                        { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
-                                        { content_type: "text", title: "Change Password", payload: "Change Password" },
-                                        { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
-                                        { content_type: "text", title: "Relocation", payload: "Relocation" },
-                                        { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
-                                        { content_type: "text", title: "Mobile App", payload: "Mobile App" },
-                                        { content_type: "text", title: "Contacts", payload: "Contacts" },
-                                        { content_type: "text", title: "Cancel", payload: "Cancel" }
+                                    quick_replies: [
+                    { content_type: "text", title: "Technical Support", payload: "Technical Support" },
+                    { content_type: "text", title: "Billing", payload: "Billing" },
+                    { content_type: "text", title: "Change Password", payload: "Change Password" },
+                    { content_type: "text", title: "Account Inquiry", payload: "Account Inquiry" },
+                    { content_type: "text", title: "Apply Now", payload: "Apply Now" },
+                    { content_type: "text", title: "Internet Plans", payload: "Internet Plans" },
+                    { content_type: "text", title: "Area Inquiry", payload: "Area Inquiry" },
+                    { content_type: "text", title: "Relocation", payload: "Relocation" },
+                    { content_type: "text", title: "Mobile App", payload: "Mobile App" },
+                    { content_type: "text", title: "Contacts", payload: "Contacts" },
+                    { content_type: "text", title: "Cancel", payload: "Cancel" }
+
                                     ]
                                 });
 
