@@ -391,7 +391,7 @@ app.post('/webhook', (req, res) => {
                     // Reset complaint tracking if global stopper used
                     const incomingText = webhook_event.message?.text || "";
                     const incomingPayload = webhook_event.message?.quick_reply ? webhook_event.message.quick_reply.payload : incomingText;
-                    const isGlobalStopper = incomingPayload.match(/(cancel|stop|ayoko)/i);
+                    const isGlobalStopper = incomingPayload.match(/(cancel|stop|ayoko|chatbot)/i);
 
                     if (isGlobalStopper) {
                         is_paused = false;
@@ -1651,7 +1651,7 @@ Our team will check if your area is serviceable and contact you for installation
         ai_decision = 'CONTACTS';
     } else if (msg.match(/^(get started)$/i)) {
         ai_decision = 'GET_STARTED';
-    } else if (msg.match(/^(hello|hi|good morning|good afternoon|good evening|test|menu)$/i)) {
+    } else if (msg.match(/^(hello|hi|good morning|good afternoon|good evening|test|menu|chatbot)$/i)) {
         ai_decision = 'GREETING';
     } else if (msg.match(/^(plans|packages|magkano plan|internet plans|speeds|options)$/i)) {
         ai_decision = 'PLANS';
