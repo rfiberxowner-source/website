@@ -323,7 +323,7 @@ app.post('/webhook', (req, res) => {
 
             if (webhook_event.message && webhook_event.message.is_echo) {
                 const appId = String(webhook_event.message.app_id || "");
-                const BOT_APP_ID = "987564787660975"; // The exact App ID from your Meta dashboard
+                const BOT_APP_ID = "1092144383307825"; // The exact App ID from your Meta dashboard
 
                 // If the message wasn't sent by our bot, it means a human agent typed it in the Page Inbox!
                 if (appId !== BOT_APP_ID) {
