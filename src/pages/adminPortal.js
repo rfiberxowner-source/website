@@ -5640,9 +5640,20 @@ window.exportBillingExcel = async function(event) {
       if (selectedMonth && b.month !== selectedMonth) return;
       if ((b.status || '').toLowerCase() === 'paid' || (b.status || '').toLowerCase() === 'completed') return;
 
+      const rawName = u.fullName || u.name || '';
+      const accountName = rawName.toLowerCase().replace(/\s+/g, '.');
+
       excelData.push({
         "Account Number": u.accountNumber || u.account || '',
-        "Client Name": u.fullName || u.name || '',
+        "Client Name": rawName,
+        "Account Name": accountName,
+        "Client Type": u.clientType || 'Old',
+        "Payment": '',
+        "Due Date": b.dueDate || '',
+        "Date of Payment": '-',
+        "Payment Status": "UNPAID",
+        "Connection Status": u.status || u.connectionStatus || 'Connected',
+        "Ref No.": '-',
         "Phone": u.phone || u.contactNumber || '',
         "Email": u.email || '',
         "Facebook": u.facebook || u.fb || '',
@@ -5651,9 +5662,7 @@ window.exportBillingExcel = async function(event) {
         "Plan": u.plan || u.Plan || '',
         "Billing Month": b.month || '',
         "Amount": b.amount || b.totalAmount || '',
-        "Status": "UNPAID",
-        "Payment Channel": b.paymentMethod || b.method || '-',
-        "Date Paid": '-'
+        "Payment Channel": b.paymentMethod || b.method || '-'
       });
     });
 
@@ -5668,9 +5677,20 @@ window.exportBillingExcel = async function(event) {
         if (matchedUserId) u = usersMap[matchedUserId];
       }
       
+      const rawName = p.customerName || (u ? (u.fullName || u.name) : '');
+      const accountName = rawName.toLowerCase().replace(/\s+/g, '.');
+
       excelData.push({
         "Account Number": p.accountNumber || (u ? (u.accountNumber || u.account) : ''),
-        "Client Name": p.customerName || (u ? (u.fullName || u.name) : ''),
+        "Client Name": rawName,
+        "Account Name": accountName,
+        "Client Type": u ? (u.clientType || 'Old') : 'Old',
+        "Payment": '',
+        "Due Date": p.dueDate || '',
+        "Date of Payment": p.datePaid ? new Date(p.datePaid).toLocaleDateString() : (p.timestamp ? new Date(p.timestamp.toMillis()).toLocaleDateString() : ''),
+        "Payment Status": "PAID",
+        "Connection Status": u ? (u.status || u.connectionStatus || 'Connected') : 'Connected',
+        "Ref No.": p.referenceNumber || p.refNo || p.transactionId || '',
         "Phone": u ? (u.phone || u.contactNumber) : '',
         "Email": u ? (u.email) : '',
         "Facebook": u ? (u.facebook || u.fb) : '',
@@ -5679,9 +5699,7 @@ window.exportBillingExcel = async function(event) {
         "Plan": p.plan || (u ? (u.plan || u.Plan) : ''),
         "Billing Month": p.billingMonth || p.month || '',
         "Amount": p.amount || p.totalAmount || '',
-        "Status": "PAID",
-        "Payment Channel": p.paymentMethod || p.method || 'CASH',
-        "Date Paid": p.datePaid ? new Date(p.datePaid).toLocaleDateString() : (p.timestamp ? new Date(p.timestamp.toMillis()).toLocaleDateString() : '')
+        "Payment Channel": p.paymentMethod || p.method || 'CASH'
       });
     });
 
@@ -5696,9 +5714,10 @@ window.exportBillingExcel = async function(event) {
 
     const worksheet = window.XLSX.utils.json_to_sheet(excelData);
     const colWidths = [
-      { wch: 15 }, { wch: 25 }, { wch: 15 }, { wch: 25 }, { wch: 25 }, 
-      { wch: 30 }, { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 15 }, 
-      { wch: 15 }, { wch: 20 }, { wch: 15 }
+      { wch: 15 }, { wch: 25 }, { wch: 25 }, { wch: 12 }, { wch: 15 }, // Account Number, Client Name, Account Name, Client Type, Payment
+      { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, // Due Date, Date of Payment, Payment Status, Connection Status, Ref No.
+      { wch: 15 }, { wch: 25 }, { wch: 25 }, { wch: 30 }, { wch: 20 }, // Phone, Email, Facebook, Address, Location
+      { wch: 15 }, { wch: 20 }, { wch: 15 }, { wch: 20 }               // Plan, Billing Month, Amount, Payment Channel
     ];
     worksheet['!cols'] = colWidths;
 
