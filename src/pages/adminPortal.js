@@ -5626,13 +5626,4 @@ window.exportBillingExcel = async function(event) {
     console.error("Export Excel Error: ", e);
     alert("Error exporting Excel: " + e.message);
   }
-}; catch(e) {
-    console.error("Export Excel Error: ", e);
-    alert("Error exporting Excel: " + e.message);
-    const btn = event ? event.currentTarget : document.querySelector('button[onclick="window.exportBillingExcel()"]');
-    if (btn) {
-      btn.innerHTML = 'Export Failed';
-      btn.disabled = false;
-    }
-  }
-};
+
