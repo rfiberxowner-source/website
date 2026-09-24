@@ -5611,7 +5611,8 @@ window.exportBillingExcel = async function(event) {
     const selectedMonth = monthFilter ? monthFilter.value : '';
 
     // Directly trigger a download from the backend API
-    const url = `/api/admin/export-excel?month=${encodeURIComponent(selectedMonth)}`;
+    const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
+    const url = `${BACKEND_URL}/api/admin/export-excel?month=${encodeURIComponent(selectedMonth)}`;
     window.location.href = url;
 
     // Reset button after 2 seconds to allow the download to start
