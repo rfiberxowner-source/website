@@ -2505,92 +2505,105 @@ If it IS a receipt, extract:
 app.get('/api/admin/export-excel', async (req, res) => {
     try {
         const selectedMonth = req.query.month || '';
+        let titleMonth = selectedMonth;
+        if (!titleMonth) {
+            titleMonth = new Date().toLocaleString('en-US', { month: 'long' });
+        }
+        
         const ExcelJS = (await import('exceljs')).default;
         const workbook = new ExcelJS.Workbook();
         const sheet = workbook.addWorksheet('Billing Report');
 
         // Fetch users map for fast lookup
         const usersSnap = await db.collection('users').get();
-        const usersMap = {};
-        usersSnap.forEach(doc => { usersMap[doc.id] = doc.data(); });
+        let allUsers = [];
+        usersSnap.forEach(doc => {
+            const u = doc.data();
+            u.id = doc.id;
+            allUsers.push(u);
+        });
 
-        const excelData = [];
-
-        // Fetch Unpaid Bills
+        // Fetch Unpaid Bills for Due Date
         const billsSnap = await db.collectionGroup('billing_emails').get();
+        const userBills = {};
         billsSnap.forEach(bDoc => {
             const b = bDoc.data();
             const userId = bDoc.ref.parent.parent.id;
-            const u = usersMap[userId];
-            if (!u) return;
-            if (selectedMonth && b.month !== selectedMonth) return;
-            if ((b.status || '').toLowerCase() === 'paid' || (b.status || '').toLowerCase() === 'completed') return;
+            if (b.month === titleMonth) {
+                userBills[userId] = b;
+            }
+        });
 
+        // Fetch Paid Bills for the specific month
+        const paymentsSnap = await db.collection('payments').get();
+        const userPayments = {};
+        paymentsSnap.forEach(pDoc => {
+            const p = pDoc.data();
+            if (p.billingMonth === titleMonth || p.month === titleMonth) {
+                userPayments[p.userId] = p;
+                if (!p.userId && p.accountNumber) {
+                    // map by account number if userId is missing
+                    const matchedUser = allUsers.find(u => u.accountNumber === p.accountNumber || u.account === p.accountNumber);
+                    if (matchedUser) {
+                        userPayments[matchedUser.id] = p;
+                    }
+                }
+            }
+        });
+
+        // Generate data for ALL users
+        let excelData = [];
+        allUsers.forEach(u => {
             const rawName = u.fullName || u.name || '';
             const accountName = rawName.toLowerCase().replace(/\s+/g, '.');
+            
+            const payment = userPayments[u.id];
+            const bill = userBills[u.id];
+
+            let status = 'UNPAID';
+            if (payment) status = 'PAID';
+            else if (u.status === 'DELETED') status = 'DELETED';
+            
+            let datePaidStr = '';
+            let refNo = '';
+            let dueDate = bill ? (bill.dueDate || '') : '';
+            
+            if (payment) {
+                if (payment.datePaid) {
+                    datePaidStr = new Date(payment.datePaid).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
+                } else if (payment.timestamp) {
+                    datePaidStr = new Date(payment.timestamp.toDate()).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
+                }
+                refNo = payment.referenceNumber || payment.refNo || payment.transactionId || '';
+                dueDate = payment.dueDate || dueDate;
+            }
+
             excelData.push({
                 clientName: rawName,
                 accountName: accountName,
                 clientType: u.clientType || 'Old Client',
                 payment: 'Monthly',
-                dueDate: b.dueDate || '',
-                dateOfPayment: '',
-                paymentStatus: 'UNPAID',
+                dueDate: dueDate,
+                dateOfPayment: datePaidStr,
+                paymentStatus: status,
                 connectionStatus: u.status || u.connectionStatus || 'CONNECTED',
-                refNo: '',
-                plan: u.plan || u.Plan || '',
-                amount: b.amount || b.totalAmount || '',
+                refNo: refNo,
+                plan: payment ? (payment.plan || u.plan || u.Plan || '') : (u.plan || u.Plan || ''),
+                amount: payment ? (payment.amount || payment.totalAmount || '') : (bill ? (bill.amount || bill.totalAmount || '') : ''),
                 facebook: u.facebook || u.fb || '',
                 phone: u.phone || u.contactNumber || '',
                 email: u.email || '',
                 address: u.address || '',
-                location: u.Location || u.location || ''
+                location: u.Location || u.location || '',
+                accountNumber: payment ? (payment.accountNumber || u.accountNumber || u.account || '') : (u.accountNumber || u.account || '')
             });
         });
 
-        // Fetch Paid Bills
-        const paymentsSnap = await db.collection('payments').get();
-        paymentsSnap.forEach(pDoc => {
-            const p = pDoc.data();
-            if (selectedMonth && p.billingMonth !== selectedMonth && p.month !== selectedMonth) return;
-            let u = usersMap[p.userId];
-            if (!u) {
-                const matchedUserId = Object.keys(usersMap).find(id => (usersMap[id].accountNumber === p.accountNumber || usersMap[id].account === p.accountNumber));
-                if (matchedUserId) u = usersMap[matchedUserId];
-            }
-            const rawName = p.customerName || (u ? (u.fullName || u.name) : '');
-            const accountName = rawName.toLowerCase().replace(/\s+/g, '.');
-
-            let datePaidStr = '';
-            if (p.datePaid) {
-                datePaidStr = new Date(p.datePaid).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
-            } else if (p.timestamp) {
-                datePaidStr = new Date(p.timestamp.toDate()).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
-            }
-
-            excelData.push({
-                clientName: rawName,
-                accountName: accountName,
-                clientType: u ? (u.clientType || 'Old Client') : 'Old Client',
-                payment: 'Monthly',
-                dueDate: p.dueDate || '',
-                dateOfPayment: datePaidStr,
-                paymentStatus: 'PAID',
-                connectionStatus: u ? (u.status || u.connectionStatus || 'CONNECTED') : 'CONNECTED',
-                refNo: p.referenceNumber || p.refNo || p.transactionId || '',
-                plan: p.plan || (u ? (u.plan || u.Plan) : ''),
-                amount: p.amount || p.totalAmount || '',
-                facebook: u ? (u.facebook || u.fb) : '',
-                phone: u ? (u.phone || u.contactNumber) : '',
-                email: u ? (u.email) : '',
-                address: u ? u.address : '',
-                location: u ? (u.Location || u.location) : ''
-            });
-        });
+        // Sort alphabetically by clientName
+        excelData.sort((a, b) => a.clientName.localeCompare(b.clientName));
 
         // Add Big Title Row
-        const titleMonth = selectedMonth || 'All Months';
-        sheet.mergeCells('A1:P1');
+        sheet.mergeCells('A1:Q1');
         const titleCell = sheet.getCell('A1');
         titleCell.value = titleMonth;
         titleCell.font = { name: 'Arial', family: 4, size: 24, bold: true };
@@ -2598,11 +2611,11 @@ app.get('/api/admin/export-excel', async (req, res) => {
         titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8EA9DB' } }; 
         sheet.getRow(1).height = 40;
 
-        // Add Headers (Row 2)
+        // Add Headers (Row 2) - Added Account Number at the end
         const headers = [
             "Name", "Account", "Type of Client", "Payment", "Due Date", "Date of Payment", 
             "Payment Status", "Connection Status", "Ref. No.", "Plan", "Amount", 
-            "Contact", "Phone", "Email", "Address", "Location"
+            "Contact", "Phone", "Email", "Address", "Location", "Account Number"
         ];
         
         sheet.getRow(2).values = headers;
@@ -2644,6 +2657,7 @@ app.get('/api/admin/export-excel', async (req, res) => {
             rowRef.getCell(14).value = row.email;
             rowRef.getCell(15).value = row.address;
             rowRef.getCell(16).value = row.location;
+            rowRef.getCell(17).value = row.accountNumber;
 
             // Add Data Validations (Dropdowns)
             sheet.getCell(`C${rowIndex}`).dataValidation = { type: 'list', allowBlank: true, formulae: ['"New Client,Old Client"'] };
@@ -2677,7 +2691,7 @@ app.get('/api/admin/export-excel', async (req, res) => {
             { width: 25 }, { width: 25 }, { width: 15 }, { width: 20 }, // Name, Account, Type, Payment
             { width: 15 }, { width: 15 }, { width: 15 }, { width: 20 }, // Due Date, Date of Payment, Payment Status, Connection Status
             { width: 15 }, { width: 15 }, { width: 15 }, { width: 30 }, // Ref No, Plan, Amount, Contact
-            { width: 15 }, { width: 25 }, { width: 30 }, { width: 15 }  // Phone, Email, Address, Location
+            { width: 15 }, { width: 25 }, { width: 30 }, { width: 15 }, { width: 20 }  // Phone, Email, Address, Location, Account Number
         ];
 
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
