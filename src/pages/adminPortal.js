@@ -5626,4 +5626,5 @@ window.exportBillingExcel = async function(event) {
     console.error("Export Excel Error: ", e);
     alert("Error exporting Excel: " + e.message);
   }
+};
 
