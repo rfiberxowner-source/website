@@ -5600,8 +5600,6 @@ window.resetSimulator = async function() {
 
 window.exportBillingExcel = async function(event) {
   try {
-    const selectedMonth = document.getElementById('ph-month')?.value || '';
-    
     const btn = event ? event.currentTarget : document.querySelector('button[onclick="window.exportBillingExcel()"]');
     const oldText = btn ? btn.innerHTML : 'Export to Excel';
     if (btn) {
@@ -5609,130 +5607,26 @@ window.exportBillingExcel = async function(event) {
       btn.disabled = true;
     }
 
-    if (typeof window.XLSX === 'undefined') {
-      await new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
+    const monthFilter = document.getElementById('billingMonthFilter');
+    const selectedMonth = monthFilter ? monthFilter.value : '';
 
-    const { db, firestore } = await window._getAdminDb();
-    
-    const usersSnap = await firestore.getDocs(firestore.collection(db, "users"));
-    const usersMap = {};
-    usersSnap.forEach(doc => {
-      usersMap[doc.id] = doc.data();
-    });
+    // Directly trigger a download from the backend API
+    const url = `/api/admin/export-excel?month=${encodeURIComponent(selectedMonth)}`;
+    window.location.href = url;
 
-    const excelData = [];
-
-    // 4. Fetch Unpaid Bills (single optimized query)
-    const billsSnap = await firestore.getDocs(firestore.collectionGroup(db, 'billing_emails'));
-    billsSnap.forEach(bDoc => {
-      const b = bDoc.data();
-      const userId = bDoc.ref.parent.parent.id;
-      const u = usersMap[userId];
-      
-      if (!u) return;
-      if (selectedMonth && b.month !== selectedMonth) return;
-      if ((b.status || '').toLowerCase() === 'paid' || (b.status || '').toLowerCase() === 'completed') return;
-
-      const rawName = u.fullName || u.name || '';
-      const accountName = rawName.toLowerCase().replace(/\s+/g, '.');
-
-      excelData.push({
-        "Account Number": u.accountNumber || u.account || '',
-        "Client Name": rawName,
-        "Account Name": accountName,
-        "Client Type": u.clientType || 'Old',
-        "Payment": '',
-        "Due Date": b.dueDate || '',
-        "Date of Payment": '-',
-        "Payment Status": "UNPAID",
-        "Connection Status": u.status || u.connectionStatus || 'Connected',
-        "Ref No.": '-',
-        "Phone": u.phone || u.contactNumber || '',
-        "Email": u.email || '',
-        "Facebook": u.facebook || u.fb || '',
-        "Address": u.address || '',
-        "Location": u.Location || u.location || '',
-        "Plan": u.plan || u.Plan || '',
-        "Billing Month": b.month || '',
-        "Amount": b.amount || b.totalAmount || '',
-        "Payment Channel": b.paymentMethod || b.method || '-'
-      });
-    });
-
-    const paymentsSnap = await firestore.getDocs(firestore.collection(db, "payments"));
-    paymentsSnap.forEach(pDoc => {
-      const p = pDoc.data();
-      if (selectedMonth && p.billingMonth !== selectedMonth && p.month !== selectedMonth) return;
-      
-      let u = usersMap[p.userId];
-      if (!u) {
-        const matchedUserId = Object.keys(usersMap).find(id => (usersMap[id].accountNumber === p.accountNumber || usersMap[id].account === p.accountNumber));
-        if (matchedUserId) u = usersMap[matchedUserId];
-      }
-      
-      const rawName = p.customerName || (u ? (u.fullName || u.name) : '');
-      const accountName = rawName.toLowerCase().replace(/\s+/g, '.');
-
-      excelData.push({
-        "Account Number": p.accountNumber || (u ? (u.accountNumber || u.account) : ''),
-        "Client Name": rawName,
-        "Account Name": accountName,
-        "Client Type": u ? (u.clientType || 'Old') : 'Old',
-        "Payment": '',
-        "Due Date": p.dueDate || '',
-        "Date of Payment": p.datePaid ? new Date(p.datePaid).toLocaleDateString() : (p.timestamp ? new Date(p.timestamp.toMillis()).toLocaleDateString() : ''),
-        "Payment Status": "PAID",
-        "Connection Status": u ? (u.status || u.connectionStatus || 'Connected') : 'Connected',
-        "Ref No.": p.referenceNumber || p.refNo || p.transactionId || '',
-        "Phone": u ? (u.phone || u.contactNumber) : '',
-        "Email": u ? (u.email) : '',
-        "Facebook": u ? (u.facebook || u.fb) : '',
-        "Address": u ? u.address : '',
-        "Location": u ? (u.Location || u.location) : '',
-        "Plan": p.plan || (u ? (u.plan || u.Plan) : ''),
-        "Billing Month": p.billingMonth || p.month || '',
-        "Amount": p.amount || p.totalAmount || '',
-        "Payment Channel": p.paymentMethod || p.method || 'CASH'
-      });
-    });
-
-    if (excelData.length === 0) {
-      alert("No billing records found for the selected month.");
+    // Reset button after 2 seconds to allow the download to start
+    setTimeout(() => {
       if (btn) {
         btn.innerHTML = oldText;
         btn.disabled = false;
       }
-      return;
-    }
-
-    const worksheet = window.XLSX.utils.json_to_sheet(excelData);
-    const colWidths = [
-      { wch: 15 }, { wch: 25 }, { wch: 25 }, { wch: 12 }, { wch: 15 }, // Account Number, Client Name, Account Name, Client Type, Payment
-      { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, // Due Date, Date of Payment, Payment Status, Connection Status, Ref No.
-      { wch: 15 }, { wch: 25 }, { wch: 25 }, { wch: 30 }, { wch: 20 }, // Phone, Email, Facebook, Address, Location
-      { wch: 15 }, { wch: 20 }, { wch: 15 }, { wch: 20 }               // Plan, Billing Month, Amount, Payment Channel
-    ];
-    worksheet['!cols'] = colWidths;
-
-    const workbook = window.XLSX.utils.book_new();
-    window.XLSX.utils.book_append_sheet(workbook, worksheet, "Billing Data");
-    
-    const fileName = selectedMonth ? `Billing_Report_${selectedMonth.replace(/\s+/g, '_')}.xlsx` : `Billing_Report_All_Months.xlsx`;
-    window.XLSX.writeFile(workbook, fileName);
-
-    if (btn) {
-      btn.innerHTML = oldText;
-      btn.disabled = false;
-    }
+    }, 2000);
 
   } catch(e) {
+    console.error("Export Excel Error: ", e);
+    alert("Error exporting Excel: " + e.message);
+  }
+}; catch(e) {
     console.error("Export Excel Error: ", e);
     alert("Error exporting Excel: " + e.message);
     const btn = event ? event.currentTarget : document.querySelector('button[onclick="window.exportBillingExcel()"]');

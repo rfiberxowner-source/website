@@ -2498,6 +2498,198 @@ If it IS a receipt, extract:
     }
 }
 
+
+// =========================================================================
+// 🚀 EXCEL EXPORT ENDPOINT (EXCELJS)
+// =========================================================================
+app.get('/api/admin/export-excel', async (req, res) => {
+    try {
+        const selectedMonth = req.query.month || '';
+        const ExcelJS = (await import('exceljs')).default;
+        const workbook = new ExcelJS.Workbook();
+        const sheet = workbook.addWorksheet('Billing Report');
+
+        // Fetch users map for fast lookup
+        const usersSnap = await db.collection('users').get();
+        const usersMap = {};
+        usersSnap.forEach(doc => { usersMap[doc.id] = doc.data(); });
+
+        const excelData = [];
+
+        // Fetch Unpaid Bills
+        const billsSnap = await db.collectionGroup('billing_emails').get();
+        billsSnap.forEach(bDoc => {
+            const b = bDoc.data();
+            const userId = bDoc.ref.parent.parent.id;
+            const u = usersMap[userId];
+            if (!u) return;
+            if (selectedMonth && b.month !== selectedMonth) return;
+            if ((b.status || '').toLowerCase() === 'paid' || (b.status || '').toLowerCase() === 'completed') return;
+
+            const rawName = u.fullName || u.name || '';
+            const accountName = rawName.toLowerCase().replace(/\s+/g, '.');
+            excelData.push({
+                clientName: rawName,
+                accountName: accountName,
+                clientType: u.clientType || 'Old Client',
+                payment: 'Monthly',
+                dueDate: b.dueDate || '',
+                dateOfPayment: '',
+                paymentStatus: 'UNPAID',
+                connectionStatus: u.status || u.connectionStatus || 'CONNECTED',
+                refNo: '',
+                plan: u.plan || u.Plan || '',
+                amount: b.amount || b.totalAmount || '',
+                facebook: u.facebook || u.fb || '',
+                phone: u.phone || u.contactNumber || '',
+                email: u.email || '',
+                address: u.address || '',
+                location: u.Location || u.location || ''
+            });
+        });
+
+        // Fetch Paid Bills
+        const paymentsSnap = await db.collection('payments').get();
+        paymentsSnap.forEach(pDoc => {
+            const p = pDoc.data();
+            if (selectedMonth && p.billingMonth !== selectedMonth && p.month !== selectedMonth) return;
+            let u = usersMap[p.userId];
+            if (!u) {
+                const matchedUserId = Object.keys(usersMap).find(id => (usersMap[id].accountNumber === p.accountNumber || usersMap[id].account === p.accountNumber));
+                if (matchedUserId) u = usersMap[matchedUserId];
+            }
+            const rawName = p.customerName || (u ? (u.fullName || u.name) : '');
+            const accountName = rawName.toLowerCase().replace(/\s+/g, '.');
+
+            let datePaidStr = '';
+            if (p.datePaid) {
+                datePaidStr = new Date(p.datePaid).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
+            } else if (p.timestamp) {
+                datePaidStr = new Date(p.timestamp.toDate()).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
+            }
+
+            excelData.push({
+                clientName: rawName,
+                accountName: accountName,
+                clientType: u ? (u.clientType || 'Old Client') : 'Old Client',
+                payment: 'Monthly',
+                dueDate: p.dueDate || '',
+                dateOfPayment: datePaidStr,
+                paymentStatus: 'PAID',
+                connectionStatus: u ? (u.status || u.connectionStatus || 'CONNECTED') : 'CONNECTED',
+                refNo: p.referenceNumber || p.refNo || p.transactionId || '',
+                plan: p.plan || (u ? (u.plan || u.Plan) : ''),
+                amount: p.amount || p.totalAmount || '',
+                facebook: u ? (u.facebook || u.fb) : '',
+                phone: u ? (u.phone || u.contactNumber) : '',
+                email: u ? (u.email) : '',
+                address: u ? u.address : '',
+                location: u ? (u.Location || u.location) : ''
+            });
+        });
+
+        // Add Big Title Row
+        const titleMonth = selectedMonth || 'All Months';
+        sheet.mergeCells('A1:P1');
+        const titleCell = sheet.getCell('A1');
+        titleCell.value = titleMonth;
+        titleCell.font = { name: 'Arial', family: 4, size: 24, bold: true };
+        titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+        titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8EA9DB' } }; 
+        sheet.getRow(1).height = 40;
+
+        // Add Headers (Row 2)
+        const headers = [
+            "Name", "Account", "Type of Client", "Payment", "Due Date", "Date of Payment", 
+            "Payment Status", "Connection Status", "Ref. No.", "Plan", "Amount", 
+            "Contact", "Phone", "Email", "Address", "Location"
+        ];
+        
+        sheet.getRow(2).values = headers;
+        sheet.getRow(2).height = 30;
+        
+        // Style Headers
+        headers.forEach((header, i) => {
+            const cell = sheet.getRow(2).getCell(i + 1);
+            cell.font = { name: 'Arial', bold: true, color: { argb: 'FFFFFFFF' } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF203764' } }; 
+            cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            cell.border = {
+                top: { style: 'thin' }, left: { style: 'thin' },
+                bottom: { style: 'thin' }, right: { style: 'thin' }
+            };
+        });
+
+        // Add Data
+        excelData.forEach((row, i) => {
+            const rowIndex = i + 3;
+            const rowRef = sheet.getRow(rowIndex);
+            
+            rowRef.getCell(1).value = row.clientName;
+            rowRef.getCell(2).value = row.accountName;
+            rowRef.getCell(3).value = row.clientType;
+            rowRef.getCell(4).value = row.payment;
+            rowRef.getCell(5).value = row.dueDate;
+            rowRef.getCell(6).value = row.dateOfPayment;
+            rowRef.getCell(7).value = row.paymentStatus;
+            rowRef.getCell(8).value = row.connectionStatus;
+            rowRef.getCell(9).value = row.refNo;
+            rowRef.getCell(10).value = row.plan;
+            
+            // Formula for amount based on Plan
+            rowRef.getCell(11).value = { formula: `IF(J${rowIndex}="30Mbps", 800, IF(J${rowIndex}="50Mbps", 1000, IF(J${rowIndex}="70Mbps", 1200, IF(J${rowIndex}="100Mbps", 1500, IF(J${rowIndex}="200Mbps", 2000, ${row.amount || 0})))))`, result: row.amount };
+            
+            rowRef.getCell(12).value = row.facebook ? `FB: ${row.facebook}` : '';
+            rowRef.getCell(13).value = row.phone;
+            rowRef.getCell(14).value = row.email;
+            rowRef.getCell(15).value = row.address;
+            rowRef.getCell(16).value = row.location;
+
+            // Add Data Validations (Dropdowns)
+            sheet.getCell(`C${rowIndex}`).dataValidation = { type: 'list', allowBlank: true, formulae: ['"New Client,Old Client"'] };
+            sheet.getCell(`D${rowIndex}`).dataValidation = { type: 'list', allowBlank: true, formulae: ['"Monthly,Every Last Week"'] };
+            sheet.getCell(`G${rowIndex}`).dataValidation = { type: 'list', allowBlank: true, formulae: ['"PAID,UNPAID,DELETED"'] };
+            sheet.getCell(`H${rowIndex}`).dataValidation = { type: 'list', allowBlank: true, formulae: ['"CONNECTED,DISCONNECTED,PARTIAL CONNECTED"'] };
+            sheet.getCell(`J${rowIndex}`).dataValidation = { type: 'list', allowBlank: true, formulae: ['"30Mbps,50Mbps,70Mbps,100Mbps,200Mbps"'] };
+        });
+
+        // Add Conditional Formatting for colors
+        sheet.addConditionalFormatting({
+            ref: 'G3:G10000',
+            rules: [
+                { type: 'cellIs', operator: 'equal', formulae: ['"PAID"'], style: { font: { color: { argb: 'FF006100' }, bold: true }, fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'FFC6EFCE' } } } },
+                { type: 'cellIs', operator: 'equal', formulae: ['"UNPAID"'], style: { font: { color: { argb: 'FF9C0006' }, bold: true }, fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'FFFFC7CE' } } } },
+                { type: 'cellIs', operator: 'equal', formulae: ['"DELETED"'], style: { font: { color: { argb: 'FF9C5700' }, bold: true }, fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'FFFFEB9C' } } } }
+            ]
+        });
+
+        sheet.addConditionalFormatting({
+            ref: 'H3:H10000',
+            rules: [
+                { type: 'cellIs', operator: 'equal', formulae: ['"CONNECTED"'], style: { font: { color: { argb: 'FF006100' }, bold: true }, fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'FFC6EFCE' } } } },
+                { type: 'cellIs', operator: 'equal', formulae: ['"DISCONNECTED"'], style: { font: { color: { argb: 'FF9C0006' }, bold: true }, fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'FFFFC7CE' } } } },
+                { type: 'cellIs', operator: 'equal', formulae: ['"PARTIAL CONNECTED"'], style: { font: { color: { argb: 'FF9C5700' }, bold: true }, fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: 'FFFFEB9C' } } } }
+            ]
+        });
+
+        // Set column widths
+        sheet.columns = [
+            { width: 25 }, { width: 25 }, { width: 15 }, { width: 20 }, // Name, Account, Type, Payment
+            { width: 15 }, { width: 15 }, { width: 15 }, { width: 20 }, // Due Date, Date of Payment, Payment Status, Connection Status
+            { width: 15 }, { width: 15 }, { width: 15 }, { width: 30 }, // Ref No, Plan, Amount, Contact
+            { width: 15 }, { width: 25 }, { width: 30 }, { width: 15 }  // Phone, Email, Address, Location
+        ];
+
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename=RFiberX_Billing_${titleMonth}.xlsx`);
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (error) {
+        console.error("Export Excel Error:", error);
+        res.status(500).send('Error generating Excel');
+    }
+});
+
 // A simple root route to verify the server is running
 app.get('/', (req, res) => {
     res.send('RFiberX Webhook Server is running!');
