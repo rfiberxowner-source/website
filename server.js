@@ -924,7 +924,7 @@ Our team will check if your area is serviceable and contact you for installation
 
                 try {
                     const psidDoc = await db.collection('messenger_psids').doc(sender_psid).get();
-                    if (!psidDoc.exists || !psidDoc.data().hasBeenAskedAboutApp) {
+                    if (false /* !psidDoc.exists || !psidDoc.data().hasBeenAskedAboutApp */) {
                         userSessions.set(sender_psid, 'ASK_DOWNLOAD_APP');
                         try {
                             await callSendAPI(sender_psid, {
@@ -1000,7 +1000,7 @@ Our team will check if your area is serviceable and contact you for installation
 
                 try {
                     const psidDoc = await db.collection('messenger_psids').doc(sender_psid).get();
-                    if (!psidDoc.exists || !psidDoc.data().hasBeenAskedAboutApp) {
+                    if (false /* !psidDoc.exists || !psidDoc.data().hasBeenAskedAboutApp */) {
                         userSessions.set(sender_psid, 'ASK_DOWNLOAD_APP');
                         try {
                             await callSendAPI(sender_psid, {
@@ -1060,7 +1060,7 @@ Our team will check if your area is serviceable and contact you for installation
 
                 try {
                     const psidDoc = await db.collection('messenger_psids').doc(sender_psid).get();
-                    if (!psidDoc.exists || !psidDoc.data().hasBeenAskedAboutApp) {
+                    if (false /* !psidDoc.exists || !psidDoc.data().hasBeenAskedAboutApp */) {
                         userSessions.set(sender_psid, 'ASK_DOWNLOAD_APP');
                         try {
                             await callSendAPI(sender_psid, { attachment: { type: "image", payload: { url: "https://rfiberx.net/RFiberX_App_QR_new.png", is_reusable: true } } });
@@ -1292,7 +1292,7 @@ Our team will check if your area is serviceable and contact you for installation
 
                     try {
                         const psidDoc = await db.collection('messenger_psids').doc(sender_psid).get();
-                        if (!psidDoc.exists || !psidDoc.data().hasBeenAskedAboutApp) {
+                        if (false /* !psidDoc.exists || !psidDoc.data().hasBeenAskedAboutApp */) {
                             userSessions.set(sender_psid, 'ASK_DOWNLOAD_APP_INQUIRY');
                             try {
                                 await callSendAPI(sender_psid, { attachment: { type: "image", payload: { url: "https://rfiberx.net/RFiberX_App_QR_new.png", is_reusable: true } } });
@@ -1368,7 +1368,7 @@ Our team will check if your area is serviceable and contact you for installation
 
                 try {
                     const psidDoc = await db.collection('messenger_psids').doc(sender_psid).get();
-                    if (!psidDoc.exists || !psidDoc.data().hasBeenAskedAboutApp) {
+                    if (false /* !psidDoc.exists || !psidDoc.data().hasBeenAskedAboutApp */) {
                         userSessions.set(sender_psid, 'ASK_DOWNLOAD_APP_INQUIRY');
                         try {
                             await callSendAPI(sender_psid, { attachment: { type: "image", payload: { url: "https://rfiberx.net/RFiberX_App_QR_new.png", is_reusable: true } } });
@@ -1736,7 +1736,7 @@ Our team will check if your area is serviceable and contact you for installation
                 if (savedAccount) {
                     accountRecoveryData.set(sender_psid, { account: savedAccount });
 
-                    if (!psidDoc.data().hasBeenAskedAboutApp) {
+                    if (false /* !psidDoc.data().hasBeenAskedAboutApp */) {
                         userSessions.set(sender_psid, 'ASK_DOWNLOAD_APP');
                         try {
                             await callSendAPI(sender_psid, {
@@ -1865,7 +1865,7 @@ You can also always call the support using the phone number: 09913746474, email 
                         const nextText = `Welcome back! Your Account Number is ${accountNum}.\n\n${detailsStr}`;
                         accountRecoveryData.set(sender_psid, { account: accountNum, password: pass, nextText: nextText });
 
-                        if (!psidDoc.data().hasBeenAskedAboutApp) {
+                        if (false /* !psidDoc.data().hasBeenAskedAboutApp */) {
                             userSessions.set(sender_psid, 'ASK_DOWNLOAD_APP_INQUIRY');
                             try {
                                 await callSendAPI(sender_psid, { attachment: { type: "image", payload: { url: "https://rfiberx.net/RFiberX_App_QR_new.png", is_reusable: true } } });
