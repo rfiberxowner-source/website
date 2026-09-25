@@ -2359,11 +2359,6 @@ async function processImageAttachmentLogic(base64Data, sender_psid, accountNum, 
             }
             console.log(`✅ Marked all ${unpaidBillsList.length} bills as Waiting for ${accountNum}`);
 
-            // Send confirmation to the client
-            const confirmMsg = tl ?
-                `Natanggap na namin ang iyong image at na-update na ang iyong ${unpaidBillsList.length} billing statement(s) sa "Waiting" status. Kukumpirmahin ng admin ang iyong payment sa lalong madaling panahon.` :
-                `We have received your image and updated your ${unpaidBillsList.length} billing statement(s) to "Waiting" status. An admin will confirm your payment shortly.`;
-            callSendAPI(sender_psid, { text: confirmMsg }).catch(err => console.error("Error sending waiting confirmation:", err));
 
             return true;
         }
