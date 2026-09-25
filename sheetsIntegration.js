@@ -83,13 +83,13 @@ function listenForPayments() {
     });
 }
 
-async function syncPaymentToSheet(payment) {
+export async function syncPaymentToSheet(payment) {
     if (!sheetsAPI) return;
     try {
-        const sheetName = await getLatestSheetName();
+        const sheetName = 'Billing Report'; // Hardcode exactly to the sheet the user uses
         const res = await sheetsAPI.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: `${sheetName}!B:B`, // Account name is column B
+            range: `${sheetName}!A:Q`, // Fetch up to Column Q
         });
 
         const rows = res.data.values;
@@ -97,16 +97,23 @@ async function syncPaymentToSheet(payment) {
 
         // Find the user's row
         let rowIndex = -1;
+        const targetName = (payment.customerName || '').toLowerCase().trim();
         const targetAccount = (payment.accountNumber || '').toLowerCase().trim();
+        
         for (let i = 0; i < rows.length; i++) {
-            if (rows[i][0] && rows[i][0].toLowerCase().trim() === targetAccount) {
+            const rowName = (rows[i][0] || '').toLowerCase().trim();
+            const rowAccNum = (rows[i][16] || '').toLowerCase().trim(); // Column Q (Account Number) is index 16
+            
+            // Match prioritize Account Number (Column Q), fallback to Name (Column A)
+            if ((targetAccount && rowAccNum === targetAccount) || 
+                (!targetAccount && targetName && rowName === targetName)) {
                 rowIndex = i + 1; // API uses 1-based index
                 break;
             }
         }
 
         if (rowIndex === -1) {
-            console.warn(`Could not find row for account ${targetAccount} in sheet ${sheetName}`);
+            console.warn(`Could not find row for ${targetName} / ${targetAccount} in sheet ${sheetName}`);
             return;
         }
 
@@ -116,25 +123,32 @@ async function syncPaymentToSheet(payment) {
         
         let datePaidStr = '';
         if (payment.datePaid) {
-            datePaidStr = new Date(payment.datePaid).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            datePaidStr = new Date(payment.datePaid).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
         } else if (payment.timestamp && payment.timestamp.toDate) {
-            datePaidStr = new Date(payment.timestamp.toDate()).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            datePaidStr = new Date(payment.timestamp.toDate()).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
         }
 
         const refNo = payment.referenceNumber || payment.refNo || payment.transactionId || '';
         
+        let updates = [
+            { range: `${sheetName}!F${rowIndex}`, values: [[datePaidStr]] },
+            { range: `${sheetName}!G${rowIndex}`, values: [['PAID']] },
+            { range: `${sheetName}!I${rowIndex}`, values: [[refNo]] }
+        ];
+
+        if (payment.plan) {
+            updates.push({ range: `${sheetName}!J${rowIndex}`, values: [[payment.plan]] });
+        }
+        if (payment.amount || payment.totalAmount) {
+            updates.push({ range: `${sheetName}!K${rowIndex}`, values: [[payment.amount || payment.totalAmount]] });
+        }
+
         // Batch update to update specific cells
         await sheetsAPI.spreadsheets.values.batchUpdate({
             spreadsheetId: SPREADSHEET_ID,
             requestBody: {
                 valueInputOption: 'USER_ENTERED',
-                data: [
-                    { range: `${sheetName}!F${rowIndex}`, values: [[datePaidStr]] },
-                    { range: `${sheetName}!G${rowIndex}`, values: [['PAID']] },
-                    { range: `${sheetName}!I${rowIndex}`, values: [[refNo]] },
-                    { range: `${sheetName}!J${rowIndex}`, values: [[payment.plan || '']] },
-                    { range: `${sheetName}!K${rowIndex}`, values: [[payment.amount || payment.totalAmount || '']] },
-                ]
+                data: updates
             }
         });
 
@@ -144,10 +158,11 @@ async function syncPaymentToSheet(payment) {
     }
 }
 
-async function createNewMonthSheet() {
+export async function createNewMonthSheet(targetDate = new Date()) {
+    const now = targetDate;
     if (!sheetsAPI) return;
     try {
-        const date = new Date();
+        const date = targetDate;
         const currentMonth = date.toLocaleString('en-US', { month: 'long' });
         const currentYear = date.getFullYear();
         const newSheetName = `${currentMonth} ${currentYear}`;
