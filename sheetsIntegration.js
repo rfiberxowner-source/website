@@ -106,7 +106,7 @@ export async function syncPaymentToSheet(payment) {
             
             // Match prioritize Account Number (Column Q), fallback to Name (Column A)
             if ((targetAccount && rowAccNum === targetAccount) || 
-                (!targetAccount && targetName && rowName === targetName)) {
+                (targetName && rowName === targetName)) {
                 rowIndex = i + 1; // API uses 1-based index
                 break;
             }
