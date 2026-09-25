@@ -1,6 +1,7 @@
 import express from 'express';
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { initSheetsSync } from './sheetsIntegration.js';
 import fs from 'fs';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
@@ -20,6 +21,9 @@ initializeApp({
     credential: cert(serviceAccount)
 });
 const db = getFirestore();
+
+// Initialize Google Sheets Auto-Sync
+initSheetsSync(db);
 const userSessions = new Map();
 const topicTracker = new Map();
 const pendingTextMessages = new Map();
