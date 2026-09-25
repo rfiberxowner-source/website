@@ -2059,13 +2059,13 @@ db.collection('payments').onSnapshot((snapshot) => {
                                 const psid = psidDoc.id;
 
                                                                 // Fetch user data to get exact Due Date
-                                let userDueDate = 6; // default
+                                let userDueDate = 7; // default
                                 if (data.userId) {
                                     const uDoc = await db.collection('users').doc(data.userId).get();
-                                    if (uDoc.exists) userDueDate = uDoc.data().dueDate || uDoc.data().DueDate || 6;
+                                    if (uDoc.exists) userDueDate = uDoc.data().dueDate || uDoc.data().DueDate || 7;
                                 } else if (acct) {
                                     const uSnap = await db.collection('users').where('accountNumber', '==', acct).limit(1).get();
-                                    if (!uSnap.empty) userDueDate = uSnap.docs[0].data().dueDate || uSnap.docs[0].data().DueDate || 6;
+                                    if (!uSnap.empty) userDueDate = uSnap.docs[0].data().dueDate || uSnap.docs[0].data().DueDate || 7;
                                 }
 
                                 // Calculate exact coverage and next due date based on billingMonth
@@ -2080,17 +2080,20 @@ db.collection('payments').onSnapshot((snapshot) => {
                                 
                                 let lastDay = 30;
                                 let nextMonthName = "next month";
+                                let nextLastDay = 30;
                                 if (!isNaN(coverageDate.getTime())) {
                                     lastDay = new Date(coverageDate.getFullYear(), coverageDate.getMonth() + 1, 0).getDate();
                                     const nextMonthDate = new Date(coverageDate.getFullYear(), coverageDate.getMonth() + 1, 1);
                                     nextMonthName = nextMonthDate.toLocaleString('en-US', { month: 'long' });
+                                    nextLastDay = new Date(nextMonthDate.getFullYear(), nextMonthDate.getMonth() + 1, 0).getDate();
                                 }
 
                                 const coverageText = `${monthName} 1–${lastDay}`;
-                                let dueDayNumber = parseInt(String(userDueDate).replace(/\D/g, '')) || 6;
+                                const nextCoverageText = `${nextMonthName} 1–${nextLastDay}`;
+                                let dueDayNumber = parseInt(String(userDueDate).replace(/\D/g, '')) || 7;
                                 const nextDueDateText = `${nextMonthName} ${dueDayNumber}`;
 
-                                let message = `✅ Payment Confirmation: Your payment has been successfully received and recorded in our system for the month of ${monthName} (${coverageText}).\n\nYour next payment due date is ${nextDueDateText} for your (${coverageText} billing). Kindly ensure that your payment is made on or before the due date to avoid any interruption to your internet service.\n\nIf you believe the billing month we recorded is incorrect, kindly let us know so we can review your account. Thank you for your continued support!`;
+                                let message = `✅ Payment Confirmation: Your payment has been successfully received and recorded in our system for the month of ${monthName} (${coverageText}).\n\nYour next payment due date is ${nextDueDateText} for your (${nextCoverageText} billing). Kindly ensure that your payment is made on or before the due date to avoid any interruption to your internet service.\n\nIf you believe the billing month we recorded is incorrect, kindly let us know so we can review your account. Thank you for your continued support!`;
 
                                 // Send proactive message
                                 await callSendAPI(psid, {
