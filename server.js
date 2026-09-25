@@ -958,7 +958,8 @@ Our team will check if your area is serviceable and contact you for installation
                 usersSnapshot.forEach(doc => {
                     const data = doc.data();
                     const name = (data.name || data.firstName || data.lastName || '').toLowerCase();
-                    if (name && name.includes(msg)) {
+                    const acctNum = (data.accountNumber || data.account || '').toLowerCase();
+                    if ((name && name.includes(msg)) || (acctNum && acctNum.includes(msg))) {
                         matches.push(data);
                     }
                 });
@@ -977,7 +978,7 @@ Our team will check if your area is serviceable and contact you for installation
                             { content_type: "text", title: "Cancel", payload: "Cancel" }]
                     };
                 } else {
-                    return { text: "We couldn't find an account with that name. Please try another name or type 'Cancel' to stop." };
+                    return { text: "We couldn't find an account with that name or account number. Please try again or type 'Cancel' to stop." };
                 }
             } catch (err) {
                 console.error("DB Error:", err);
@@ -1245,7 +1246,8 @@ Our team will check if your area is serviceable and contact you for installation
                 usersSnapshot.forEach(doc => {
                     const data = doc.data();
                     const name = (data.name || data.firstName || data.lastName || '').toLowerCase();
-                    if (name && name.includes(msg)) {
+                    const acctNum = (data.accountNumber || data.account || '').toLowerCase();
+                    if ((name && name.includes(msg)) || (acctNum && acctNum.includes(msg))) {
                         matches.push(data);
                     }
                 });
@@ -1263,7 +1265,7 @@ Our team will check if your area is serviceable and contact you for installation
                             { content_type: "text", title: "Cancel", payload: "Cancel" }]
                     };
                 } else {
-                    return { text: "We couldn't find an account with that name. Please try another name or type 'Cancel' to stop." };
+                    return { text: "We couldn't find an account with that name or account number. Please try again or type 'Cancel' to stop." };
                 }
             } catch (err) {
                 console.error("DB Error:", err);
@@ -1891,7 +1893,7 @@ You can also always call the support using the phone number: 09913746474, email 
             }
 
             userSessions.set(sender_psid, 'ACCOUNT_INQUIRY_NAME');
-            return { text: T("To help you find your account details, please provide your Full Name or the name you remember for your account.", "Para mahanap ang iyong account details, pakibigay ang iyong Full Name o ang pangalang naaalala mo na nakarehistro sa iyong account.") };
+            return { text: T("To help you find your account details, please provide your Full Name or your Account Number.", "Para mahanap ang iyong account details, pakibigay ang iyong Full Name o ang iyong Account Number.") };
 
         case 'GET_STARTED':
             return {
