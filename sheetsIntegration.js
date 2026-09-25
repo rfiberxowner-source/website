@@ -65,19 +65,28 @@ function colToLetter(colIndex) {
 }
 
 function listenForPayments() {
-    console.log("👀 Listening for new payments to sync to Google Sheets...");
+    console.log("👀 Listening for new payments and deletions to sync to Google Sheets...");
     
-    // We only want to sync NEW payments after the server started to avoid re-syncing everything, 
-    // but onSnapshot will give us everything initially. We can filter by recent timestamp or just handle updates.
-    // A safer way is to query payments from the last 24 hours
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    db.collection('payments').where('timestamp', '>', yesterday).onSnapshot(async (snapshot) => {
+    // We listen to ALL payments so we can catch deletions of older payments.
+    // To avoid spamming the Sheets API with old payments on server restart,
+    // we only sync "added/modified" payments if they are from the last 24 hours.
+    
+    db.collection('payments').onSnapshot(async (snapshot) => {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        
         for (const change of snapshot.docChanges()) {
+            const payment = change.doc.data();
+            
             if (change.type === 'added' || change.type === 'modified') {
-                const payment = change.doc.data();
-                await syncPaymentToSheet(payment);
+                const paymentDate = payment.timestamp ? payment.timestamp.toDate() : (payment.datePaid ? new Date(payment.datePaid) : new Date(0));
+                
+                if (paymentDate > yesterday) {
+                    await syncPaymentToSheet(payment);
+                }
+            } else if (change.type === 'removed') {
+                console.log(`🗑️ Payment deleted for ${payment.customerName || payment.accountNumber}. Reverting in Google Sheets...`);
+                await revertPaymentInSheet(payment);
             }
         }
     });
@@ -260,5 +269,59 @@ export async function createNewMonthSheet(targetDate = new Date()) {
 
     } catch (err) {
         console.error("❌ Error creating new month sheet:", err);
+    }
+}
+
+async function revertPaymentInSheet(payment) {
+    if (!sheetsAPI) return;
+    try {
+        const sheetName = 'Billing Report'; // Hardcode exactly to the sheet the user uses
+        const res = await sheetsAPI.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `${sheetName}!A:Q`, // Fetch up to Column Q
+        });
+
+        const rows = res.data.values;
+        if (!rows) return;
+
+        // Find the user's row
+        let rowIndex = -1;
+        const targetName = (payment.customerName || '').toLowerCase().trim();
+        const targetAccount = (payment.accountNumber || '').toLowerCase().trim();
+        
+        for (let i = 0; i < rows.length; i++) {
+            const rowName = (rows[i][0] || '').toLowerCase().trim();
+            const rowAccNum = (rows[i][16] || '').toLowerCase().trim(); // Column Q
+            
+            if ((targetAccount && rowAccNum === targetAccount) || 
+                (targetName && rowName === targetName)) {
+                rowIndex = i + 1;
+                break;
+            }
+        }
+
+        if (rowIndex === -1) {
+            console.warn(`Could not find row for deleted payment ${targetName} / ${targetAccount}`);
+            return;
+        }
+
+        // Revert Date of Payment (F), Status (G), and Ref No (I)
+        let updates = [
+            { range: `${sheetName}!F${rowIndex}`, values: [['']] },
+            { range: `${sheetName}!G${rowIndex}`, values: [['UNPAID']] },
+            { range: `${sheetName}!I${rowIndex}`, values: [['']] }
+        ];
+
+        await sheetsAPI.spreadsheets.values.batchUpdate({
+            spreadsheetId: SPREADSHEET_ID,
+            requestBody: {
+                valueInputOption: 'USER_ENTERED',
+                data: updates
+            }
+        });
+
+        console.log(`✅ Reverted payment for ${targetAccount || targetName} to UNPAID in Google Sheets!`);
+    } catch (err) {
+        console.error("❌ Error reverting payment in Google Sheets:", err);
     }
 }
