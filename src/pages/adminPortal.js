@@ -4615,6 +4615,12 @@ window.markAdminBillPaid = async function (btn, billId, customerId, amountStr, b
   if (ev) ev.stopPropagation();
   if (btn.disabled) return;
 
+  const refNo = prompt("Please input the Reference Number (Optional):");
+  if (refNo === null) {
+    return;
+  }
+
+
   btn.innerHTML = 'Processing...';
   btn.disabled = true;
 
@@ -4640,7 +4646,8 @@ window.markAdminBillPaid = async function (btn, billId, customerId, amountStr, b
       timestamp: firestore.serverTimestamp(),
       customerName: cName,
       accountNumber: acct,
-      processedBy: processedBy
+      processedBy: processedBy,
+      referenceNumber: refNo.trim()
     };
 
     await firestore.addDoc(firestore.collection(db, "payments"), payData);
