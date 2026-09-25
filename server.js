@@ -2058,15 +2058,39 @@ db.collection('payments').onSnapshot((snapshot) => {
                             for (const psidDoc of psidSnap.docs) {
                                 const psid = psidDoc.id;
 
-                                // Build specific details
-                                // Date calculations for exact coverage output (e.g. "14-30")
-                                const phTime = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
-                                const paymentDay = phTime.getDate();
-                                const lastDayOfMonth = new Date(phTime.getFullYear(), phTime.getMonth() + 1, 0).getDate();
-                                const paymentMonthName = phTime.toLocaleDateString('en-PH', { month: 'long' });
-                                const coverageText = `${paymentDay}-${lastDayOfMonth}`;
+                                                                // Fetch user data to get exact Due Date
+                                let userDueDate = 6; // default
+                                if (data.userId) {
+                                    const uDoc = await db.collection('users').doc(data.userId).get();
+                                    if (uDoc.exists) userDueDate = uDoc.data().dueDate || uDoc.data().DueDate || 6;
+                                } else if (acct) {
+                                    const uSnap = await db.collection('users').where('accountNumber', '==', acct).limit(1).get();
+                                    if (!uSnap.empty) userDueDate = uSnap.docs[0].data().dueDate || uSnap.docs[0].data().DueDate || 6;
+                                }
 
-                                let message = `Payment Approved: Your account has been credited and recorded for the month of ${paymentMonthName} (${coverageText}). Thank you for choosing RFiberX!`;
+                                // Calculate exact coverage and next due date based on billingMonth
+                                let rawMonth = (data.billingMonth || '').split(' ')[0] || '';
+                                if (!rawMonth || rawMonth === '-') {
+                                    rawMonth = new Date().toLocaleString('en-US', { month: 'long', timeZone: 'Asia/Manila' });
+                                }
+                                const monthName = rawMonth.charAt(0).toUpperCase() + rawMonth.slice(1).toLowerCase();
+                                
+                                const currentYear = new Date().toLocaleString('en-US', { year: 'numeric', timeZone: 'Asia/Manila' });
+                                const coverageDate = new Date(`${monthName} 1, ${currentYear}`);
+                                
+                                let lastDay = 30;
+                                let nextMonthName = "next month";
+                                if (!isNaN(coverageDate.getTime())) {
+                                    lastDay = new Date(coverageDate.getFullYear(), coverageDate.getMonth() + 1, 0).getDate();
+                                    const nextMonthDate = new Date(coverageDate.getFullYear(), coverageDate.getMonth() + 1, 1);
+                                    nextMonthName = nextMonthDate.toLocaleString('en-US', { month: 'long' });
+                                }
+
+                                const coverageText = `${monthName} 1–${lastDay}`;
+                                let dueDayNumber = parseInt(String(userDueDate).replace(/\D/g, '')) || 6;
+                                const nextDueDateText = `${nextMonthName} ${dueDayNumber}`;
+
+                                let message = `✅ Payment Confirmation: Your payment has been successfully received and recorded in our system for the month of ${monthName} (${coverageText}).\n\nYour next payment due date is ${nextDueDateText} for your (${coverageText} billing). Kindly ensure that your payment is made on or before the due date to avoid any interruption to your internet service.\n\nIf you believe the billing month we recorded is incorrect, kindly let us know so we can review your account. Thank you for your continued support!`;
 
                                 // Send proactive message
                                 await callSendAPI(psid, {
