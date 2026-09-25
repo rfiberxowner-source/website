@@ -690,8 +690,8 @@ async function getAutoReply(text, sender_psid, language, isQuickReply = false) {
         userSessions.delete(sender_psid);
         return {
             text: T("We are now transferring you to agents for further assistance, please wait.", "We are now transferring you to agents for further assistance, please wait."),
-            isHandover: true
-        };
+            // isHandover removed — no longer transferring to agent
+    };
     }
 
     try {
@@ -2263,15 +2263,12 @@ async function queueImageAttachment(imageUrl, sender_psid, language, shouldReply
     const defaultReply = {
         text: T(
             "We have received your receipt. We are now transferring your chat to one of our agents for verification and further assistance. Someone will be with you shortly to check your account.",
-            "Natanggap na namin ang iyong image. Ititransfer na namin ang iyong chat sa isa sa aming mga agent para sa karagdagang tulong. Mangyaring maghintay."
+            "Natanggap na namin ang iyong resibo. Ititransfer na namin ang iyong chat sa isa sa aming mga agent para sa verification at karagdagang tulong. May sasalubong sa iyo sa lalong madaling panahon."
         ),
         isHandover: true
     };
 
-    if (!process.env.ENABLE_AI_RECEIPT || String(process.env.ENABLE_AI_RECEIPT).trim().toLowerCase() !== "true") {
-        console.log("📸 Image received from PSID: " + sender_psid + ". Transferring to agent (AI receipt scanner disabled).");
-        return shouldReply ? defaultReply : null;
-    }
+    // ENABLE_AI_RECEIPT check removed — always queue images now
 
     try {
         let base64Data;
@@ -2300,132 +2297,9 @@ async function queueImageAttachment(imageUrl, sender_psid, language, shouldReply
 
 async function processImageAttachmentLogic(base64Data, sender_psid, accountNum, language, imageUrl) {
     const tl = language === 'tl';
-    const T = (en, tag) => tl ? tag : en;
-
-    const createErrorTicket = async (reason) => {
-        try {
-            console.log(`[AI Ticket] Creating manual review ticket for ${sender_psid} due to: ${reason}`);
-            const psidDoc = await db.collection('messenger_psids').doc(sender_psid).get();
-            const clientName = (psidDoc.exists && psidDoc.data().name) ? psidDoc.data().name : "Unknown Client";
-            
-            const newComplaintRef = db.collection('complaints').doc();
-            await newComplaintRef.set({
-                psid: sender_psid,
-                name: clientName,
-                status: "Unread",
-                createdAt: FieldValue.serverTimestamp()
-            });
-            await db.collection('complaints').doc(newComplaintRef.id).collection('messages').add({
-                sender: 'client',
-                text: `[Failed AI Receipt Scan: ${reason}]`,
-                imageUrl: imageUrl || '',
-                timestamp: FieldValue.serverTimestamp()
-            });
-            await db.collection('messenger_psids').doc(sender_psid).set({ active_complaint_id: newComplaintRef.id }, { merge: true });
-        } catch(e) {
-            console.error("Error creating AI ticket:", e);
-        }
-    };
 
     try {
-        console.log(`📸 Background scanning image receipt for ${sender_psid}...`);
-
-        // Fetch Gemini API key
-        const apiKeyDoc = await db.collection('settings').doc('apiKeys').get();
-        let apiKey = '';
-        if (apiKeyDoc.exists && apiKeyDoc.data().gemini) {
-            apiKey = apiKeyDoc.data().gemini;
-        }
-        if (!apiKey) {
-            console.error("Gemini API Key missing");
-            return false;
-        }
-
-        const genAI = new GoogleGenerativeAI(apiKey);
-
-        const modelsToTry = [
-            "gemini-1.5-flash",
-            "gemini-1.5-pro",
-            "gemini-2.0-flash",
-            "gemini-2.0-flash-lite"
-        ];
-
-        const imagePart = {
-            inlineData: {
-                data: base64Data,
-                mimeType: "image/jpeg"
-            }
-        };
-
-        const prompt = `I need you to scan this GCash/UnionBank receipt image and extract text.
-Reply ONLY with a strictly formatted JSON object without markdown formatting. If it is NOT a receipt, reply with {"error": "NOT_A_RECEIPT"}.
-If it IS a receipt, extract:
-{
-  "referenceNumber": "The 13-digit reference number",
-  "amount": "Numeric amount (e.g. 1500)",
-  "date": "Full date",
-  "senderName": "Name of the sender",
-  "receiverName": "Name of the receiver"
-}`;
-
-        let result = null;
-        let finalError = null;
-
-        for (let i = 0; i < modelsToTry.length; i++) {
-            try {
-                const currentModelName = modelsToTry[i];
-                const model = genAI.getGenerativeModel({ model: currentModelName });
-                console.log(`[Receipt Scan] Attempt ${i + 1}/${modelsToTry.length} using model: ${currentModelName}`);
-
-                result = await model.generateContent([prompt, imagePart]);
-                break;
-            } catch (apiError) {
-                finalError = apiError;
-                const isRetryable = apiError.status === 503 || apiError.status === 429 || apiError.status === 404 || (apiError.message && (apiError.message.includes('503') || apiError.message.includes('429') || apiError.message.includes('404') || apiError.message.includes('Not Found')));
-
-                if (isRetryable && i < modelsToTry.length - 1) {
-                    const delayMs = (i + 1) * 1000;
-                    console.warn(`[Receipt Scan] ${modelsToTry[i]} failed (${apiError.status}). Falling back in ${delayMs}ms...`);
-                    await new Promise(resolve => setTimeout(resolve, delayMs));
-                } else if (isRetryable) {
-                    return "BUSY"; // Tell the queue worker to pause and retry later
-                } else {
-                    break;
-                }
-            }
-        }
-
-        if (!result) {
-            console.error("Failed to process receipt after trying all fallback models.");
-            await createErrorTicket("AI Failed to Analyze Image");
-            return false;
-        }
-
-        const responseText = result.response.text();
-        let jsonStr = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-        let extracted = JSON.parse(jsonStr);
-
-        if (extracted.error === "NOT_A_RECEIPT") {
-            console.log("❌ Image is not a receipt. Creating error ticket instead of dropping.");
-            await createErrorTicket("Image Not Recognized As Receipt");
-            return false;
-        }
-
-        // Allow alphanumeric characters for UnionBank and variable lengths (6-16)
-        const refNo = extracted.referenceNumber ? String(extracted.referenceNumber).replace(/[^A-Z0-9]/ig, '').toUpperCase() : '';
-        if (refNo.length < 6 || refNo.length > 16) {
-            console.log(`🚨 FRAUD DETECTED 🚨 Invalid Reference Number length: ${refNo}`);
-            await createErrorTicket(`Invalid Reference Number (${refNo})`);
-            return false;
-        }
-
-        const receiptsRef = db.collection('receipts');
-        const q = receiptsRef.where("referenceNumber", "==", refNo);
-        const dupCheck = await q.get();
-        if (!dupCheck.empty) {
-            console.log(`🚨 FRAUD DETECTED 🚨 Duplicate Reference Number: ${refNo}`);
-            return false;
-        }
+        console.log(`📸 Processing image for ${sender_psid} (Simplified: instantly mark bills as Waiting)...`);
 
         let userId = null;
 
@@ -2438,8 +2312,6 @@ If it IS a receipt, extract:
                 userId = usersSnap2.docs[0].id;
             }
         }
-
-        console.log("✅ Receipt validated. Updating billing status...");
 
         if (userId) {
             const billingSnap = await db.collection('users').doc(userId).collection('billing_emails').get();
@@ -2459,71 +2331,44 @@ If it IS a receipt, extract:
             const unpaidCount = unpaidBillsList.length;
 
             if (unpaidCount === 0) {
-                console.log(`No unpaid bills found for ${accountNum}. Sending 'no bills' message.`);
-                
+                console.log(`No unpaid bills found for ${accountNum}.`);
+
                 let textMsg = "";
                 if (waitingCount > 0) {
-                    textMsg = tl ? 
-                        "Na-scan na namin ang iyong resibo, ngunit wala ka nang unpaid billing statement ngayon. Mayroon kang payment na kasalukuyang naghihintay ng admin approval." :
-                        "We have scanned your receipt, but you currently have no unpaid billing statements. You do have a payment currently waiting for admin approval.";
+                    textMsg = tl ?
+                        "Natanggap na namin ang iyong image, ngunit wala ka nang unpaid billing statement ngayon. Mayroon kang payment na kasalukuyang naghihintay ng admin approval." :
+                        "We have received your image, but you currently have no unpaid billing statements. You do have a payment currently waiting for admin approval.";
                 } else {
-                    textMsg = tl ? 
-                        "Na-scan na namin ang iyong resibo, ngunit wala ka nang unpaid billing statement sa iyong account ngayon." :
-                        "We have scanned your receipt, but you currently have no unpaid billing statements on your account.";
+                    textMsg = tl ?
+                        "Natanggap na namin ang iyong image, ngunit wala ka nang unpaid billing statement sa iyong account ngayon." :
+                        "We have received your image, but you currently have no unpaid billing statements on your account.";
                 }
-                
+
                 callSendAPI(sender_psid, { text: textMsg }).catch(err => console.error("Error sending no bills message:", err));
                 return false;
             }
 
-            unpaidBillsList.sort((a, b) => new Date(a.dateSent || 0) - new Date(b.dateSent || 0));
-            const extractedAmount = parseFloat(String(extracted.amount).replace(/[^0-9\.]/g, ''));
-
-            let expectedTotalAmount = 0;
-            unpaidBillsList.forEach(b => {
-                expectedTotalAmount += parseFloat(String(b.amount || 0).replace(/[^0-9\.]/g, '')) || 0;
-            });
-            const oldestBillAmt = parseFloat(String(unpaidBillsList[0].amount || 0).replace(/[^0-9\.]/g, '')) || 0;
-
-            let isTotalMatch = false;
-            let isOldestMatch = false;
-
-            if (extractedAmount > 0) {
-                if (expectedTotalAmount > 0 && extractedAmount === expectedTotalAmount) {
-                    isTotalMatch = true;
-                }
-                else if (oldestBillAmt > 0 && extractedAmount === oldestBillAmt) {
-                    isOldestMatch = true;
-                }
-            }
-
-            if (!isTotalMatch && !isOldestMatch) {
-                console.log(`🚨 INVALID AMOUNT 🚨 Extracted: ${extractedAmount}, Expected Total: ${expectedTotalAmount}, Oldest: ${oldestBillAmt}`);
-                return false;
-            }
-
-            if (isTotalMatch) {
-                for (let bill of unpaidBillsList) {
-                    await bill.ref.update({
-                        status: 'Waiting',
-                        processedBy: 'Page AI',
-                        updatedAt: FieldValue.serverTimestamp()
-                    });
-                }
-                console.log(`✅ Marked all ${unpaidBillsList.length} bills as Waiting for ${accountNum}`);
-                return true;
-            } else if (isOldestMatch) {
-                await unpaidBillsList[0].ref.update({
+            // Mark ALL unpaid bills as Waiting immediately
+            for (let bill of unpaidBillsList) {
+                await bill.ref.update({
                     status: 'Waiting',
-                    processedBy: 'Page AI',
+                    processedBy: 'Auto-Wait',
+                    receiptImageUrl: imageUrl || '',
                     updatedAt: FieldValue.serverTimestamp()
                 });
-                console.log(`✅ Marked oldest bill as Waiting for ${accountNum}`);
-                return true;
             }
+            console.log(`✅ Marked all ${unpaidBillsList.length} bills as Waiting for ${accountNum}`);
+
+            // Send confirmation to the client
+            const confirmMsg = tl ?
+                `Natanggap na namin ang iyong image at na-update na ang iyong ${unpaidBillsList.length} billing statement(s) sa "Waiting" status. Kukumpirmahin ng admin ang iyong payment sa lalong madaling panahon.` :
+                `We have received your image and updated your ${unpaidBillsList.length} billing statement(s) to "Waiting" status. An admin will confirm your payment shortly.`;
+            callSendAPI(sender_psid, { text: confirmMsg }).catch(err => console.error("Error sending waiting confirmation:", err));
+
+            return true;
         }
-        
-        console.log(`✅ Successfully processed but no logic path executed for ${accountNum}.`);
+
+        console.log(`No user found for account ${accountNum}.`);
         return true;
     } catch (err) {
         console.error("Error processing image receipt logic:", err);
