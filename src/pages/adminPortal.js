@@ -321,12 +321,6 @@ export const adminViews = {
 
   '/RFiberXAdminportal-dashboard': () => {
     
-    const nowBilling = new Date();
-    const curMonthStr = nowBilling.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-    const nextDateBilling = new Date(nowBilling.getFullYear(), nowBilling.getMonth() + 1, 1);
-    const nextMonthStr = nextDateBilling.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-    const monthOptionsHTML = `<option value="current">${curMonthStr} (Current)</option><option value="next">${nextMonthStr} (Advance)</option>`;
-
     const content = `
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
         
@@ -1763,6 +1757,12 @@ export const adminViews = {
         statusEl.innerHTML = '<div style="background: rgba(229,57,53,0.1); border: 1px solid rgba(229,57,53,0.2); color: #E53935; padding: 1rem; border-radius: 8px; font-size: 0.9rem;">Error: ' + err.message + '</div>';
       }
     };
+
+    const nowBilling = new Date();
+    const curMonthStr = nowBilling.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    const nextDateBilling = new Date(nowBilling.getFullYear(), nowBilling.getMonth() + 1, 1);
+    const nextMonthStr = nextDateBilling.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    const monthOptionsHTML = `<option value="current">${curMonthStr} (Current)</option><option value="next">${nextMonthStr} (Advance)</option>`;
 
     const content = `
       <div style="margin-bottom: 1.5rem;">
