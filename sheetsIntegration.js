@@ -115,14 +115,29 @@ export async function syncPaymentToSheet(payment) {
         const targetName = (payment.customerName || '').toLowerCase().trim();
         const targetAccount = (payment.accountNumber || '').toLowerCase().trim();
         
+        // Helper to strip all spaces and non-alphanumeric chars for ultra-fuzzy matching
+        const stripStr = (str) => str.replace(/[^a-z0-9]/g, '');
+        const strippedTargetName = stripStr(targetName);
+        
         for (let i = 0; i < rows.length; i++) {
             const rowName = (rows[i][0] || '').toLowerCase().trim();
             const rowAccNum = (rows[i][16] || '').toLowerCase().trim(); // Column Q (Account Number) is index 16
             
-            // Match prioritize Account Number (Column Q), fallback to Name (Column A)
-            if ((targetAccount && rowAccNum === targetAccount) || 
-                (targetName && rowName === targetName)) {
-                rowIndex = i + 1; // API uses 1-based index
+            const strippedRowName = stripStr(rowName);
+            
+            // 1. Strict Account Number Match
+            if (targetAccount && targetAccount !== '' && rowAccNum === targetAccount) {
+                rowIndex = i + 1;
+                break;
+            }
+            // 2. Strict Name Match
+            else if (targetName && targetName !== '' && rowName === targetName) {
+                rowIndex = i + 1;
+                break;
+            }
+            // 3. Fuzzy Name Match (Ignores spaces, punctuation, etc.)
+            else if (strippedTargetName && strippedTargetName !== '' && strippedRowName === strippedTargetName) {
+                rowIndex = i + 1;
                 break;
             }
         }
