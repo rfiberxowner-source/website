@@ -320,6 +320,13 @@ export const adminViews = {
   },
 
   '/RFiberXAdminportal-dashboard': () => {
+    
+    const nowBilling = new Date();
+    const curMonthStr = nowBilling.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    const nextDateBilling = new Date(nowBilling.getFullYear(), nowBilling.getMonth() + 1, 1);
+    const nextMonthStr = nextDateBilling.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    const monthOptionsHTML = `<option value="current">${curMonthStr} (Current)</option><option value="next">${nextMonthStr} (Advance)</option>`;
+
     const content = `
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
         
@@ -664,13 +671,6 @@ export const adminViews = {
           </div>
           <select id="bm-month" style="background: #0f131f; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.85rem; width: 140px;">
             <option value="">All Months</option>
-            <option value="July 2026">July 2026</option>
-            <option value="June 2026">June 2026</option>
-            <option value="May 2026">May 2026</option>
-            <option value="April 2026">April 2026</option>
-            <option value="March 2026">March 2026</option>
-            <option value="February 2026">February 2026</option>
-            <option value="January 2026">January 2026</option>
           </select>
           <select id="bm-plan" style="background: #0f131f; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.85rem; width: 140px;">
             <option value="">All Plans</option>
@@ -719,14 +719,34 @@ export const adminViews = {
           </div>
           <select id="ph-month" style="background: #0f131f; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.85rem; width: 140px;">
             <option value="">All Months</option>
-            <option value="July 2026">July 2026</option>
-            <option value="June 2026">June 2026</option>
-            <option value="May 2026">May 2026</option>
-            <option value="April 2026">April 2026</option>
-            <option value="March 2026">March 2026</option>
-            <option value="February 2026">February 2026</option>
-            <option value="January 2026">January 2026</option>
           </select>
+          <script>
+            (function() {
+              function populateMonths(selectId) {
+                var sel = document.getElementById(selectId);
+                if (!sel) return;
+                var now = new Date();
+                // Add advance month
+                var mDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                var opt = document.createElement('option');
+                opt.value = mDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                opt.textContent = opt.value + ' (Advance)';
+                sel.appendChild(opt);
+                
+                // Add current and past 11 months
+                for (var i = 0; i < 12; i++) {
+                  var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                  var val = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                  var opt2 = document.createElement('option');
+                  opt2.value = val;
+                  opt2.textContent = val + (i === 0 ? ' (Current)' : '');
+                  sel.appendChild(opt2);
+                }
+              }
+              populateMonths('bm-month');
+              populateMonths('ph-month');
+            })();
+          </script>
           <select id="ph-plan" style="background: #0f131f; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.85rem; width: 140px;">
             <option value="">All Plans</option>
             <option value="30Mbps">30Mbps</option>
@@ -1789,6 +1809,7 @@ export const adminViews = {
           <div style="min-width: 200px;">
             <label style="display: block; color: #94a3b8; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Billing Month</label>
             <select id="comm-billing-month" style="width: 100%; background: #0b0f19; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.85rem 1rem; border-radius: 8px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; cursor: pointer; font-family: 'Inter', sans-serif; appearance: auto;" onfocus="this.style.borderColor='#E53935'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+              ${monthOptionsHTML}
             </select>
           </div>
           <button id="comm-send-btn" onclick="window.sendBillingEmail()" style="background: #E53935; color: #fff; border: none; padding: 0.85rem 2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(229,57,53,0.3); white-space: nowrap; display: flex; align-items: center; gap: 0.5rem;" onmouseover="this.style.background='#d32f2f'" onmouseout="this.style.background='#E53935'">
@@ -1798,18 +1819,7 @@ export const adminViews = {
         </div>
 
         <div id="comm-status" style="margin-top: 1rem;"></div>
-        <script>
-          (function() {
-            var sel = document.getElementById('comm-billing-month');
-            if (sel) {
-              var now = new Date();
-              var curMonth = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-              var nextDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-              var nextMonth = nextDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-              sel.innerHTML = '<option value="current">' + curMonth + ' (Current)</option><option value="next">' + nextMonth + ' (Advance)</option>';
-            }
-          })();
-        </script>
+        
 
       </div>
 
@@ -1832,19 +1842,9 @@ export const adminViews = {
           <div style="min-width: 200px;">
             <label style="display: block; color: #94a3b8; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Billing Month</label>
             <select id="comm-all-billing-month" style="width: 100%; background: #0b0f19; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.85rem 1rem; border-radius: 8px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; cursor: pointer; font-family: 'Inter', sans-serif; appearance: auto;" onfocus="this.style.borderColor='#E53935'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+              ${monthOptionsHTML}
             </select>
-            <script>
-              (function() {
-                var sel = document.getElementById('comm-all-billing-month');
-                if (sel) {
-                  var now = new Date();
-                  var curMonth = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-                  var nextDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-                  var nextMonth = nextDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-                  sel.innerHTML = '<option value="current">' + curMonth + ' (Current)</option><option value="next">' + nextMonth + ' (Advance)</option>';
-                }
-              })();
-            </script>
+            
           </div>
           <button id="comm-delete-pending-btn" onclick="window.deletePendingBillsAll()" style="background: transparent; color: #E53935; border: 1px solid #E53935; padding: 0.85rem 2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 0.5rem;" onmouseover="this.style.background='rgba(229,57,53,0.1)'" onmouseout="this.style.background='transparent'">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
