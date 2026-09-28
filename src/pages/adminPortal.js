@@ -1534,8 +1534,11 @@ export const adminViews = {
         });
 
         const now = new Date();
-        const billingMonth = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-        const dueDate = new Date(now.getFullYear(), now.getMonth(), 7);
+        const monthSelect = document.getElementById('comm-billing-month');
+        const isAdvance = monthSelect && monthSelect.value === 'next';
+        const billingDate = isAdvance ? new Date(now.getFullYear(), now.getMonth() + 1, 1) : now;
+        const billingMonth = billingDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        const dueDate = new Date(billingDate.getFullYear(), billingDate.getMonth(), 7);
         const dueDateStr = dueDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
         let newBillId = '';
@@ -1617,8 +1620,11 @@ export const adminViews = {
         let sentCount = 0;
 
         const now = new Date();
-        const billingMonth = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-        const dueDate = new Date(now.getFullYear(), now.getMonth(), 7);
+        const allMonthSelect = document.getElementById('comm-all-billing-month');
+        const isAdvanceAll = allMonthSelect && allMonthSelect.value === 'next';
+        const billingDateAll = isAdvanceAll ? new Date(now.getFullYear(), now.getMonth() + 1, 1) : now;
+        const billingMonth = billingDateAll.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        const dueDate = new Date(billingDateAll.getFullYear(), billingDateAll.getMonth(), 7);
         const dueDateStr = dueDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
         const logBody = document.getElementById('comm-log-body');
@@ -1780,6 +1786,11 @@ export const adminViews = {
             <label style="display: block; color: #94a3b8; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Account Number</label>
             <input type="text" id="comm-acct-number" value="129005" placeholder="e.g. 129005" style="width: 100%; background: #0b0f19; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.85rem 1rem; border-radius: 8px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; font-family: 'JetBrains Mono', monospace, 'Inter', sans-serif; letter-spacing: 0.5px;" onfocus="this.style.borderColor='#E53935'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
           </div>
+          <div style="min-width: 200px;">
+            <label style="display: block; color: #94a3b8; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Billing Month</label>
+            <select id="comm-billing-month" style="width: 100%; background: #0b0f19; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.85rem 1rem; border-radius: 8px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; cursor: pointer; font-family: 'Inter', sans-serif; appearance: auto;" onfocus="this.style.borderColor='#E53935'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+            </select>
+          </div>
           <button id="comm-send-btn" onclick="window.sendBillingEmail()" style="background: #E53935; color: #fff; border: none; padding: 0.85rem 2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(229,57,53,0.3); white-space: nowrap; display: flex; align-items: center; gap: 0.5rem;" onmouseover="this.style.background='#d32f2f'" onmouseout="this.style.background='#E53935'">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             Send Billing Statement
@@ -1787,6 +1798,18 @@ export const adminViews = {
         </div>
 
         <div id="comm-status" style="margin-top: 1rem;"></div>
+        <script>
+          (function() {
+            var sel = document.getElementById('comm-billing-month');
+            if (sel) {
+              var now = new Date();
+              var curMonth = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+              var nextDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+              var nextMonth = nextDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+              sel.innerHTML = '<option value="current">' + curMonth + ' (Current)</option><option value="next">' + nextMonth + ' (Advance)</option>';
+            }
+          })();
+        </script>
 
       </div>
 
@@ -1805,6 +1828,23 @@ export const adminViews = {
         <div style="display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap;">
           <div style="flex: 1; min-width: 250px;">
             <p style="color: #94a3b8; font-size: 0.9rem; margin: 0 0 0.5rem 0;">Clicking the button will send statements to all active accounts.</p>
+          </div>
+          <div style="min-width: 200px;">
+            <label style="display: block; color: #94a3b8; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Billing Month</label>
+            <select id="comm-all-billing-month" style="width: 100%; background: #0b0f19; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.85rem 1rem; border-radius: 8px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; cursor: pointer; font-family: 'Inter', sans-serif; appearance: auto;" onfocus="this.style.borderColor='#E53935'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+            </select>
+            <script>
+              (function() {
+                var sel = document.getElementById('comm-all-billing-month');
+                if (sel) {
+                  var now = new Date();
+                  var curMonth = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                  var nextDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                  var nextMonth = nextDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                  sel.innerHTML = '<option value="current">' + curMonth + ' (Current)</option><option value="next">' + nextMonth + ' (Advance)</option>';
+                }
+              })();
+            </script>
           </div>
           <button id="comm-delete-pending-btn" onclick="window.deletePendingBillsAll()" style="background: transparent; color: #E53935; border: 1px solid #E53935; padding: 0.85rem 2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 0.5rem;" onmouseover="this.style.background='rgba(229,57,53,0.1)'" onmouseout="this.style.background='transparent'">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
