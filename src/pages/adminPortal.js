@@ -4019,6 +4019,20 @@ window.requestAdminClientUpdate = async function () {
         monthlyFee: firestore.deleteField()
       });
 
+      // Cascade plan and amount updates to all UNPAID billing statements
+      if (changes.includes('plan') || changes.includes('amount')) {
+          const billsSnap = await firestore.getDocs(firestore.collection(db, "users", id, "billing_emails"));
+          for (const bDoc of billsSnap.docs) {
+              const bStatus = (bDoc.data().status || '').toLowerCase();
+              if (bStatus !== 'paid' && bStatus !== 'completed') {
+                  await firestore.updateDoc(bDoc.ref, {
+                      plan: plan,
+                      amount: amount
+                  });
+              }
+          }
+      }
+
       msg.style.display = 'block';
       msg.style.background = 'rgba(16,185,129,0.1)';
       msg.style.color = '#10b981';
