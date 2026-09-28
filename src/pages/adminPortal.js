@@ -4020,7 +4020,7 @@ window.requestAdminClientUpdate = async function () {
       });
 
       // Cascade plan and amount updates to all UNPAID billing statements
-      if (changes.includes('plan') || changes.includes('amount')) {
+      if (changes.includes('Plan') || changes.includes('Amount')) {
           const billsSnap = await firestore.getDocs(firestore.collection(db, "users", id, "billing_emails"));
           for (const bDoc of billsSnap.docs) {
               const bStatus = (bDoc.data().status || '').toLowerCase();
