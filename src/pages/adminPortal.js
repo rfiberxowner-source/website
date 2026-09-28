@@ -1706,7 +1706,17 @@ export const adminViews = {
           }
         }
 
-        statusEl.innerHTML = '<div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #10b981; padding: 1rem; border-radius: 8px; font-size: 0.9rem; display: flex; align-items: center; gap: 0.75rem;"><div style="width: 20px; height: 20px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; flex-shrink: 0;">✓</div> Billing statements sent successfully to <strong>' + sentCount + '</strong> accounts!</div>';
+        statusEl.innerHTML = '<div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #10b981; padding: 1rem; border-radius: 8px; font-size: 0.9rem; display: flex; align-items: center; gap: 0.75rem;"><div style="width: 20px; height: 20px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; flex-shrink: 0;">✓</div> Billing statements sent successfully to <strong>' + sentCount + '</strong> accounts! Generating Google Sheet...</div>';
+        try {
+            await fetch(window.BACKEND_URL + '/api/admin/create-month-sheet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ dateStr: billingMonth })
+            });
+            statusEl.innerHTML = '<div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #10b981; padding: 1rem; border-radius: 8px; font-size: 0.9rem; display: flex; align-items: center; gap: 0.75rem;"><div style="width: 20px; height: 20px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; flex-shrink: 0;">✓</div> Billing statements sent successfully to <strong>' + sentCount + '</strong> accounts! Google Sheet for "' + billingMonth + '" has been generated/synced!</div>';
+        } catch (sheetErr) {
+            console.error("Failed to generate Google Sheet", sheetErr);
+        }
 
         sendBtn.disabled = false;
         sendBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Send Bill Statement to all';

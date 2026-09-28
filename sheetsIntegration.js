@@ -29,6 +29,9 @@ export async function initSheetsSync(firestoreDb) {
 
         // Start listening to payments collection
         listenForPayments();
+        
+        // Start listening for new users to append to sheets
+        listenForNewUsers();
 
         // Schedule Monthly Rollover (Runs exactly at midnight on the 1st of every month)
         cron.schedule('0 0 1 * *', async () => {
@@ -95,7 +98,10 @@ function listenForPayments() {
 export async function syncPaymentToSheet(payment) {
     if (!sheetsAPI) return;
     try {
-        const sheetName = 'Billing Report'; // Hardcode exactly to the sheet the user uses
+        let sheetName = payment.billingMonth || payment.month;
+        if (!sheetName) {
+            sheetName = await getLatestSheetName();
+        }
         const res = await sheetsAPI.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
             range: `${sheetName}!A:Q`, // Fetch up to Column Q
@@ -176,6 +182,13 @@ export async function createNewMonthSheet(targetDate = new Date()) {
         const currentYear = date.getFullYear();
         const newSheetName = `${currentMonth} ${currentYear}`;
         
+        // 0. Check if sheet already exists
+        const existingId = await getSheetIdByName(newSheetName);
+        if (existingId) {
+            console.log(`⚠️ Sheet ${newSheetName} already exists! Skipping creation.`);
+            return;
+        }
+
         // 1. Duplicate the previous month sheet
         const oldSheetName = await getLatestSheetName();
         const oldSheetId = await getSheetIdByName(oldSheetName);
@@ -324,4 +337,88 @@ async function revertPaymentInSheet(payment) {
     } catch (err) {
         console.error("❌ Error reverting payment in Google Sheets:", err);
     }
+}
+
+
+async function appendUserToSheet(sheetName, user) {
+    if (!sheetsAPI) return;
+    try {
+        // Check if sheet exists
+        const res = await sheetsAPI.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
+        const exists = res.data.sheets.find(s => s.properties.title === sheetName);
+        if (!exists) return; // Don't append if the sheet hasn't been created yet
+
+        const rawName = user.fullName || user.name || '';
+        const accountName = rawName.toLowerCase().replace(/\s+/g, '.');
+        let status = user.status === 'DELETED' ? 'DELETED' : 'UNPAID';
+        
+        // Format Due Date for that month
+        const [month, year] = sheetName.split(' ');
+        const dueDateString = `${month} 7, ${year}`;
+
+        const rowData = [
+            rawName,                          // A: Name
+            accountName,                      // B: Account
+            user.clientType || 'Old Client',     // C: Type
+            'Monthly',                        // D: Payment
+            dueDateString,                    // E: Due Date
+            '',                               // F: Date of Payment
+            status,                           // G: Payment Status (UNPAID)
+            user.status || user.connectionStatus || 'CONNECTED', // H: Connection Status
+            '',                               // I: Ref No.
+            user.plan || user.Plan || '',           // J: Plan
+            '',                               // K: Amount
+            user.facebook || user.fb || '',         // L: Contact (FB)
+            user.phone || user.contactNumber || '', // M: Phone
+            user.email || '',                    // N: Email
+            user.address || '',                  // O: Address
+            user.Location || user.location || '',   // P: Location
+            user.accountNumber || user.account || '' // Q: Account Number
+        ];
+
+        await sheetsAPI.spreadsheets.values.append({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `${sheetName}!A:Q`,
+            valueInputOption: 'USER_ENTERED',
+            insertDataOption: 'INSERT_ROWS',
+            requestBody: {
+                values: [rowData]
+            }
+        });
+        console.log(`✅ Appended new user ${rawName} to Google Sheet: ${sheetName}`);
+    } catch (err) {
+        console.error(`❌ Error appending user to ${sheetName}:`, err);
+    }
+}
+
+function listenForNewUsers() {
+    console.log("👀 Listening for new users to append to Google Sheets...");
+    
+    db.collection('users').onSnapshot(async (snapshot) => {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        for (const change of snapshot.docChanges()) {
+            if (change.type === 'added') {
+                const user = change.doc.data();
+                
+                // Only sync newly created users (using a timestamp if available, else assume they are old)
+                // If the user doesn't have a createdAt, we skip them to avoid appending 100s of users on server restart
+                if (user.createdAt && user.createdAt.toDate) {
+                    const createdDate = user.createdAt.toDate();
+                    if (createdDate > yesterday) {
+                        // Append to Current Month
+                        const now = new Date();
+                        const currentMonthStr = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                        await appendUserToSheet(currentMonthStr, user);
+                        
+                        // Append to Advance Month (if it exists)
+                        const advanceDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                        const advanceMonthStr = advanceDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                        await appendUserToSheet(advanceMonthStr, user);
+                    }
+                }
+            }
+        }
+    });
 }

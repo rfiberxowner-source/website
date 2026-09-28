@@ -1,7 +1,7 @@
 import express from 'express';
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import { initSheetsSync } from './sheetsIntegration.js';
+import { initSheetsSync, createNewMonthSheet } from './sheetsIntegration.js';
 import fs from 'fs';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
@@ -2375,6 +2375,22 @@ async function processImageAttachmentLogic(base64Data, sender_psid, accountNum, 
 // =========================================================================
 // 🚀 EXCEL EXPORT ENDPOINT (EXCELJS)
 // =========================================================================
+
+
+// Endpoint to manually trigger creation of a new month's Google Sheet
+app.post('/api/admin/create-month-sheet', express.json(), async (req, res) => {
+    try {
+        const { dateStr } = req.body;
+        // dateStr should be like "October 2026"
+        const targetDate = new Date(dateStr); 
+        await createNewMonthSheet(targetDate);
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Error creating month sheet:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.get('/api/admin/export-excel', async (req, res) => {
     try {
         const selectedMonth = req.query.month || '';
