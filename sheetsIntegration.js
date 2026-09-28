@@ -142,6 +142,14 @@ export async function syncPaymentToSheet(payment) {
             }
         }
 
+        if (rowIndex !== -1) {
+            const rowStatus = (rows[rowIndex - 1][6] || '').trim().toUpperCase(); // Col G
+            if (rowStatus === 'PAID') {
+                console.log(`Row ${rowIndex} is already PAID. Skipping overwrite.`);
+                return;
+            }
+        }
+
         if (rowIndex === -1) {
             console.warn(`Could not find row for ${targetName} / ${targetAccount} in sheet ${sheetName}`);
             return;
