@@ -337,7 +337,7 @@ export async function createNewMonthSheet(targetDate = new Date()) {
                 u.address || '',                  // O: Address
                 u.Location || u.location || '',   // P: Location
                 u.accountNumber || u.account || '', // Q: Account Number
-                u.createdAt ? (typeof u.createdAt.toDate === 'function' ? u.createdAt.toDate() : new Date(u.createdAt)).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : '' // R: Date Created
+                u.createdAt ? (typeof u.createdAt.toDate === 'function' ? u.createdAt.toDate() : new Date(u.createdAt)).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' }) : '' // R: Date Created
             ]);
         });
 
@@ -362,6 +362,90 @@ export async function createNewMonthSheet(targetDate = new Date()) {
             spreadsheetId: SPREADSHEET_ID,
             range: clearRange
         });
+
+        // 6. Ensure row 1 is merged A1:R1, R2 is styled, data is centered, and column R is auto-resized
+        await sheetsAPI.spreadsheets.batchUpdate({
+            spreadsheetId: SPREADSHEET_ID,
+            requestBody: {
+                requests: [
+                    {
+                        mergeCells: {
+                            range: {
+                                sheetId: newSheetId,
+                                startRowIndex: 0,
+                                endRowIndex: 1,
+                                startColumnIndex: 0,
+                                endColumnIndex: 18
+                            },
+                            mergeType: 'MERGE_ALL'
+                        }
+                    },
+                    {
+                        updateCells: {
+                            range: {
+                                sheetId: newSheetId,
+                                startRowIndex: 1,
+                                endRowIndex: 2,
+                                startColumnIndex: 17,
+                                endColumnIndex: 18
+                            },
+                            rows: [{
+                                values: [{
+                                    userEnteredValue: { stringValue: 'Date Created' },
+                                    userEnteredFormat: {
+                                        backgroundColor: { red: 0.1254902, green: 0.21568628, blue: 0.39215687 },
+                                        horizontalAlignment: 'CENTER',
+                                        verticalAlignment: 'MIDDLE',
+                                        wrapStrategy: 'WRAP',
+                                        textFormat: {
+                                            foregroundColor: { red: 1, green: 1, blue: 1 },
+                                            fontFamily: 'Arial',
+                                            fontSize: 10,
+                                            bold: true
+                                        },
+                                        borders: {
+                                            top: { style: 'SOLID', width: 1, color: { red: 0, green: 0, blue: 0 } },
+                                            bottom: { style: 'SOLID', width: 1, color: { red: 0, green: 0, blue: 0 } },
+                                            left: { style: 'SOLID', width: 1, color: { red: 0, green: 0, blue: 0 } },
+                                            right: { style: 'SOLID', width: 1, color: { red: 0, green: 0, blue: 0 } }
+                                        }
+                                    }
+                                }]
+                            }],
+                            fields: 'userEnteredValue,userEnteredFormat(backgroundColor,horizontalAlignment,verticalAlignment,wrapStrategy,textFormat,borders)'
+                        }
+                    },
+                    {
+                        repeatCell: {
+                            range: {
+                                sheetId: newSheetId,
+                                startRowIndex: 2,
+                                endRowIndex: rowData.length + 2,
+                                startColumnIndex: 17,
+                                endColumnIndex: 18
+                            },
+                            cell: {
+                                userEnteredFormat: {
+                                    horizontalAlignment: 'CENTER',
+                                    verticalAlignment: 'MIDDLE'
+                                }
+                            },
+                            fields: 'userEnteredFormat(horizontalAlignment,verticalAlignment)'
+                        }
+                    },
+                    {
+                        autoResizeDimensions: {
+                            dimensions: {
+                                sheetId: newSheetId,
+                                dimension: 'COLUMNS',
+                                startIndex: 17,
+                                endIndex: 18
+                            }
+                        }
+                    }
+                ]
+            }
+        }).catch(err => console.error("⚠️ Failed to format Column R in new month sheet:", err));
 
         console.log(`✅ Successfully created new Auto-Rollover sheet for ${newSheetName}`);
 
@@ -515,7 +599,7 @@ async function appendUserToSheet(sheetName, user) {
             user.address || '',                  // O: Address
             user.Location || user.location || '',   // P: Location
             user.accountNumber || user.account || '', // Q: Account Number
-            user.createdAt ? (typeof user.createdAt.toDate === 'function' ? user.createdAt.toDate() : new Date(user.createdAt)).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : '' // R: Date Created
+            user.createdAt ? (typeof user.createdAt.toDate === 'function' ? user.createdAt.toDate() : new Date(user.createdAt)).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' }) : '' // R: Date Created
         ];
 
         // 1. Append the row
