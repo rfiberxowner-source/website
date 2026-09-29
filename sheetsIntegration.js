@@ -95,6 +95,16 @@ function listenForPayments() {
     });
 }
 
+function colIndexToLetter(index) {
+    let temp, letter = '';
+    while (index >= 0) {
+        temp = index % 26;
+        letter = String.fromCharCode(temp + 65) + letter;
+        index = (index - temp - 1) / 26;
+    }
+    return letter;
+}
+
 export async function syncPaymentToSheet(payment) {
     if (!sheetsAPI) return;
     try {
@@ -104,46 +114,82 @@ export async function syncPaymentToSheet(payment) {
         }
         const res = await sheetsAPI.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: `${sheetName}!A:Q`, // Fetch up to Column Q
+            range: `${sheetName}!A:Z`, // Fetch up to Column Z just in case
         });
 
         const rows = res.data.values;
         if (!rows) return;
 
-        // Find the user's row
+        // 1. Identify Columns Dynamically from Headers (Search first 5 rows)
+        let colDatePaid = 5; // default F (index 5)
+        let colStatus = 6;   // default G
+        let colRef = 8;      // default I
+        let colPlan = 9;     // default J
+        let colAmt = 10;     // default K
+        let headerRow = 1;   // default row 2 (index 1)
+
+        for(let r = 0; r < Math.min(rows.length, 5); r++) {
+            const h = rows[r].map(c => (c || '').toLowerCase().trim());
+            if (h.includes('payment status') || h.includes('status')) {
+                headerRow = r;
+                let cDP = h.findIndex(x => x.includes('date of payment') || x.includes('date paid') || (x.includes('date') && !x.includes('due')));
+                if (cDP !== -1) colDatePaid = cDP;
+                let cS = h.findIndex(x => x === 'payment status' || x === 'status');
+                if (cS !== -1) colStatus = cS;
+                let cR = h.findIndex(x => x.includes('ref. no.') || x.includes('ref no') || x.includes('reference'));
+                if (cR !== -1) colRef = cR;
+                let cP = h.findIndex(x => x.includes('plan'));
+                if (cP !== -1) colPlan = cP;
+                let cA = h.findIndex(x => x.includes('amount'));
+                if (cA !== -1) colAmt = cA;
+                break;
+            }
+        }
+
+        // 2. Find the user's row
         let rowIndex = -1;
         const targetName = (payment.customerName || '').toLowerCase().trim();
         const targetAccount = (payment.accountNumber || '').toLowerCase().trim();
         
-        // Helper to strip all spaces and non-alphanumeric chars for ultra-fuzzy matching
         const stripStr = (str) => str.replace(/[^a-z0-9]/g, '');
         const strippedTargetName = stripStr(targetName);
         
-        for (let i = 0; i < rows.length; i++) {
-            const rowName = (rows[i][0] || '').toLowerCase().trim();
-            const rowAccNum = (rows[i][16] || '').toLowerCase().trim(); // Column Q (Account Number) is index 16
+        for (let i = headerRow + 1; i < rows.length; i++) {
+            const rowData = rows[i];
             
-            const strippedRowName = stripStr(rowName);
-            
-            // 1. Strict Account Number Match
-            if (targetAccount && targetAccount !== '' && rowAccNum === targetAccount) {
+            // Search ENTIRE row for Account Number
+            let foundByAccount = false;
+            if (targetAccount !== '') {
+                for (let col = 0; col < rowData.length; col++) {
+                    if ((rowData[col] || '').toLowerCase().trim() === targetAccount) {
+                        foundByAccount = true;
+                        break;
+                    }
+                }
+            }
+
+            if (foundByAccount) {
                 rowIndex = i + 1;
                 break;
             }
-            // 2. Strict Name Match
-            else if (targetName && targetName !== '' && rowName === targetName) {
+
+            // Fallback: Name Match (Check Column A and B)
+            const rowNameA = (rowData[0] || '').toLowerCase().trim();
+            const rowNameB = (rowData[1] || '').toLowerCase().trim();
+            const strippedA = stripStr(rowNameA);
+            const strippedB = stripStr(rowNameB);
+
+            if (targetName !== '' && (rowNameA === targetName || rowNameB === targetName)) {
                 rowIndex = i + 1;
                 break;
-            }
-            // 3. Fuzzy Name Match (Ignores spaces, punctuation, etc.)
-            else if (strippedTargetName && strippedTargetName !== '' && strippedRowName === strippedTargetName) {
+            } else if (strippedTargetName !== '' && (strippedA === strippedTargetName || strippedB === strippedTargetName)) {
                 rowIndex = i + 1;
                 break;
             }
         }
 
         if (rowIndex !== -1) {
-            const rowStatus = (rows[rowIndex - 1][6] || '').trim().toUpperCase(); // Col G
+            const rowStatus = (rows[rowIndex - 1][colStatus] || '').trim().toUpperCase();
             if (rowStatus === 'PAID') {
                 console.log(`Row ${rowIndex} is already PAID. Skipping overwrite.`);
                 return;
@@ -155,10 +201,7 @@ export async function syncPaymentToSheet(payment) {
             return;
         }
 
-        // Update the row values
-        // Date of Payment (F), Payment Status (G), Ref No (I), Plan (J), Amount (K)
-        // Note: F = col 6, G = col 7, I = col 9, J = col 10, K = col 11
-        
+        // 3. Prepare Updates
         let datePaidStr = '';
         if (payment.datePaid) {
             datePaidStr = new Date(payment.datePaid).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
@@ -169,19 +212,23 @@ export async function syncPaymentToSheet(payment) {
         const refNo = payment.referenceNumber || payment.refNo || payment.transactionId || '';
         
         let updates = [
-            { range: `${sheetName}!F${rowIndex}`, values: [[datePaidStr]] },
-            { range: `${sheetName}!G${rowIndex}`, values: [['PAID']] },
-            { range: `${sheetName}!I${rowIndex}`, values: [[refNo]] }
+            { range: `${sheetName}!${colIndexToLetter(colDatePaid)}${rowIndex}`, values: [[datePaidStr]] },
+            { range: `${sheetName}!${colIndexToLetter(colStatus)}${rowIndex}`, values: [['PAID']] },
         ];
 
-        if (payment.plan) {
-            updates.push({ range: `${sheetName}!J${rowIndex}`, values: [[payment.plan]] });
-        }
-        if (payment.amount || payment.totalAmount) {
-            updates.push({ range: `${sheetName}!K${rowIndex}`, values: [[payment.amount || payment.totalAmount]] });
+        // Only update Ref No if the column exists in their sheet
+        if (colRef !== -1 && refNo !== '') {
+            updates.push({ range: `${sheetName}!${colIndexToLetter(colRef)}${rowIndex}`, values: [[refNo]] });
         }
 
-        // Batch update to update specific cells
+        if (payment.plan && colPlan !== -1) {
+            updates.push({ range: `${sheetName}!${colIndexToLetter(colPlan)}${rowIndex}`, values: [[payment.plan]] });
+        }
+        
+        if ((payment.amount || payment.totalAmount) && colAmt !== -1) {
+            updates.push({ range: `${sheetName}!${colIndexToLetter(colAmt)}${rowIndex}`, values: [[payment.amount || payment.totalAmount]] });
+        }
+
         await sheetsAPI.spreadsheets.values.batchUpdate({
             spreadsheetId: SPREADSHEET_ID,
             requestBody: {
