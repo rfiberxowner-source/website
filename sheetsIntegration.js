@@ -306,10 +306,22 @@ export async function createNewMonthSheet(targetDate = new Date()) {
             const accountName = rawName.toLowerCase().replace(/\\s+/g, '.');
             let status = u.status === 'DELETED' ? 'DELETED' : 'UNPAID';
 
+            let cType = u.clientType || 'Old Client';
+            if (u.createdAt) {
+                try {
+                    const cDate = u.createdAt.toDate ? u.createdAt.toDate() : new Date(u.createdAt);
+                    if ((Date.now() - cDate.getTime()) / (1000 * 60 * 60 * 24) < 30) {
+                        cType = 'New Client';
+                    } else {
+                        cType = 'Old Client';
+                    }
+                } catch(e) {}
+            }
+
             rowData.push([
                 rawName,                          // A: Name
                 accountName,                      // B: Account
-                u.clientType || 'Old Client',     // C: Type
+                cType,                            // C: Type
                 'Monthly',                        // D: Payment
                 dueDateString,                    // E: Due Date
                 '',                               // F: Date of Payment (CLEAR IT)
@@ -420,9 +432,62 @@ async function appendUserToSheet(sheetName, user) {
         const exists = res.data.sheets.find(s => s.properties.title === sheetName);
         if (!exists) return; // Don't append if the sheet hasn't been created yet
 
+        // Check if user already exists in the sheet to avoid duplicates
+        const existingData = await sheetsAPI.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `${sheetName}!A:Q`
+        }).catch(() => null);
+
+        if (existingData && existingData.data.values) {
+            const checkName = (user.fullName || user.name || '').toLowerCase().trim();
+            const checkAccount = (user.accountNumber || user.account || '').toLowerCase().trim();
+            const stripCheck = (str) => str.replace(/[^a-z0-9]/g, '');
+            const strippedCheckName = stripCheck(checkName);
+
+            for (let i = 0; i < existingData.data.values.length; i++) {
+                const rd = existingData.data.values[i];
+                // Check account number match across all columns
+                if (checkAccount !== '') {
+                    let foundAccount = false;
+                    for (let col = 0; col < rd.length; col++) {
+                        if ((rd[col] || '').toLowerCase().trim() === checkAccount) {
+                            foundAccount = true;
+                            break;
+                        }
+                    }
+                    if (foundAccount) {
+                        console.log(`⚠️ User ${checkName} already exists in ${sheetName}. Skipping append.`);
+                        return;
+                    }
+                }
+                // Check name match in Column A
+                const rName = (rd[0] || '').toLowerCase().trim();
+                if (checkName !== '' && rName === checkName) {
+                    console.log(`⚠️ User ${checkName} already exists in ${sheetName}. Skipping append.`);
+                    return;
+                }
+                if (strippedCheckName !== '' && stripCheck(rName) === strippedCheckName) {
+                    console.log(`⚠️ User ${checkName} already exists in ${sheetName}. Skipping append.`);
+                    return;
+                }
+            }
+        }
+
         const rawName = user.fullName || user.name || '';
         const accountName = rawName.toLowerCase().replace(/\s+/g, '.');
         let status = user.status === 'DELETED' ? 'DELETED' : 'UNPAID';
+        
+        let cType = user.clientType || 'Old Client';
+        if (user.createdAt) {
+            try {
+                const cDate = user.createdAt.toDate ? user.createdAt.toDate() : new Date(user.createdAt);
+                if ((Date.now() - cDate.getTime()) / (1000 * 60 * 60 * 24) < 30) {
+                    cType = 'New Client';
+                } else {
+                    cType = 'Old Client';
+                }
+            } catch(e) {}
+        }
         
         // Format Due Date for that month
         const [month, year] = sheetName.split(' ');
@@ -431,7 +496,7 @@ async function appendUserToSheet(sheetName, user) {
         const rowData = [
             rawName,                          // A: Name
             accountName,                      // B: Account
-            user.clientType || 'Old Client',     // C: Type
+            cType,                            // C: Type
             'Monthly',                        // D: Payment
             dueDateString,                    // E: Due Date
             '',                               // F: Date of Payment
@@ -505,10 +570,7 @@ async function appendUserToSheet(sheetName, user) {
         console.log(`✅ Appended and Alphabetically Sorted new user ${rawName} in Google Sheet: ${sheetName}`);
         
         // 4. Force color styling for the new row by calling syncProfileToSheet
-        // We delay it slightly to ensure the sort is complete
-        setTimeout(async () => {
-            await syncProfileToSheet(user);
-        }, 3000);
+        await syncProfileToSheet(user);
 
     } catch (err) {
         console.error(`❌ Error appending user to ${sheetName}:`, err);
@@ -610,71 +672,83 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
             return;
         }
 
-        let updates = [];
-        const loc = user.Location || user.location || '';
-        if (loc && colLoc !== -1) {
-            updates.push({ range: `${sheetName}!${colIndexToLetter(colLoc)}${rowIndex}`, values: [[loc]] });
-        }
-        const cType = user.clientType || 'Old Client';
-        if (cType && colClientType !== -1) {
-            updates.push({ range: `${sheetName}!${colIndexToLetter(colClientType)}${rowIndex}`, values: [[cType]] });
+        let cType = user.clientType || 'Old Client';
+        if (user.createdAt) {
+            try {
+                const cDate = user.createdAt.toDate ? user.createdAt.toDate() : new Date(user.createdAt);
+                if ((Date.now() - cDate.getTime()) / (1000 * 60 * 60 * 24) < 30) {
+                    cType = 'New Client';
+                } else {
+                    cType = 'Old Client';
+                }
+            } catch(e) {}
         }
 
-        if (updates.length > 0) {
-            // Write the text values
-            await sheetsAPI.spreadsheets.values.batchUpdate({
-                spreadsheetId: SPREADSHEET_ID,
-                requestBody: {
-                    valueInputOption: 'USER_ENTERED',
-                    data: updates
+        // Determine color for client type
+        let bgColor = { red: 1, green: 1, blue: 1 }; // white
+        let fgColor = { red: 0, green: 0, blue: 0 }; // black text
+
+        if (cType.toLowerCase().includes('new')) {
+            bgColor = { red: 0.145, green: 0.388, blue: 0.921 }; // #2563eb
+            fgColor = { red: 1, green: 1, blue: 1 }; // white text
+        } else if (cType.toLowerCase().includes('old')) {
+            bgColor = { red: 0.086, green: 0.627, blue: 0.521 }; // #16a085
+            fgColor = { red: 1, green: 1, blue: 1 }; // white text
+        }
+
+        // Build all requests for a single batchUpdate call (values + colors combined)
+        const batchRequests = [];
+        const loc = user.Location || user.location || '';
+
+        if (loc && colLoc !== -1) {
+            batchRequests.push({
+                updateCells: {
+                    range: {
+                        sheetId: sheetId,
+                        startRowIndex: rowIndex - 1,
+                        endRowIndex: rowIndex,
+                        startColumnIndex: colLoc,
+                        endColumnIndex: colLoc + 1
+                    },
+                    rows: [{ values: [{ userEnteredValue: { stringValue: loc } }] }],
+                    fields: 'userEnteredValue'
                 }
             });
-            
-            // Apply colors if Type of Client column was found
-            if (colClientType !== -1 && cType !== '') {
-                // Determine color
-                let bgColor = { red: 1, green: 1, blue: 1 }; // white
-                let fgColor = { red: 0, green: 0, blue: 0 }; // black text
-                
-                if (cType.toLowerCase().includes('new')) {
-                    // Blue background for New Client
-                    bgColor = { red: 0.145, green: 0.388, blue: 0.921 }; // #2563eb
-                    fgColor = { red: 1, green: 1, blue: 1 }; // white text
-                } else if (cType.toLowerCase().includes('old')) {
-                    // Green background for Old Client
-                    bgColor = { red: 0.086, green: 0.627, blue: 0.521 }; // #16a085
-                    fgColor = { red: 1, green: 1, blue: 1 }; // white text
-                }
+        }
 
-                await sheetsAPI.spreadsheets.batchUpdate({
-                    spreadsheetId: SPREADSHEET_ID,
-                    requestBody: {
-                        requests: [
-                            {
-                                repeatCell: {
-                                    range: {
-                                        sheetId: sheetId,
-                                        startRowIndex: rowIndex - 1,
-                                        endRowIndex: rowIndex,
-                                        startColumnIndex: colClientType,
-                                        endColumnIndex: colClientType + 1
-                                    },
-                                    cell: {
-                                        userEnteredFormat: {
-                                            backgroundColor: bgColor,
-                                            textFormat: {
-                                                foregroundColor: fgColor,
-                                                bold: true
-                                            }
-                                        }
-                                    },
-                                    fields: 'userEnteredFormat(backgroundColor,textFormat)'
+        if (colClientType !== -1 && cType !== '') {
+            // Write value AND apply color in a single request
+            batchRequests.push({
+                updateCells: {
+                    range: {
+                        sheetId: sheetId,
+                        startRowIndex: rowIndex - 1,
+                        endRowIndex: rowIndex,
+                        startColumnIndex: colClientType,
+                        endColumnIndex: colClientType + 1
+                    },
+                    rows: [{
+                        values: [{
+                            userEnteredValue: { stringValue: cType },
+                            userEnteredFormat: {
+                                backgroundColor: bgColor,
+                                textFormat: {
+                                    foregroundColor: fgColor,
+                                    bold: true
                                 }
                             }
-                        ]
-                    }
-                });
-            }
+                        }]
+                    }],
+                    fields: 'userEnteredValue,userEnteredFormat(backgroundColor,textFormat)'
+                }
+            });
+        }
+
+        if (batchRequests.length > 0) {
+            await sheetsAPI.spreadsheets.batchUpdate({
+                spreadsheetId: SPREADSHEET_ID,
+                requestBody: { requests: batchRequests }
+            });
 
             console.log(`✅ Synced profile updates (Location/Type + Colors) for ${targetName} to ${sheetName}`);
         }
@@ -687,23 +761,31 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
 
 function startClientAgingCron() {
     console.log("⏳ Starting daily cron job to check for client aging...");
-    setInterval(async () => {
+    
+    const checkClientAging = async () => {
         try {
             const now = new Date();
-            // Check all users who are currently "New Client" or have no clientType
             const snap = await db.collection('users').get();
             let batch = db.batch();
             let count = 0;
             
             snap.forEach(doc => {
                 const user = doc.data();
-                if (user.role !== 'admin' && user.role !== 'technician') {
-                    const cType = user.clientType || 'Old Client'; // Default to old if unknown
-                    if (cType === 'New Client' && user.createdAt && user.createdAt.toDate) {
-                        const ageMs = now - user.createdAt.toDate();
-                        const ageDays = ageMs / (1000 * 60 * 60 * 24);
-                        if (ageDays > 30) {
+                if (user.role !== 'admin' && user.role !== 'technician' && user.createdAt) {
+                    const createdDate = typeof user.createdAt.toDate === 'function' 
+                        ? user.createdAt.toDate() 
+                        : new Date(user.createdAt);
+                    const ageMs = now - createdDate;
+                    const ageDays = ageMs / (1000 * 60 * 60 * 24);
+                    
+                    if (ageDays > 30) {
+                        if (user.clientType !== 'Old Client') {
                             batch.update(doc.ref, { clientType: 'Old Client' });
+                            count++;
+                        }
+                    } else {
+                        if (user.clientType !== 'New Client') {
+                            batch.update(doc.ref, { clientType: 'New Client' });
                             count++;
                         }
                     }
@@ -711,26 +793,38 @@ function startClientAgingCron() {
             });
             
             if (count > 0) {
+                // Note: Firestore batch has a limit of 500 operations, 
+                // but assuming < 500 users changing state per day/run.
                 await batch.commit();
-                console.log(`✅ Aged ${count} clients from New to Old.`);
+                console.log(`✅ Aged/Updated ${count} clients' Client Type.`);
             }
         } catch (e) {
             console.error("❌ Error in client aging cron:", e);
         }
-    }, 24 * 60 * 60 * 1000); // run every 24 hours
+    };
+
+    // Run immediately on server start
+    checkClientAging();
+    // Then run every 24 hours
+    setInterval(checkClientAging, 24 * 60 * 60 * 1000);
 }
 
 // Call startClientAgingCron at the end of initSheetsSync
 
 function listenForNewUsers() {
     console.log("👀 Listening for new users to append to Google Sheets...");
-    
+
+    let initialLoadComplete = false;
+
     db.collection('users').onSnapshot(async (snapshot) => {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        
+        const isInitialLoad = !initialLoadComplete;
+        initialLoadComplete = true;
+
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
         for (const change of snapshot.docChanges()) {
-            
+
             if (change.type === 'modified') {
                 const user = change.doc.data();
                 await syncProfileToSheet(user);
@@ -738,22 +832,38 @@ function listenForNewUsers() {
 
             if (change.type === 'added') {
                 const user = change.doc.data();
-                
-                // Only sync newly created users (using a timestamp if available, else assume they are old)
-                // If the user doesn't have a createdAt, we skip them to avoid appending 100s of users on server restart
-                if (user.createdAt && user.createdAt.toDate) {
-                    const createdDate = user.createdAt.toDate();
-                    if (createdDate > yesterday) {
-                        // Append to Current Month
-                        const now = new Date();
-                        const currentMonthStr = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-                        await appendUserToSheet(currentMonthStr, user);
-                        
-                        // Append to Advance Month (if it exists)
-                        const advanceDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-                        const advanceMonthStr = advanceDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-                        await appendUserToSheet(advanceMonthStr, user);
+
+                // Determine if we should append this user
+                let shouldAppend = false;
+
+                if (isInitialLoad) {
+                    // On server restart, all existing docs fire as 'added'.
+                    // Use a 7-day window to catch users added while server was down,
+                    // without re-processing very old users.
+                    // The duplicate check in appendUserToSheet prevents double entries.
+                    if (user.createdAt) {
+                        const createdDate = typeof user.createdAt.toDate === 'function'
+                            ? user.createdAt.toDate()
+                            : new Date(user.createdAt);
+                        if (createdDate > sevenDaysAgo) {
+                            shouldAppend = true;
+                        }
                     }
+                } else {
+                    // Real-time: always append genuinely new users
+                    shouldAppend = true;
+                }
+
+                if (shouldAppend) {
+                    // Append to Current Month
+                    const now = new Date();
+                    const currentMonthStr = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                    await appendUserToSheet(currentMonthStr, user);
+
+                    // Append to Advance Month (if it exists)
+                    const advanceDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                    const advanceMonthStr = advanceDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                    await appendUserToSheet(advanceMonthStr, user);
                 }
             }
         }
