@@ -32,6 +32,7 @@ export async function initSheetsSync(firestoreDb) {
         
         // Start listening for new users to append to sheets
         listenForNewUsers();
+    startClientAgingCron();
 
         // Schedule Monthly Rollover (Runs exactly at midnight on the 1st of every month)
         cron.schedule('0 0 1 * *', async () => {
@@ -461,6 +462,142 @@ async function appendUserToSheet(sheetName, user) {
     }
 }
 
+
+export async function syncProfileToSheet(user) {
+    if (!sheetsAPI) return;
+    try {
+        const now = new Date();
+        const sheetName = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        
+        const res = await sheetsAPI.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `${sheetName}!A:Z`
+        }).catch(() => null);
+        
+        if (!res || !res.data.values) return; // Sheet might not exist
+
+        const rows = res.data.values;
+        if (!rows || rows.length === 0) return;
+
+        let headerRow = 1;
+        let colLoc = 15; // P
+        let colClientType = 2; // C
+        
+        for(let r = 0; r < Math.min(rows.length, 5); r++) {
+            const h = rows[r].map(c => (c || '').toLowerCase().trim());
+            if (h.includes('payment status') || h.includes('status')) {
+                headerRow = r;
+                let cL = h.findIndex(x => x.includes('location'));
+                if (cL !== -1) colLoc = cL;
+                let cC = h.findIndex(x => x.includes('type of client') || x.includes('client type'));
+                if (cC !== -1) colClientType = cC;
+                break;
+            }
+        }
+
+        let rowIndex = -1;
+        const targetAccount = (user.accountNumber || user.account || '').toLowerCase().trim();
+        const targetName = (user.fullName || user.name || '').toLowerCase().trim();
+        const stripStr = (str) => str.replace(/[^a-z0-9]/g, '');
+        const strippedTargetName = stripStr(targetName);
+
+        for (let i = headerRow + 1; i < rows.length; i++) {
+            const rowData = rows[i];
+            let foundByAccount = false;
+            if (targetAccount !== '') {
+                for (let col = 0; col < rowData.length; col++) {
+                    if ((rowData[col] || '').toLowerCase().trim() === targetAccount) {
+                        foundByAccount = true;
+                        break;
+                    }
+                }
+            }
+            if (foundByAccount) {
+                rowIndex = i + 1;
+                break;
+            }
+            const rowNameA = (rowData[0] || '').toLowerCase().trim();
+            const rowNameB = (rowData[1] || '').toLowerCase().trim();
+            const strippedA = stripStr(rowNameA);
+            const strippedB = stripStr(rowNameB);
+
+            if (targetName !== '' && (rowNameA === targetName || rowNameB === targetName)) {
+                rowIndex = i + 1;
+                break;
+            } else if (strippedTargetName !== '' && (strippedA === strippedTargetName || strippedB === strippedTargetName)) {
+                rowIndex = i + 1;
+                break;
+            }
+        }
+
+        if (rowIndex === -1) {
+            console.warn(`Could not find row for ${targetName} to sync profile in ${sheetName}`);
+            return;
+        }
+
+        let updates = [];
+        const loc = user.Location || user.location || '';
+        if (loc && colLoc !== -1) {
+            updates.push({ range: `${sheetName}!${colIndexToLetter(colLoc)}${rowIndex}`, values: [[loc]] });
+        }
+        const cType = user.clientType || 'Old Client';
+        if (cType && colClientType !== -1) {
+            updates.push({ range: `${sheetName}!${colIndexToLetter(colClientType)}${rowIndex}`, values: [[cType]] });
+        }
+
+        if (updates.length > 0) {
+            await sheetsAPI.spreadsheets.values.batchUpdate({
+                spreadsheetId: SPREADSHEET_ID,
+                requestBody: {
+                    valueInputOption: 'USER_ENTERED',
+                    data: updates
+                }
+            });
+            console.log(`✅ Synced profile updates (Location/Type) for ${targetName} to Google Sheets!`);
+        }
+    } catch (err) {
+        console.error("❌ Error syncing profile to sheets:", err);
+    }
+}
+
+
+function startClientAgingCron() {
+    console.log("⏳ Starting daily cron job to check for client aging...");
+    setInterval(async () => {
+        try {
+            const now = new Date();
+            // Check all users who are currently "New Client" or have no clientType
+            const snap = await db.collection('users').get();
+            let batch = db.batch();
+            let count = 0;
+            
+            snap.forEach(doc => {
+                const user = doc.data();
+                if (user.role !== 'admin' && user.role !== 'technician') {
+                    const cType = user.clientType || 'Old Client'; // Default to old if unknown
+                    if (cType === 'New Client' && user.createdAt && user.createdAt.toDate) {
+                        const ageMs = now - user.createdAt.toDate();
+                        const ageDays = ageMs / (1000 * 60 * 60 * 24);
+                        if (ageDays > 30) {
+                            batch.update(doc.ref, { clientType: 'Old Client' });
+                            count++;
+                        }
+                    }
+                }
+            });
+            
+            if (count > 0) {
+                await batch.commit();
+                console.log(`✅ Aged ${count} clients from New to Old.`);
+            }
+        } catch (e) {
+            console.error("❌ Error in client aging cron:", e);
+        }
+    }, 24 * 60 * 60 * 1000); // run every 24 hours
+}
+
+// Call startClientAgingCron at the end of initSheetsSync
+
 function listenForNewUsers() {
     console.log("👀 Listening for new users to append to Google Sheets...");
     
@@ -469,6 +606,12 @@ function listenForNewUsers() {
         yesterday.setDate(yesterday.getDate() - 1);
         
         for (const change of snapshot.docChanges()) {
+            
+            if (change.type === 'modified') {
+                const user = change.doc.data();
+                await syncProfileToSheet(user);
+            }
+
             if (change.type === 'added') {
                 const user = change.doc.data();
                 
