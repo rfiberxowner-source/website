@@ -605,6 +605,20 @@ export const adminViews = {
     return window.renderAdminLayout('dashboard', 'Dashboard', content);
   },
   '/RFiberXAdminportal-banking': () => {
+    const now = new Date();
+    const months = [];
+    // Advance month
+    const advDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const advVal = advDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    months.push({ value: advVal, label: `${advVal} (Advance)` });
+    // Current and past 11 months
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const val = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+      months.push({ value: val, label: `${val}${i === 0 ? ' (Current)' : ''}` });
+    }
+    const monthOptionsHtml = `<option value="">All Months</option>` + months.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+
     const content = `
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
         <div style="background: #151a27; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1.25rem; padding-bottom: 4.5rem; position: relative; overflow: hidden; z-index: 1;">
@@ -664,7 +678,7 @@ export const adminViews = {
             <input id="bm-search" type="text" placeholder="Search customer name..." style="width: 100%; background: #0f131f; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.5rem 1rem 0.5rem 2rem; border-radius: 4px; font-size: 0.85rem; outline: none;">
           </div>
           <select id="bm-month" style="background: #0f131f; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.85rem; width: 140px;">
-            <option value="">All Months</option>
+            ${monthOptionsHtml}
           </select>
           <select id="bm-plan" style="background: #0f131f; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.85rem; width: 140px;">
             <option value="">All Plans</option>
@@ -712,35 +726,8 @@ export const adminViews = {
             <input id="ph-search" type="text" placeholder="Search customer name..." style="width: 100%; background: #0f131f; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.5rem 1rem 0.5rem 2rem; border-radius: 4px; font-size: 0.85rem; outline: none;">
           </div>
           <select id="ph-month" style="background: #0f131f; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.85rem; width: 140px;">
-            <option value="">All Months</option>
+            ${monthOptionsHtml}
           </select>
-          <script>
-            (function() {
-              function populateMonths(selectId) {
-                var sel = document.getElementById(selectId);
-                if (!sel) return;
-                var now = new Date();
-                // Add advance month
-                var mDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-                var opt = document.createElement('option');
-                opt.value = mDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-                opt.textContent = opt.value + ' (Advance)';
-                sel.appendChild(opt);
-                
-                // Add current and past 11 months
-                for (var i = 0; i < 12; i++) {
-                  var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                  var val = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-                  var opt2 = document.createElement('option');
-                  opt2.value = val;
-                  opt2.textContent = val + (i === 0 ? ' (Current)' : '');
-                  sel.appendChild(opt2);
-                }
-              }
-              populateMonths('bm-month');
-              populateMonths('ph-month');
-            })();
-          </script>
           <select id="ph-plan" style="background: #0f131f; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.85rem; width: 140px;">
             <option value="">All Plans</option>
             <option value="30Mbps">30Mbps</option>
@@ -2620,6 +2607,24 @@ window.initAdminBanking = async function () {
         if (window.renderPayments) window.renderPayments();
       })
     );
+
+    // Ensure month options are present
+    const ensureMonthOptions = (selectId) => {
+      const sel = document.getElementById(selectId);
+      if (!sel || sel.options.length > 1) return;
+      const n = new Date();
+      let opts = '<option value="">All Months</option>';
+      const adv = new Date(n.getFullYear(), n.getMonth() + 1, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+      opts += `<option value="${adv}">${adv} (Advance)</option>`;
+      for (let i = 0; i < 12; i++) {
+        const d = new Date(n.getFullYear(), n.getMonth() - i, 1);
+        const val = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        opts += `<option value="${val}">${val}${i === 0 ? ' (Current)' : ''}</option>`;
+      }
+      sel.innerHTML = opts;
+    };
+    ensureMonthOptions('bm-month');
+    ensureMonthOptions('ph-month');
 
     // Attach listeners
     ['bm-search', 'bm-month', 'bm-plan', 'bm-status'].forEach(id => {
