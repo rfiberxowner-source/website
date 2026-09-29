@@ -296,8 +296,9 @@ export async function createNewMonthSheet(targetDate = new Date()) {
             { range: `${newSheetName}!A1`, values: [[currentMonth]] }
         ];
 
-        // Format Date string: "September 7, 2026"
-        const dueDateString = `${currentMonth} 7, ${currentYear}`;
+        // Format Due Date as MM/DD/YY
+        const dueDate = new Date(currentYear, date.getMonth(), 7);
+        const dueDateString = dueDate.toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
         
         // Prepare row data (starting row 3)
         let rowData = [];
@@ -322,11 +323,11 @@ export async function createNewMonthSheet(targetDate = new Date()) {
                 rawName,                          // A: Name
                 accountName,                      // B: Account
                 cType,                            // C: Type
-                'Monthly',                        // D: Payment
+                u.paymentType || 'Monthly',       // D: Payment
                 dueDateString,                    // E: Due Date
                 '',                               // F: Date of Payment (CLEAR IT)
                 status,                           // G: Payment Status (UNPAID)
-                u.status || u.connectionStatus || 'CONNECTED', // H: Connection Status
+                u.connectionStatus || 'CONNECTED', // H: Connection Status
                 '',                               // I: Ref No. (CLEAR IT)
                 u.plan || u.Plan || '',           // J: Plan
                 '',                               // K: Amount (CLEAR IT)
@@ -490,19 +491,21 @@ async function appendUserToSheet(sheetName, user) {
             } catch(e) {}
         }
         
-        // Format Due Date for that month
+        // Format Due Date as MM/DD/YY
         const [month, year] = sheetName.split(' ');
-        const dueDateString = `${month} 7, ${year}`;
+        const monthIndex = new Date(Date.parse(month + ' 1, 2000')).getMonth();
+        const dueDate = new Date(parseInt(year), monthIndex, 7);
+        const dueDateString = dueDate.toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
 
         const rowData = [
             rawName,                          // A: Name
             accountName,                      // B: Account
             cType,                            // C: Type
-            'Monthly',                        // D: Payment
+            user.paymentType || 'Monthly',    // D: Payment
             dueDateString,                    // E: Due Date
             '',                               // F: Date of Payment
             status,                           // G: Payment Status (UNPAID)
-            user.status || user.connectionStatus || 'CONNECTED', // H: Connection Status
+            user.connectionStatus || 'CONNECTED', // H: Connection Status
             '',                               // I: Ref No.
             user.plan || user.Plan || '',           // J: Plan
             '',                               // K: Amount
@@ -621,6 +624,7 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
         let headerRow = 1;
         let colLoc = 15; // P (index 15)
         let colClientType = 2; // C (index 2)
+        let colPayment = 3; // D (index 3)
         
         for(let r = 0; r < Math.min(rows.length, 5); r++) {
             const h = rows[r].map(c => (c || '').toLowerCase().trim());
@@ -630,6 +634,8 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
                 if (cL !== -1) colLoc = cL;
                 let cC = h.findIndex(x => x.includes('type of client') || x.includes('client type'));
                 if (cC !== -1) colClientType = cC;
+                let cP = h.findIndex(x => x === 'payment' || x.includes('payment type') || x.includes('payment mode'));
+                if (cP !== -1) colPayment = cP;
                 break;
             }
         }
@@ -736,6 +742,42 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
                                 backgroundColor: bgColor,
                                 textFormat: {
                                     foregroundColor: fgColor,
+                                    bold: true
+                                }
+                            }
+                        }]
+                    }],
+                    fields: 'userEnteredValue,userEnteredFormat(backgroundColor,textFormat)'
+                }
+            });
+        }
+
+        // Apply color to Payment column (D)
+        if (colPayment !== -1) {
+            const paymentType = user.paymentType || 'Monthly';
+            let payBgColor = { red: 0.086, green: 0.627, blue: 0.521 }; // green for Monthly
+            let payFgColor = { red: 1, green: 1, blue: 1 }; // white text
+
+            if (paymentType.toLowerCase().includes('last week') || paymentType.toLowerCase().includes('weekly')) {
+                payBgColor = { red: 0.145, green: 0.388, blue: 0.921 }; // blue for Every Last Week
+            }
+
+            batchRequests.push({
+                updateCells: {
+                    range: {
+                        sheetId: sheetId,
+                        startRowIndex: rowIndex - 1,
+                        endRowIndex: rowIndex,
+                        startColumnIndex: colPayment,
+                        endColumnIndex: colPayment + 1
+                    },
+                    rows: [{
+                        values: [{
+                            userEnteredValue: { stringValue: paymentType },
+                            userEnteredFormat: {
+                                backgroundColor: payBgColor,
+                                textFormat: {
+                                    foregroundColor: payFgColor,
                                     bold: true
                                 }
                             }
