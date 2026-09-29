@@ -335,18 +335,19 @@ export async function createNewMonthSheet(targetDate = new Date()) {
                 u.email || '',                    // N: Email
                 u.address || '',                  // O: Address
                 u.Location || u.location || '',   // P: Location
-                u.accountNumber || u.account || '' // Q: Account Number
+                u.accountNumber || u.account || '', // Q: Account Number
+                u.createdAt ? (typeof u.createdAt.toDate === 'function' ? u.createdAt.toDate() : new Date(u.createdAt)).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : '' // R: Date Created
             ]);
         });
 
         // 4. Overwrite the main data block
         updates.push({
-            range: `${newSheetName}!A3:Q${rowData.length + 2}`,
+            range: `${newSheetName}!A3:R${rowData.length + 2}`,
             values: rowData
         });
 
         // 5. Clear any extra rows left over from last month if previous month had more users
-        const clearRange = `${newSheetName}!A${rowData.length + 3}:Q10000`;
+        const clearRange = `${newSheetName}!A${rowData.length + 3}:R10000`;
 
         await sheetsAPI.spreadsheets.values.batchUpdate({
             spreadsheetId: SPREADSHEET_ID,
@@ -510,13 +511,14 @@ async function appendUserToSheet(sheetName, user) {
             user.email || '',                    // N: Email
             user.address || '',                  // O: Address
             user.Location || user.location || '',   // P: Location
-            user.accountNumber || user.account || '' // Q: Account Number
+            user.accountNumber || user.account || '', // Q: Account Number
+            user.createdAt ? (typeof user.createdAt.toDate === 'function' ? user.createdAt.toDate() : new Date(user.createdAt)).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : '' // R: Date Created
         ];
 
         // 1. Append the row
         await sheetsAPI.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: `${sheetName}!A:Q`,
+            range: `${sheetName}!A:R`,
             valueInputOption: 'USER_ENTERED',
             insertDataOption: 'INSERT_ROWS',
             requestBody: {
