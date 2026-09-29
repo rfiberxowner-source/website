@@ -411,6 +411,7 @@ async function revertPaymentInSheet(payment) {
 }
 
 
+
 async function appendUserToSheet(sheetName, user) {
     if (!sheetsAPI) return;
     try {
@@ -447,6 +448,7 @@ async function appendUserToSheet(sheetName, user) {
             user.accountNumber || user.account || '' // Q: Account Number
         ];
 
+        // 1. Append the row
         await sheetsAPI.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
             range: `${sheetName}!A:Q`,
@@ -456,32 +458,105 @@ async function appendUserToSheet(sheetName, user) {
                 values: [rowData]
             }
         });
-        console.log(`✅ Appended new user ${rawName} to Google Sheet: ${sheetName}`);
+        
+        // 2. Fetch the sheet again to find the header row so we can sort everything below it
+        const sheetId = exists.properties.sheetId;
+        const sheetData = await sheetsAPI.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `${sheetName}!A:Z`
+        }).catch(() => null);
+        
+        let headerRow = 1; // Default to row index 1 (Row 2 in Sheets)
+        if (sheetData && sheetData.data.values) {
+            for(let r = 0; r < Math.min(sheetData.data.values.length, 5); r++) {
+                const h = sheetData.data.values[r].map(c => (c || '').toLowerCase().trim());
+                if (h.includes('payment status') || h.includes('status') || h.includes('name')) {
+                    headerRow = r;
+                    break;
+                }
+            }
+        }
+
+        // 3. Sort the sheet alphabetically by Name (Column A)
+        await sheetsAPI.spreadsheets.batchUpdate({
+            spreadsheetId: SPREADSHEET_ID,
+            requestBody: {
+                requests: [
+                    {
+                        sortRange: {
+                            range: {
+                                sheetId: sheetId,
+                                startRowIndex: headerRow + 1, // Start sorting just below the header
+                                startColumnIndex: 0,          // A
+                                endColumnIndex: 26            // Z
+                            },
+                            sortSpecs: [
+                                {
+                                    dimensionIndex: 0, // Sort by Column A (Index 0)
+                                    sortOrder: 'ASCENDING'
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        });
+
+        console.log(`✅ Appended and Alphabetically Sorted new user ${rawName} in Google Sheet: ${sheetName}`);
+        
+        // 4. Force color styling for the new row by calling syncProfileToSheet
+        // We delay it slightly to ensure the sort is complete
+        setTimeout(async () => {
+            await syncProfileToSheet(user);
+        }, 3000);
+
     } catch (err) {
         console.error(`❌ Error appending user to ${sheetName}:`, err);
     }
 }
 
 
+
+
 export async function syncProfileToSheet(user) {
     if (!sheetsAPI) return;
     try {
         const now = new Date();
-        const sheetName = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        const currentMonthStr = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        const advanceDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        const advanceMonthStr = advanceDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
         
+        // Fetch sheets to get Sheet IDs for color updates
+        const meta = await sheetsAPI.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
+        const sheets = meta.data.sheets;
+        
+        await applyProfileUpdates(user, currentMonthStr, sheets);
+        await applyProfileUpdates(user, advanceMonthStr, sheets);
+        
+    } catch (err) {
+        console.error("❌ Error syncing profile to sheets:", err);
+    }
+}
+
+async function applyProfileUpdates(user, sheetName, sheetsMeta) {
+    try {
+        const sheetInfo = sheetsMeta.find(s => s.properties.title === sheetName);
+        if (!sheetInfo) return; // Sheet doesn't exist
+        const sheetId = sheetInfo.properties.sheetId;
+
         const res = await sheetsAPI.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
             range: `${sheetName}!A:Z`
         }).catch(() => null);
         
-        if (!res || !res.data.values) return; // Sheet might not exist
+        if (!res || !res.data.values) return; 
 
         const rows = res.data.values;
         if (!rows || rows.length === 0) return;
 
         let headerRow = 1;
-        let colLoc = 15; // P
-        let colClientType = 2; // C
+        let colLoc = 15; // P (index 15)
+        let colClientType = 2; // C (index 2)
         
         for(let r = 0; r < Math.min(rows.length, 5); r++) {
             const h = rows[r].map(c => (c || '').toLowerCase().trim());
@@ -546,6 +621,7 @@ export async function syncProfileToSheet(user) {
         }
 
         if (updates.length > 0) {
+            // Write the text values
             await sheetsAPI.spreadsheets.values.batchUpdate({
                 spreadsheetId: SPREADSHEET_ID,
                 requestBody: {
@@ -553,12 +629,60 @@ export async function syncProfileToSheet(user) {
                     data: updates
                 }
             });
-            console.log(`✅ Synced profile updates (Location/Type) for ${targetName} to Google Sheets!`);
+            
+            // Apply colors if Type of Client column was found
+            if (colClientType !== -1 && cType !== '') {
+                // Determine color
+                let bgColor = { red: 1, green: 1, blue: 1 }; // white
+                let fgColor = { red: 0, green: 0, blue: 0 }; // black text
+                
+                if (cType.toLowerCase().includes('new')) {
+                    // Blue background for New Client
+                    bgColor = { red: 0.145, green: 0.388, blue: 0.921 }; // #2563eb
+                    fgColor = { red: 1, green: 1, blue: 1 }; // white text
+                } else if (cType.toLowerCase().includes('old')) {
+                    // Green background for Old Client
+                    bgColor = { red: 0.086, green: 0.627, blue: 0.521 }; // #16a085
+                    fgColor = { red: 1, green: 1, blue: 1 }; // white text
+                }
+
+                await sheetsAPI.spreadsheets.batchUpdate({
+                    spreadsheetId: SPREADSHEET_ID,
+                    requestBody: {
+                        requests: [
+                            {
+                                repeatCell: {
+                                    range: {
+                                        sheetId: sheetId,
+                                        startRowIndex: rowIndex - 1,
+                                        endRowIndex: rowIndex,
+                                        startColumnIndex: colClientType,
+                                        endColumnIndex: colClientType + 1
+                                    },
+                                    cell: {
+                                        userEnteredFormat: {
+                                            backgroundColor: bgColor,
+                                            textFormat: {
+                                                foregroundColor: fgColor,
+                                                bold: true
+                                            }
+                                        }
+                                    },
+                                    fields: 'userEnteredFormat(backgroundColor,textFormat)'
+                                }
+                            }
+                        ]
+                    }
+                });
+            }
+
+            console.log(`✅ Synced profile updates (Location/Type + Colors) for ${targetName} to ${sheetName}`);
         }
     } catch (err) {
-        console.error("❌ Error syncing profile to sheets:", err);
+        console.error(`❌ Error syncing profile to ${sheetName}:`, err);
     }
 }
+
 
 
 function startClientAgingCron() {
