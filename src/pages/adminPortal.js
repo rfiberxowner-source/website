@@ -393,7 +393,7 @@ export const adminViews = {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
           <div>
             <h2 style="font-size: 1.1rem; color: #fff; margin: 0 0 0.25rem 0;">Revenue Overview</h2>
-            <div style="font-size: 0.8rem; color: #94a3b8;">Past 6 months comparison</div>
+            <div style="font-size: 0.8rem; color: #94a3b8;">6 months comparison</div>
           </div>
         </div>
         
@@ -2160,9 +2160,10 @@ window.initDashboard = async function () {
     }
 
     const monthKeys = [];
-    for (let i = 0; i < 6; i++) {
+    for (let bi = 0; bi < 6; bi++) {
       const d = new Date();
-      d.setMonth(d.getMonth() - i);
+      d.setDate(1);
+      d.setMonth(d.getMonth() + 1 - bi);
       monthKeys.push(d.toLocaleString('en-US', { month: 'long', year: 'numeric' }));
     }
     const dummyRevs = [0, 0, 0, 0, 0, 0];
@@ -2263,42 +2264,71 @@ window.initDashboard = async function () {
 
       const monthlyRevenue = {};
       const monthKeys = [];
-      for (let i = 0; i < 6; i++) {
+      // 6 months ending at the advance month (Current + 1)
+      for (let bi = 0; bi < 6; bi++) {
         const d = new Date();
-        d.setMonth(d.getMonth() - i);
+        d.setDate(1);
+        d.setMonth(d.getMonth() + 1 - bi);
         const k = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
         monthKeys.push(k);
         monthlyRevenue[k] = 0;
       }
-      const thisMonthKey = monthKeys[0];
+      const advanceMonthKey = monthKeys[0]; // e.g. "October 2026"
+      const currentMonthKey = monthKeys[1]; // e.g. "September 2026"
       let thisMonthRev = 0;
 
       paymentsSnap.docs.forEach(d => {
         const p = d.data();
         const amt = parseFloat(p.amount) || 0;
 
-        let pDate;
-        if (p.timestamp && p.timestamp.toDate) {
-          pDate = p.timestamp.toDate();
-        } else if (p.datePaid) {
-          pDate = new Date(p.datePaid);
-        } else if (p.date) {
-          pDate = new Date(p.date);
+        // Match payment to billingMonth first (e.g. "October 2026"), then fallback to payment date
+        let pk = null;
+        const rawMonth = String(p.billingMonth || p.month || p.period || '').trim();
+        if (rawMonth) {
+          if (monthlyRevenue[rawMonth] !== undefined) {
+            pk = rawMonth;
+          } else {
+            const matchedKey = monthKeys.find(mk =>
+              mk.toLowerCase() === rawMonth.toLowerCase() ||
+              mk.toLowerCase().startsWith(rawMonth.toLowerCase() + ' ')
+            );
+            if (matchedKey) {
+              pk = matchedKey;
+            } else {
+              const parsed = new Date(Date.parse(rawMonth.includes(' ') ? rawMonth : rawMonth + ' 1, ' + new Date().getFullYear()));
+              if (!isNaN(parsed)) {
+                const parsedKey = parsed.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                if (monthlyRevenue[parsedKey] !== undefined) {
+                  pk = parsedKey;
+                }
+              }
+            }
+          }
         }
 
-        if (pDate && !isNaN(pDate)) {
-          const pk = pDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-          if (monthlyRevenue[pk] !== undefined) {
-            monthlyRevenue[pk] += amt;
+        if (!pk) {
+          let pDate;
+          if (p.timestamp && p.timestamp.toDate) {
+            pDate = p.timestamp.toDate();
+          } else if (p.datePaid) {
+            pDate = new Date(p.datePaid);
+          } else if (p.date) {
+            pDate = new Date(p.date);
           }
-          if (pk === thisMonthKey) {
-            thisMonthRev += amt;
+          if (pDate && !isNaN(pDate)) {
+            pk = pDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
           }
+        }
+
+        if (pk && monthlyRevenue[pk] !== undefined) {
+          monthlyRevenue[pk] += amt;
         }
       });
 
-
-
+      // Display active/advance billing month earnings if available, else current month earnings
+      thisMonthRev = (monthlyRevenue[advanceMonthKey] > 0)
+        ? monthlyRevenue[advanceMonthKey]
+        : (monthlyRevenue[currentMonthKey] || 0);
 
       if (dashRevenue) dashRevenue.innerText = '₱' + thisMonthRev.toLocaleString();
 
