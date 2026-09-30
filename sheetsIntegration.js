@@ -130,7 +130,7 @@ export async function syncPaymentToSheet(payment) {
         let headerRow = 1;   // default row 2 (index 1)
 
         for(let r = 0; r < Math.min(rows.length, 5); r++) {
-            const h = rows[r].map(c => (c || '').toLowerCase().trim());
+            const h = rows[r].map(c => String(c || '').toLowerCase().trim());
             if (h.includes('payment status') || h.includes('status')) {
                 headerRow = r;
                 let cDP = h.findIndex(x => x.includes('date of payment') || x.includes('date paid') || (x.includes('date') && !x.includes('due')));
@@ -149,8 +149,8 @@ export async function syncPaymentToSheet(payment) {
 
         // 2. Find the user's row
         let rowIndex = -1;
-        const targetName = (payment.customerName || '').toLowerCase().trim();
-        const targetAccount = (payment.accountNumber || '').toLowerCase().trim();
+        const targetName = String(payment.customerName || '').toLowerCase().trim();
+        const targetAccount = String(payment.accountNumber || '').toLowerCase().trim();
         
         const stripStr = (str) => str.replace(/[^a-z0-9]/g, '');
         const strippedTargetName = stripStr(targetName);
@@ -162,7 +162,7 @@ export async function syncPaymentToSheet(payment) {
             let foundByAccount = false;
             if (targetAccount !== '') {
                 for (let col = 0; col < rowData.length; col++) {
-                    if ((rowData[col] || '').toLowerCase().trim() === targetAccount) {
+                    if (String(rowData[col] || '').toLowerCase().trim() === targetAccount) {
                         foundByAccount = true;
                         break;
                     }
@@ -175,8 +175,8 @@ export async function syncPaymentToSheet(payment) {
             }
 
             // Fallback: Name Match (Check Column A and B)
-            const rowNameA = (rowData[0] || '').toLowerCase().trim();
-            const rowNameB = (rowData[1] || '').toLowerCase().trim();
+            const rowNameA = String(rowData[0] || '').toLowerCase().trim();
+            const rowNameB = String(rowData[1] || '').toLowerCase().trim();
             const strippedA = stripStr(rowNameA);
             const strippedB = stripStr(rowNameB);
 
@@ -442,6 +442,50 @@ export async function createNewMonthSheet(targetDate = new Date()) {
                                 endIndex: 18
                             }
                         }
+                    },
+                    {
+                        addConditionalFormatRule: {
+                            rule: {
+                                ranges: [{ sheetId: newSheetId, startRowIndex: 2, startColumnIndex: 2, endColumnIndex: 3 }],
+                                booleanRule: {
+                                    condition: { type: 'TEXT_EQ', values: [{ userEnteredValue: 'New Client' }] },
+                                    format: { backgroundColor: { red: 0.145, green: 0.388, blue: 0.921 }, textFormat: { foregroundColor: { red: 1, green: 1, blue: 1 }, bold: true } }
+                                }
+                            }, index: 0
+                        }
+                    },
+                    {
+                        addConditionalFormatRule: {
+                            rule: {
+                                ranges: [{ sheetId: newSheetId, startRowIndex: 2, startColumnIndex: 2, endColumnIndex: 3 }],
+                                booleanRule: {
+                                    condition: { type: 'TEXT_EQ', values: [{ userEnteredValue: 'Old Client' }] },
+                                    format: { backgroundColor: { red: 0.086, green: 0.627, blue: 0.521 }, textFormat: { foregroundColor: { red: 1, green: 1, blue: 1 }, bold: true } }
+                                }
+                            }, index: 0
+                        }
+                    },
+                    {
+                        addConditionalFormatRule: {
+                            rule: {
+                                ranges: [{ sheetId: newSheetId, startRowIndex: 2, startColumnIndex: 3, endColumnIndex: 4 }],
+                                booleanRule: {
+                                    condition: { type: 'TEXT_EQ', values: [{ userEnteredValue: 'Monthly' }] },
+                                    format: { backgroundColor: { red: 0.086, green: 0.627, blue: 0.521 }, textFormat: { foregroundColor: { red: 1, green: 1, blue: 1 }, bold: true } }
+                                }
+                            }, index: 0
+                        }
+                    },
+                    {
+                        addConditionalFormatRule: {
+                            rule: {
+                                ranges: [{ sheetId: newSheetId, startRowIndex: 2, startColumnIndex: 3, endColumnIndex: 4 }],
+                                booleanRule: {
+                                    condition: { type: 'TEXT_EQ', values: [{ userEnteredValue: 'Every Last Week' }] },
+                                    format: { backgroundColor: { red: 0.145, green: 0.388, blue: 0.921 }, textFormat: { foregroundColor: { red: 1, green: 1, blue: 1 }, bold: true } }
+                                }
+                            }, index: 0
+                        }
                     }
                 ]
             }
@@ -468,12 +512,12 @@ async function revertPaymentInSheet(payment) {
 
         // Find the user's row
         let rowIndex = -1;
-        const targetName = (payment.customerName || '').toLowerCase().trim();
-        const targetAccount = (payment.accountNumber || '').toLowerCase().trim();
+        const targetName = String(payment.customerName || '').toLowerCase().trim();
+        const targetAccount = String(payment.accountNumber || '').toLowerCase().trim();
         
         for (let i = 0; i < rows.length; i++) {
-            const rowName = (rows[i][0] || '').toLowerCase().trim();
-            const rowAccNum = (rows[i][16] || '').toLowerCase().trim(); // Column Q
+            const rowName = String(rows[i][0] || '').toLowerCase().trim();
+            const rowAccNum = String(rows[i][16] || '').toLowerCase().trim(); // Column Q
             
             if ((targetAccount && rowAccNum === targetAccount) || 
                 (targetName && rowName === targetName)) {
@@ -525,8 +569,8 @@ async function appendUserToSheet(sheetName, user) {
         }).catch(() => null);
 
         if (existingData && existingData.data.values) {
-            const checkName = (user.fullName || user.name || '').toLowerCase().trim();
-            const checkAccount = (user.accountNumber || user.account || '').toLowerCase().trim();
+            const checkName = String(user.fullName || user.name || '').toLowerCase().trim();
+            const checkAccount = String(user.accountNumber || user.account || '').toLowerCase().trim();
             const stripCheck = (str) => str.replace(/[^a-z0-9]/g, '');
             const strippedCheckName = stripCheck(checkName);
 
@@ -536,7 +580,7 @@ async function appendUserToSheet(sheetName, user) {
                 if (checkAccount !== '') {
                     let foundAccount = false;
                     for (let col = 0; col < rd.length; col++) {
-                        if ((rd[col] || '').toLowerCase().trim() === checkAccount) {
+                        if (String(rd[col] || '').toLowerCase().trim() === checkAccount) {
                             foundAccount = true;
                             break;
                         }
@@ -547,7 +591,7 @@ async function appendUserToSheet(sheetName, user) {
                     }
                 }
                 // Check name match in Column A
-                const rName = (rd[0] || '').toLowerCase().trim();
+                const rName = String(rd[0] || '').toLowerCase().trim();
                 if (checkName !== '' && rName === checkName) {
                     console.log(`⚠️ User ${checkName} already exists in ${sheetName}. Skipping append.`);
                     return;
@@ -623,7 +667,7 @@ async function appendUserToSheet(sheetName, user) {
         let headerRow = 1; // Default to row index 1 (Row 2 in Sheets)
         if (sheetData && sheetData.data.values) {
             for(let r = 0; r < Math.min(sheetData.data.values.length, 5); r++) {
-                const h = sheetData.data.values[r].map(c => (c || '').toLowerCase().trim());
+                const h = sheetData.data.values[r].map(c => String(c || '').toLowerCase().trim());
                 if (h.includes('payment status') || h.includes('status') || h.includes('name')) {
                     headerRow = r;
                     break;
@@ -711,7 +755,7 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
         let colPayment = 3; // D (index 3)
         
         for(let r = 0; r < Math.min(rows.length, 5); r++) {
-            const h = rows[r].map(c => (c || '').toLowerCase().trim());
+            const h = rows[r].map(c => String(c || '').toLowerCase().trim());
             if (h.includes('payment status') || h.includes('status')) {
                 headerRow = r;
                 let cL = h.findIndex(x => x.includes('location'));
@@ -725,8 +769,8 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
         }
 
         let rowIndex = -1;
-        const targetAccount = (user.accountNumber || user.account || '').toLowerCase().trim();
-        const targetName = (user.fullName || user.name || '').toLowerCase().trim();
+        const targetAccount = String(user.accountNumber || user.account || '').toLowerCase().trim();
+        const targetName = String(user.fullName || user.name || '').toLowerCase().trim();
         const stripStr = (str) => str.replace(/[^a-z0-9]/g, '');
         const strippedTargetName = stripStr(targetName);
 
@@ -735,7 +779,7 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
             let foundByAccount = false;
             if (targetAccount !== '') {
                 for (let col = 0; col < rowData.length; col++) {
-                    if ((rowData[col] || '').toLowerCase().trim() === targetAccount) {
+                    if (String(rowData[col] || '').toLowerCase().trim() === targetAccount) {
                         foundByAccount = true;
                         break;
                     }
@@ -745,8 +789,8 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
                 rowIndex = i + 1;
                 break;
             }
-            const rowNameA = (rowData[0] || '').toLowerCase().trim();
-            const rowNameB = (rowData[1] || '').toLowerCase().trim();
+            const rowNameA = String(rowData[0] || '').toLowerCase().trim();
+            const rowNameB = String(rowData[1] || '').toLowerCase().trim();
             const strippedA = stripStr(rowNameA);
             const strippedB = stripStr(rowNameB);
 
