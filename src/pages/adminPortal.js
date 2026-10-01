@@ -659,11 +659,13 @@ export const adminViews = {
 
         <div style="background: #151a27; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1.25rem; padding-bottom: 4.5rem; position: relative; overflow: hidden; z-index: 1;">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-            <div style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase;">WAITING APPROVAL</div>
-            <div style="width: 24px; height: 24px; background: rgba(16, 185, 129, 0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #10b981;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+            <div style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase;">PAID BILLS</div>
+            <select id="admin-paid-month-filter" onchange="if(window.updatePaidCounts) window.updatePaidCounts()" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #10b981; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; outline: none; cursor: pointer; max-width: 130px;">
+              <option value="">All Months</option>
+            </select>
           </div>
-          <div id="admin-waiting-bills" style="font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem;">0</div>
-          <div style="font-size: 0.7rem; color: #10b981; font-weight: 500; position: relative; z-index: 2;">Needs verification</div>
+          <div id="admin-paid-counts" style="font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem;">0</div>
+          <div style="font-size: 0.7rem; color: #10b981; font-weight: 500; position: relative; z-index: 2;">Total Paid</div>
           <div style="position: absolute; bottom: 1rem; left: 1.25rem; right: 1.25rem; height: 40px; display: flex; align-items: flex-end; justify-content: space-between; gap: 4px; z-index: 1;">
             ${[50, 60, 40, 70, 50, 40, 80, 60].map(h => `<div style="flex: 1; height: ${h}%; background: #10b981; border-radius: 4px; box-shadow: 0 0 10px rgba(16,185,129,0.8);"></div>`).join('')}
           </div>
@@ -2601,10 +2603,31 @@ window.initAdminBanking = async function () {
       })
     );
 
+    window.updatePaidCounts = function() {
+      const pCountEl = document.getElementById('admin-paid-counts');
+      const pMonth = document.getElementById('admin-paid-month-filter');
+      if (!pCountEl || !pMonth || !window._adminPaymentsDocs) return;
+      
+      const m = pMonth.value;
+      let count = 0;
+      
+      window._adminPaymentsDocs.forEach(d => {
+          const pm = d.data();
+          let rawStatus = (pm.status || 'Completed').toLowerCase();
+          if (rawStatus !== 'completed' && rawStatus !== 'paid') return;
+          
+          if (m && pm.month !== m && pm.billingMonth !== m && pm.period !== m) return;
+          count++;
+      });
+      
+      pCountEl.innerText = count;
+    };
+
     window._bankUnsubs.push(
       onSnapshot(collection(db, "payments"), snap => {
         window._adminPaymentsDocs = [...snap.docs];
         if (window.renderPayments) window.renderPayments();
+        if (window.updatePaidCounts) window.updatePaidCounts();
       })
     );
 
@@ -2624,6 +2647,12 @@ window.initAdminBanking = async function () {
       sel.innerHTML = opts;
     };
     ensureMonthOptions('bm-month');
+    ensureMonthOptions('admin-paid-month-filter');
+    const apmf = document.getElementById('admin-paid-month-filter');
+    if (apmf && apmf.options.length > 2) {
+      apmf.selectedIndex = 2; // Default to Current Month
+    }
+    if (window.updatePaidCounts) window.updatePaidCounts();
     ensureMonthOptions('ph-month');
 
     // Attach listeners
