@@ -4752,6 +4752,12 @@ window.markAdminBillPaid = async function (btn, billId, customerId, amountStr, b
     await firestore.addDoc(firestore.collection(db, "payments"), payData);
     await firestore.deleteDoc(billDocRef);
 
+    // Ping the backend to wake it up from sleep mode
+    try {
+      const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
+      fetch(`${BACKEND_URL}/`).catch(() => {});
+    } catch (e) {}
+
     // Send push notification if token exists
     const userDocRef = firestore.doc(db, "users", customerId);
     const userDoc = await firestore.getDoc(userDocRef);
