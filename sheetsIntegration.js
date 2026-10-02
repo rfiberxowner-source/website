@@ -87,10 +87,12 @@ function listenForPayments() {
                 
                 if (paymentDate > yesterday) {
                     await syncPaymentToSheet(payment);
+                    await new Promise(r => setTimeout(r, 2000)); // 2 second delay to prevent 429 errors
                 }
             } else if (change.type === 'removed') {
                 console.log(`🗑️ Payment deleted for ${payment.customerName || payment.accountNumber}. Reverting in Google Sheets...`);
                 await revertPaymentInSheet(payment);
+                await new Promise(r => setTimeout(r, 2000)); // 2 second delay to prevent 429 errors
             }
         }
     });
@@ -501,7 +503,10 @@ export async function createNewMonthSheet(targetDate = new Date()) {
 async function revertPaymentInSheet(payment) {
     if (!sheetsAPI) return;
     try {
-        const sheetName = 'Billing Report'; // Hardcode exactly to the sheet the user uses
+        let sheetName = payment.billingMonth || payment.month;
+        if (!sheetName) {
+            sheetName = await getLatestSheetName();
+        }
         const res = await sheetsAPI.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
             range: `${sheetName}!A:Q`, // Fetch up to Column Q
