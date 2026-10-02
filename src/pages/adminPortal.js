@@ -4549,19 +4549,24 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
           .admin-receipt-wrapper .sg-val { flex: 1; color: #000; }
           
           @media print {
-            @page { size: A4; margin: 0; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            html, body { margin: 0 !important; padding: 0 !important; }
+            @page { size: A4; margin: 10mm; }
+            html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+            * { background-color: transparent !important; }
             .no-print { display: none !important; }
             body > div:not(.admin-receipt-wrapper) { display: none !important; }
             #admin-sidebar, header { display: none !important; }
-            main { padding: 0 !important; margin: 0 !important; }
-            .admin-receipt-wrapper { margin: 0; padding: 10mm; }
-            .admin-receipt-wrapper .container { border: none !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important; max-width: 100% !important; }
+            main { padding: 0 !important; margin: 0 !important; background: #fff !important; }
+            div[style*="background: #0b0f19"], div[style*="background:#0b0f19"] { background: #fff !important; }
+            .admin-receipt-wrapper { margin: 0; padding: 0; background: #fff !important; }
+            .admin-receipt-wrapper .container { border: none !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important; max-width: 100% !important; background: #fff !important; }
+            .admin-receipt-wrapper .total-box { background: #111 !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .admin-receipt-wrapper .bs-title { background: #111 !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .admin-receipt-wrapper .stat-table th { background: #111 !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .admin-receipt-wrapper .stub-title { background: #E53935 !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .admin-receipt-wrapper .header { margin-bottom: 0.5rem; }
             .admin-receipt-wrapper .title-area { padding: 0.5rem 0; margin-bottom: 0.5rem; }
             .admin-receipt-wrapper .info-grid { gap: 0.5rem; margin-bottom: 0.5rem; }
-            .admin-receipt-wrapper .bill-summary { padding: 0.5rem; margin-top: 0.5rem; }
+            .admin-receipt-wrapper .bill-summary { padding: 0.5rem; margin-top: 0.5rem; border-color: #ddd !important; }
             .admin-receipt-wrapper .charge-section { margin-bottom: 0.5rem; }
             .admin-receipt-wrapper .cut-line { margin: 0.75rem 0; }
             .admin-receipt-wrapper .stub-header { margin-bottom: 0.5rem; }
