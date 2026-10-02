@@ -45,18 +45,18 @@ window.renderAdminLayout = (activeRoute, pageTitle, contentHtml) => {
 
   // --- Start Global Unread Complaints & Applications Listener ---
   if (isAdmin && !window._globalUnreadUnsub) {
-    (async function() {
+    (async function () {
       try {
         const { db, firestore } = await window._getAdminDb();
-        
+
         // Listen to complaints
         const unsubComplaints = firestore.onSnapshot(
           firestore.collection(db, "complaints"),
           (snap) => {
             let hasUnread = false;
             snap.forEach(doc => {
-               const r = doc.data();
-               if ((r.status || 'Unread') === 'Unread') hasUnread = true;
+              const r = doc.data();
+              if ((r.status || 'Unread') === 'Unread') hasUnread = true;
             });
             window._adminHasUnreadComplaints = hasUnread;
             updateGlobalUnreadDot();
@@ -69,8 +69,8 @@ window.renderAdminLayout = (activeRoute, pageTitle, contentHtml) => {
           (snap) => {
             let hasUnread = false;
             snap.forEach(doc => {
-               const r = doc.data();
-               if ((r.status || 'Unread') === 'Unread') hasUnread = true;
+              const r = doc.data();
+              if ((r.status || 'Unread') === 'Unread') hasUnread = true;
             });
             window._adminHasUnreadApply = hasUnread;
             updateGlobalUnreadDot();
@@ -80,22 +80,22 @@ window.renderAdminLayout = (activeRoute, pageTitle, contentHtml) => {
         window._globalUnreadUnsub = () => { unsubComplaints(); unsubApply(); };
 
         function updateGlobalUnreadDot() {
-            const hasAnyUnread = window._adminHasUnreadComplaints || window._adminHasUnreadApply;
-            const dot = document.getElementById('global-reports-unread-dot');
-            if (dot) {
-               dot.style.display = hasAnyUnread ? 'inline-block' : 'none';
-            }
-            
-            // Also try to update the dropdown if it exists on the Reports page
-            const select = document.getElementById('admin-reports-view-mode');
-            if (select) {
-                const compOpt = select.querySelector('option[value="Complaints"]');
-                const appOpt = select.querySelector('option[value="Apply"]');
-                if (compOpt) compOpt.innerHTML = (window._adminHasUnreadComplaints ? '🔴 ' : '') + 'Complaints Session';
-                if (appOpt) appOpt.innerHTML = (window._adminHasUnreadApply ? '🔴 ' : '') + 'Apply Session';
-            }
+          const hasAnyUnread = window._adminHasUnreadComplaints || window._adminHasUnreadApply;
+          const dot = document.getElementById('global-reports-unread-dot');
+          if (dot) {
+            dot.style.display = hasAnyUnread ? 'inline-block' : 'none';
+          }
+
+          // Also try to update the dropdown if it exists on the Reports page
+          const select = document.getElementById('admin-reports-view-mode');
+          if (select) {
+            const compOpt = select.querySelector('option[value="Complaints"]');
+            const appOpt = select.querySelector('option[value="Apply"]');
+            if (compOpt) compOpt.innerHTML = (window._adminHasUnreadComplaints ? '🔴 ' : '') + 'Complaints Session';
+            if (appOpt) appOpt.innerHTML = (window._adminHasUnreadApply ? '🔴 ' : '') + 'Apply Session';
+          }
         }
-      } catch (e) {}
+      } catch (e) { }
     })();
   }
 
@@ -320,7 +320,7 @@ export const adminViews = {
   },
 
   '/RFiberXAdminportal-dashboard': () => {
-    
+
     const content = `
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
         
@@ -1438,14 +1438,14 @@ export const adminViews = {
   '/RFiberXAdminportal-communications': () => {
     window.sendPushNotification = async function (expoPushToken, title, body, data = {}) {
       if (!expoPushToken) return;
-      const message = { 
-        to: expoPushToken, 
-        sound: 'default', 
-        channelId: 'default', 
+      const message = {
+        to: expoPushToken,
+        sound: 'default',
+        channelId: 'default',
         priority: 'high',
-        title: title, 
-        body: body, 
-        data: data 
+        title: title,
+        body: body,
+        data: data
       };
       try {
         await fetch('https://exp.host/--/api/v2/push/send', {
@@ -1721,14 +1721,14 @@ export const adminViews = {
 
         statusEl.innerHTML = '<div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #10b981; padding: 1rem; border-radius: 8px; font-size: 0.9rem; display: flex; align-items: center; gap: 0.75rem;"><div style="width: 20px; height: 20px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; flex-shrink: 0;">✓</div> Billing statements sent successfully to <strong>' + sentCount + '</strong> accounts! Generating Google Sheet...</div>';
         try {
-            await fetch(window.BACKEND_URL + '/api/admin/create-month-sheet', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ dateStr: billingMonth })
-            });
-            statusEl.innerHTML = '<div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #10b981; padding: 1rem; border-radius: 8px; font-size: 0.9rem; display: flex; align-items: center; gap: 0.75rem;"><div style="width: 20px; height: 20px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; flex-shrink: 0;">✓</div> Billing statements sent successfully to <strong>' + sentCount + '</strong> accounts! Google Sheet for "' + billingMonth + '" has been generated/synced!</div>';
+          await fetch(window.BACKEND_URL + '/api/admin/create-month-sheet', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dateStr: billingMonth })
+          });
+          statusEl.innerHTML = '<div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #10b981; padding: 1rem; border-radius: 8px; font-size: 0.9rem; display: flex; align-items: center; gap: 0.75rem;"><div style="width: 20px; height: 20px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; flex-shrink: 0;">✓</div> Billing statements sent successfully to <strong>' + sentCount + '</strong> accounts! Google Sheet for "' + billingMonth + '" has been generated/synced!</div>';
         } catch (sheetErr) {
-            console.error("Failed to generate Google Sheet", sheetErr);
+          console.error("Failed to generate Google Sheet", sheetErr);
         }
 
         sendBtn.disabled = false;
@@ -2627,23 +2627,23 @@ window.initAdminBanking = async function () {
       })
     );
 
-    window.updatePaidCounts = function() {
+    window.updatePaidCounts = function () {
       const pCountEl = document.getElementById('admin-paid-counts');
       const pMonth = document.getElementById('admin-paid-month-filter');
       if (!pCountEl || !pMonth || !window._adminPaymentsDocs) return;
-      
+
       const m = pMonth.value;
       let count = 0;
-      
+
       window._adminPaymentsDocs.forEach(d => {
-          const pm = d.data();
-          let rawStatus = (pm.status || 'Completed').toLowerCase();
-          if (rawStatus !== 'completed' && rawStatus !== 'paid') return;
-          
-          if (m && pm.month !== m && pm.billingMonth !== m && pm.period !== m) return;
-          count++;
+        const pm = d.data();
+        let rawStatus = (pm.status || 'Completed').toLowerCase();
+        if (rawStatus !== 'completed' && rawStatus !== 'paid') return;
+
+        if (m && pm.month !== m && pm.billingMonth !== m && pm.period !== m) return;
+        count++;
       });
-      
+
       pCountEl.innerText = count;
     };
 
@@ -2674,12 +2674,12 @@ window.initAdminBanking = async function () {
     ensureMonthOptions('admin-paid-month-filter');
     const apmf = document.getElementById('admin-paid-month-filter');
     if (apmf && apmf.options.length > 2) {
-      apmf.selectedIndex = 2; // Default to Current Month
+      apmf.selectedIndex = 2;
     }
     if (window.updatePaidCounts) window.updatePaidCounts();
     ensureMonthOptions('ph-month');
 
-    // Attach listeners
+
     ['bm-search', 'bm-month', 'bm-plan', 'bm-status'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener(id === 'bm-search' ? 'input' : 'change', window.renderBills);
@@ -2962,7 +2962,7 @@ window.renderAdminReportsTable = async function () {
         const dateStr = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleString() : 'Unknown Date';
         html += `
           <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;" onclick="window.openAdminComplaint('${d.id}', '${viewMode}')" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-            <td style="padding: 1rem; font-family: monospace; color: #94a3b8;">${rId.substring(0,8)}...</td>
+            <td style="padding: 1rem; font-family: monospace; color: #94a3b8;">${rId.substring(0, 8)}...</td>
             <td style="padding: 1rem;">${redDot}<div style="display:inline-block; color: #fff; font-weight: 600;">${r.name || 'Unknown'}</div><div style="font-size: 0.7rem; color: #94a3b8; margin-left: ${displayStatus === 'Unread' ? '16px' : '0'};">PSID: ${r.psid || '-'}</div></td>
             <td style="padding: 1rem; color: #fff;">Client ${viewMode === 'Complaints' ? 'Complaint' : 'Apply'} Session</td>
             <td style="padding: 1rem;">${dateStr}</td>
@@ -2998,7 +2998,7 @@ window.openAdminComplaint = async function (id, viewMode = 'Complaints') {
     const collectionName = viewMode === 'Apply' ? 'applications' : 'complaints';
     const docRef = firestore.doc(db, collectionName, id);
     const docSnap = await firestore.getDoc(docRef);
-    
+
     if (!docSnap.exists()) return;
     const data = docSnap.data();
 
@@ -3007,7 +3007,7 @@ window.openAdminComplaint = async function (id, viewMode = 'Complaints') {
     }
 
     document.getElementById('modal-complaint-title').innerText = viewMode === 'Apply' ? 'Application Session' : 'Complaint Session';
-    document.getElementById('modal-complaint-id').innerText = id.substring(0,8) + '...';
+    document.getElementById('modal-complaint-id').innerText = id.substring(0, 8) + '...';
     document.getElementById('modal-complaint-name').innerText = data.name || 'Unknown Client';
     document.getElementById('modal-complaint-psid').innerText = data.psid || '-';
 
@@ -3033,7 +3033,7 @@ window.openAdminComplaint = async function (id, viewMode = 'Complaints') {
 
     const msgsSnap = await firestore.getDocs(firestore.collection(db, collectionName, id, "messages"));
     let mHtml = '';
-    
+
     const sortedMsgs = [...msgsSnap.docs].sort((a, b) => {
       const ta = a.data().timestamp?.toMillis ? a.data().timestamp.toMillis() : 0;
       const tb = b.data().timestamp?.toMillis ? b.data().timestamp.toMillis() : 0;
@@ -3041,11 +3041,11 @@ window.openAdminComplaint = async function (id, viewMode = 'Complaints') {
     });
 
     if (sortedMsgs.length === 0) {
-       mHtml = '<div style="color:#64748b; text-align:center; padding:1rem;">No messages recorded.</div>';
+      mHtml = '<div style="color:#64748b; text-align:center; padding:1rem;">No messages recorded.</div>';
     } else {
       sortedMsgs.forEach(mDoc => {
         const m = mDoc.data();
-        const tStr = m.timestamp?.toDate ? m.timestamp.toDate().toLocaleString([], {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit'}) : '';
+        const tStr = m.timestamp?.toDate ? m.timestamp.toDate().toLocaleString([], { month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
         mHtml += `
           <div style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); border-radius: 8px; padding: 0.75rem; align-self: flex-start; max-width: 85%;">
             <div style="color: #fff; font-size: 0.9rem; line-height: 1.4;">
@@ -3065,25 +3065,25 @@ window.openAdminComplaint = async function (id, viewMode = 'Complaints') {
   }
 };
 
-window.closeAdminComplaint = function() {
+window.closeAdminComplaint = function () {
   document.getElementById('admin-complaint-modal').style.display = 'none';
 };
 
-window.toggleChatbotPause = async function(psid, currentPaused) {
+window.toggleChatbotPause = async function (psid, currentPaused) {
   if (!psid) return;
   try {
     const { db, firestore } = await window._getAdminDb();
     const newPausedState = !currentPaused;
-    
+
     // Optimistic UI update
     const pauseBtn = document.getElementById('modal-complaint-pause-btn');
     pauseBtn.dataset.paused = newPausedState ? 'true' : 'false';
     document.getElementById('modal-complaint-pause-icon').innerText = newPausedState ? '▶️' : '⏸️';
     document.getElementById('modal-complaint-pause-text').innerText = newPausedState ? 'Resume Chatbot' : 'Pause Chatbot';
     pauseBtn.style.background = newPausedState ? '#10b981' : '#f59e0b';
-    
+
     await firestore.updateDoc(firestore.doc(db, "messenger_psids", psid), { is_paused: newPausedState });
-    
+
     if (window.showAdminAlert) {
       window.showAdminAlert("Success", newPausedState ? "Chatbot paused." : "Chatbot resumed.", "success");
     }
@@ -3464,7 +3464,7 @@ window.renderAdminClientsTable = async function () {
 
       // Apply filters
       if (p !== 'All' && plan !== p) return;
-      
+
       const loc = String(u.Location || u.location || 'Magdalena').trim();
       if (l !== 'All Locations' && loc !== l) return;
 
@@ -3967,19 +3967,19 @@ window.openAdminClientModal = async function (id) {
     const ptInput = document.getElementById('modal-client-paymenttype-input');
     const addressInput = document.getElementById('modal-client-address-input');
     const phoneInput = document.getElementById('modal-client-phone-input');
-    
+
     if (fNameInput) {
-        fNameInput.value = u.firstName || '';
-        lNameInput.value = u.lastName || '';
-        ptInput.value = u.paymentType || 'Monthly';
-        addressInput.value = u.address || '';
-        phoneInput.value = u.phone || u.contactNumber || '';
-        
-        fNameInput.dataset.original = fNameInput.value;
-        lNameInput.dataset.original = lNameInput.value;
-        ptInput.dataset.original = ptInput.value;
-        addressInput.dataset.original = addressInput.value;
-        phoneInput.dataset.original = phoneInput.value;
+      fNameInput.value = u.firstName || '';
+      lNameInput.value = u.lastName || '';
+      ptInput.value = u.paymentType || 'Monthly';
+      addressInput.value = u.address || '';
+      phoneInput.value = u.phone || u.contactNumber || '';
+
+      fNameInput.dataset.original = fNameInput.value;
+      lNameInput.dataset.original = lNameInput.value;
+      ptInput.dataset.original = ptInput.value;
+      addressInput.dataset.original = addressInput.value;
+      phoneInput.dataset.original = phoneInput.value;
     }
 
     const plan = u.plan || u.Plan || '30Mbps';
@@ -4084,11 +4084,11 @@ window.requestAdminClientUpdate = async function () {
   const statusInput = document.getElementById('modal-client-status-input');
   const locInput = document.getElementById('modal-client-location-input');
   const acctNameInput = document.getElementById('modal-client-accountname-input');
-    const fNameInput = document.getElementById('modal-client-firstname-input');
-    const lNameInput = document.getElementById('modal-client-lastname-input');
-    const ptInput = document.getElementById('modal-client-paymenttype-input');
-    const addressInput = document.getElementById('modal-client-address-input');
-    const phoneInput = document.getElementById('modal-client-phone-input');
+  const fNameInput = document.getElementById('modal-client-firstname-input');
+  const lNameInput = document.getElementById('modal-client-lastname-input');
+  const ptInput = document.getElementById('modal-client-paymenttype-input');
+  const addressInput = document.getElementById('modal-client-address-input');
+  const phoneInput = document.getElementById('modal-client-phone-input');
 
   const plan = planInput.value;
   const amount = amountInput.value;
@@ -4109,7 +4109,7 @@ window.requestAdminClientUpdate = async function () {
   const pType = ptInput.value;
   const addr = addressInput.value;
   const phoneVal = phoneInput.value;
-  
+
   if (fName !== fNameInput.dataset.original) changes.push('First Name');
   if (lName !== lNameInput.dataset.original) changes.push('Last Name');
   if (pType !== ptInput.dataset.original) changes.push('Payment Type');
@@ -4156,16 +4156,16 @@ window.requestAdminClientUpdate = async function () {
 
       // Cascade plan and amount updates to all UNPAID billing statements
       if (changes.includes('Plan') || changes.includes('Amount')) {
-          const billsSnap = await firestore.getDocs(firestore.collection(db, "users", id, "billing_emails"));
-          for (const bDoc of billsSnap.docs) {
-              const bStatus = (bDoc.data().status || '').toLowerCase();
-              if (bStatus !== 'paid' && bStatus !== 'completed') {
-                  await firestore.updateDoc(bDoc.ref, {
-                      plan: plan,
-                      amount: amount
-                  });
-              }
+        const billsSnap = await firestore.getDocs(firestore.collection(db, "users", id, "billing_emails"));
+        for (const bDoc of billsSnap.docs) {
+          const bStatus = (bDoc.data().status || '').toLowerCase();
+          if (bStatus !== 'paid' && bStatus !== 'completed') {
+            await firestore.updateDoc(bDoc.ref, {
+              plan: plan,
+              amount: amount
+            });
           }
+        }
       }
 
       msg.style.display = 'block';
@@ -4509,38 +4509,35 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
           .admin-receipt-wrapper .logo-icon svg { width: 24px; height: 24px; color: #fff; }
           .admin-receipt-wrapper .brand-text { font-size: 1.5rem; font-weight: 800; color: #000; letter-spacing: -0.5px; }
           .admin-receipt-wrapper .brand-text span { color: #E53935; }
-          .admin-receipt-wrapper .brand-sub { font-size: 0.7rem; color: #666; font-weight: 600; letter-spacing: 2px; }
-          .admin-receipt-wrapper .page-num { font-size: 0.8rem; color: #666; }
+          .admin-receipt-wrapper .brand-sub { font-size: 0.7rem; color: #000; font-weight: 600; letter-spacing: 2px; }
+          .admin-receipt-wrapper .page-num { font-size: 0.8rem; color: #000; }
           
-          .admin-receipt-wrapper .title-area { border-top: 2px solid #E53935; border-bottom: 1px solid #eee; padding: 0.75rem 0; text-align: center; margin-bottom: 1rem; }
+          .admin-receipt-wrapper .title-area { border-top: 2px solid #E53935; border-bottom: 1px solid #ddd; padding: 0.75rem 0; text-align: center; margin-bottom: 1rem; }
           .admin-receipt-wrapper .title-text { font-size: 1.1rem; font-weight: 700; color: #000; letter-spacing: 2px; }
           
           .admin-receipt-wrapper .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-          .admin-receipt-wrapper .cust-name { font-size: 1rem; font-weight: 700; margin: 0 0 0.15rem 0; text-transform: uppercase; }
-          .admin-receipt-wrapper .cust-addr { font-size: 0.8rem; color: #666; margin: 0; }
+          .admin-receipt-wrapper .cust-name { font-size: 1rem; font-weight: 700; margin: 0 0 0.15rem 0; text-transform: uppercase; color: #000; }
+          .admin-receipt-wrapper .cust-addr { font-size: 0.8rem; color: #000; margin: 0; }
           
           .admin-receipt-wrapper .stat-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
-          .admin-receipt-wrapper .stat-table th, .admin-receipt-wrapper .stat-table td { border: 1px solid #000; padding: 0.5rem; text-align: center; }
+          .admin-receipt-wrapper .stat-table th, .admin-receipt-wrapper .stat-table td { border: 1px solid #000; padding: 0.5rem; text-align: center; color: #000; }
           .admin-receipt-wrapper .stat-table th { background: #111; color: #fff; font-weight: 700; font-size: 0.65rem; text-transform: uppercase; border-color: #111; }
           
-          .admin-receipt-wrapper .bill-summary { border: 1px solid #eee; padding: 1rem; margin-top: 1rem; }
+          .admin-receipt-wrapper .bill-summary { border: 1px solid #ddd; padding: 1rem; margin-top: 1rem; }
           .admin-receipt-wrapper .bs-title { background: #111; color: #fff; display: inline-block; padding: 0.35rem 1rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.75rem; }
           
           .admin-receipt-wrapper .charge-section { margin-bottom: 0.75rem; }
           .admin-receipt-wrapper .ch-title { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.4rem; color: #000; }
-          .admin-receipt-wrapper .ch-row { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.3rem; color: #444; padding-left: 1rem; }
-          .admin-receipt-wrapper .ch-sub { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; color: #000; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+          .admin-receipt-wrapper .ch-row { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.3rem; color: #000; padding-left: 1rem; }
+          .admin-receipt-wrapper .ch-sub { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; color: #000; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; }
           
           .admin-receipt-wrapper .total-box { background: #111; color: #fff; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; }
           .admin-receipt-wrapper .tb-label { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; }
           .admin-receipt-wrapper .tb-amount { font-size: 1.1rem; font-weight: 800; }
           
-          .admin-receipt-wrapper .footer-text { text-align: center; font-size: 0.75rem; color: #666; font-style: italic; margin: 1rem 0; }
-          .admin-receipt-wrapper .footer-tax { text-align: center; font-size: 0.7rem; color: #aaa; letter-spacing: 2px; text-transform: uppercase; }
-          
           .admin-receipt-wrapper .cut-line { display: flex; align-items: center; gap: 1rem; margin: 1rem 0; }
           .admin-receipt-wrapper .cut-dot { width: 10px; height: 10px; border-radius: 50%; background: #111; }
-          .admin-receipt-wrapper .cut-dash { flex: 1; border-top: 2px dashed #ccc; }
+          .admin-receipt-wrapper .cut-dash { flex: 1; border-top: 2px dashed #999; }
           
           .admin-receipt-wrapper .stub-header { text-align: center; margin-bottom: 0.75rem; }
           .admin-receipt-wrapper .stub-title { background: #E53935; color: #fff; display: inline-block; padding: 0.35rem 1rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.25rem; }
@@ -4548,23 +4545,24 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
           .admin-receipt-wrapper .stub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.8rem; }
           .admin-receipt-wrapper .sg-col { display: flex; flex-direction: column; gap: 0.5rem; }
           .admin-receipt-wrapper .sg-row { display: flex; gap: 0.75rem; }
-          .admin-receipt-wrapper .sg-label { width: 120px; font-weight: 600; color: #444; }
+          .admin-receipt-wrapper .sg-label { width: 120px; font-weight: 600; color: #000; }
           .admin-receipt-wrapper .sg-val { flex: 1; color: #000; }
           
           @media print {
-            @page { size: A4; margin: 10mm; }
+            @page { size: A4; margin: 0; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            html, body { margin: 0 !important; padding: 0 !important; }
             .no-print { display: none !important; }
             body > div:not(.admin-receipt-wrapper) { display: none !important; }
             #admin-sidebar, header { display: none !important; }
             main { padding: 0 !important; margin: 0 !important; }
-            .admin-receipt-wrapper { margin: 0; padding: 0; }
+            .admin-receipt-wrapper { margin: 0; padding: 10mm; }
             .admin-receipt-wrapper .container { border: none !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important; max-width: 100% !important; }
             .admin-receipt-wrapper .header { margin-bottom: 0.5rem; }
             .admin-receipt-wrapper .title-area { padding: 0.5rem 0; margin-bottom: 0.5rem; }
             .admin-receipt-wrapper .info-grid { gap: 0.5rem; margin-bottom: 0.5rem; }
             .admin-receipt-wrapper .bill-summary { padding: 0.5rem; margin-top: 0.5rem; }
             .admin-receipt-wrapper .charge-section { margin-bottom: 0.5rem; }
-            .admin-receipt-wrapper .footer-text { margin: 0.5rem 0; }
             .admin-receipt-wrapper .cut-line { margin: 0.75rem 0; }
             .admin-receipt-wrapper .stub-header { margin-bottom: 0.5rem; }
           }
@@ -4586,7 +4584,7 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
             <div>
               <p class="cust-name">${customerName}</p>
               <p class="cust-addr">${address}</p>
-              ${currentSpeedStr && currentSpeedStr !== 'N/A' ? `<p class="cust-plan" style="margin-top: 3px; font-size: 22px; font-weight: 700; color: #1f2937; letter-spacing: -1px;">${currentSpeedStr}</p>` : ''}
+              ${currentSpeedStr && currentSpeedStr !== 'N/A' ? `<p class="cust-plan" style="margin-top: 3px; font-size: 22px; font-weight: 700; color: #000; letter-spacing: -1px;">${currentSpeedStr}</p>` : ''}
             </div>
             <div>
               <table class="stat-table">
@@ -4642,7 +4640,7 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
                 <span>${fmt(currentCharges)}</span>
               </div>
               <div class="ch-sub">
-                <span style="font-weight: 400;"><b>Total Current Charges</b> — <i style="color: #666;">Please pay on or before the due date</i></span>
+                <span><b>Total Current Charges</b></span>
                 <span>${fmt(currentCharges)}</span>
               </div>
             </div>
@@ -4653,7 +4651,7 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
             </div>
           </div>
           
-          <div class="footer-text">Thank you for keeping your account current. We value your continued patronage.</div>
+
           
           <div class="cut-line">
             <div class="cut-dot"></div>
@@ -4663,7 +4661,7 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
           
           <div class="stub-header">
             <div class="stub-title">PAYMENT STUB</div>
-            <div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">You may be required to present this bill when paying.</div>
+            <div style="font-size: 0.8rem; color: #000; margin-top: 0.5rem;">You may be required to present this bill when paying.</div>
           </div>
           
           <div class="stub-grid">
@@ -4681,7 +4679,7 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
             </div>
           </div>
           
-          <div style="text-align: center; font-size: 0.7rem; color: #aaa; margin-top: 1rem;">${isPending ? 'Bill ID' : 'Payment ID'}: ${pm.id}</div>
+          <div style="text-align: center; font-size: 0.7rem; color: #000; margin-top: 1rem;">${isPending ? 'Bill ID' : 'Payment ID'}: ${pm.id}</div>
         </div>
       </div>
     `;
@@ -4821,58 +4819,58 @@ window.renderDashActivity = async function () {
 };
 
 
-window.unpaidAdminBill = async function(paymentId, customerId, cName) {
+window.unpaidAdminBill = async function (paymentId, customerId, cName) {
   if (!confirm(`Are you sure you want to mark ${cName}'s payment as UNPAID?\nThis will revert the payment and update the Google Sheet.`)) return;
 
   try {
     const { db, firestore } = await window._getAdminDb();
-    
+
     // Fetch payment to get details for recreation
     const pDoc = await firestore.getDoc(firestore.doc(db, "payments", paymentId));
     if (pDoc.exists()) {
       const pm = pDoc.data();
       const uid = pm.userId || customerId;
       if (uid && uid !== 'undefined' && uid.trim() !== '') {
-         // Fetch user data to populate bill properly
-         const userDoc = await firestore.getDoc(firestore.doc(db, "users", uid));
-         let uData = {};
-         if (userDoc.exists()) uData = userDoc.data();
+        // Fetch user data to populate bill properly
+        const userDoc = await firestore.getDoc(firestore.doc(db, "users", uid));
+        let uData = {};
+        if (userDoc.exists()) uData = userDoc.data();
 
-         const billData = {
-             amount: pm.amount || uData.ammount || uData.amount || 0,
-             billingMonth: pm.billingMonth || pm.month || pm.period || '-',
-             plan: pm.plan || uData.Plan || uData.plan || '-',
-             status: 'Pending',
-             timestamp: firestore.serverTimestamp(),
-             name: pm.customerName || pm.name || uData.name || cName || 'Unknown',
-             accountNumber: pm.accountNumber || uData.accountNumber || '',
-             email: uData.email || '',
-             phone: uData.phone || '',
-             facebook: uData.facebook || '',
-             dateSent: new Date().toISOString(),
-             type: 'billing_statement'
-         };
-         
-         // Try to calculate due date if missing
-         if (pm.dueDate) {
-             billData.dueDate = pm.dueDate;
-         } else {
-             const n = new Date();
-             billData.dueDate = (n.getMonth() + 1) + '/07/' + n.getFullYear(); // Default to 7th
-         }
+        const billData = {
+          amount: pm.amount || uData.ammount || uData.amount || 0,
+          billingMonth: pm.billingMonth || pm.month || pm.period || '-',
+          plan: pm.plan || uData.Plan || uData.plan || '-',
+          status: 'Pending',
+          timestamp: firestore.serverTimestamp(),
+          name: pm.customerName || pm.name || uData.name || cName || 'Unknown',
+          accountNumber: pm.accountNumber || uData.accountNumber || '',
+          email: uData.email || '',
+          phone: uData.phone || '',
+          facebook: uData.facebook || '',
+          dateSent: new Date().toISOString(),
+          type: 'billing_statement'
+        };
 
-         await firestore.addDoc(firestore.collection(db, "users", uid, "billing_emails"), billData);
+        // Try to calculate due date if missing
+        if (pm.dueDate) {
+          billData.dueDate = pm.dueDate;
+        } else {
+          const n = new Date();
+          billData.dueDate = (n.getMonth() + 1) + '/07/' + n.getFullYear(); // Default to 7th
+        }
+
+        await firestore.addDoc(firestore.collection(db, "users", uid, "billing_emails"), billData);
       }
     }
-    
+
     // Delete payment (triggers backend Google Sheet revert)
     await firestore.deleteDoc(firestore.doc(db, "payments", paymentId));
-    
+
     // Ping backend to wake it up
     try {
       const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
-      fetch(`${BACKEND_URL}/`).catch(() => {});
-    } catch (e) {}
+      fetch(`${BACKEND_URL}/`).catch(() => { });
+    } catch (e) { }
 
     alert(`Successfully reverted ${cName}'s payment!`);
   } catch (err) {
@@ -4926,8 +4924,8 @@ window.markAdminBillPaid = async function (btn, billId, customerId, amountStr, b
     // Ping the backend to wake it up from sleep mode
     try {
       const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
-      fetch(`${BACKEND_URL}/`).catch(() => {});
-    } catch (e) {}
+      fetch(`${BACKEND_URL}/`).catch(() => { });
+    } catch (e) { }
 
     // Send push notification if token exists
     const userDocRef = firestore.doc(db, "users", customerId);
@@ -5620,20 +5618,20 @@ window.chatboxSendClient = async function (clientId) {
   }
 };
 
-window.initSimulator = async function() {
+window.initSimulator = async function () {
   const { db, firestore } = await window._getAdminDb();
-  
+
   if (window._simUnsubscribe) window._simUnsubscribe();
-  
+
   const q = firestore.query(firestore.collection(db, 'simulator_chats'), firestore.orderBy('timestamp', 'asc'));
   window._simUnsubscribe = firestore.onSnapshot(q, (snapshot) => {
     const chatWin = document.getElementById('simulator-chat-window');
     if (!chatWin) return;
-    
+
     let html = '';
     let isTyping = false;
     let latestQuickReplies = null;
-    
+
     snapshot.docs.forEach(doc => {
       const data = doc.data();
       if (data.sender === 'user') {
@@ -5651,38 +5649,38 @@ window.initSimulator = async function() {
         isTyping = false;
         const response = data.response;
         if (response.text) {
-           html += `
+          html += `
              <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 0.75rem 1rem; border-radius: 12px; align-self: flex-start; max-width: 75%; font-size: 0.95rem;">
                ${response.text.replace(/\n/g, '<br/>')}
              </div>
            `;
-           if (response.quick_replies) {
-             latestQuickReplies = response.quick_replies;
-           }
+          if (response.quick_replies) {
+            latestQuickReplies = response.quick_replies;
+          }
         }
         if (response.attachment) {
-           const payload = response.attachment.payload || {};
-           
-           if (payload.template_type === 'button') {
-             html += `
+          const payload = response.attachment.payload || {};
+
+          if (payload.template_type === 'button') {
+            html += `
                <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 0.75rem 1rem; border-radius: 12px; align-self: flex-start; max-width: 75%; font-size: 0.95rem;">
                  ${(payload.text || '').replace(/\n/g, '<br/>')}
                  <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
                    ${(payload.buttons || []).map(b => {
-                     if (b.type === 'web_url') {
-                       return `<a href="${b.url}" target="_blank" style="display:block; text-align:center; background: #3b82f6; border: none; color: #fff; padding: 0.6rem; border-radius: 4px; font-size: 0.85rem; cursor: pointer; text-decoration: none; font-weight: 600;">${b.title}</a>`;
-                     } else {
-                       return `<button onclick="window.sendSimulatorPayload('${b.payload}')" style="background: #3b82f6; border: none; color: #fff; padding: 0.6rem; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: 600;">${b.title}</button>`;
-                     }
-                   }).join('')}
+              if (b.type === 'web_url') {
+                return `<a href="${b.url}" target="_blank" style="display:block; text-align:center; background: #3b82f6; border: none; color: #fff; padding: 0.6rem; border-radius: 4px; font-size: 0.85rem; cursor: pointer; text-decoration: none; font-weight: 600;">${b.title}</a>`;
+              } else {
+                return `<button onclick="window.sendSimulatorPayload('${b.payload}')" style="background: #3b82f6; border: none; color: #fff; padding: 0.6rem; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: 600;">${b.title}</button>`;
+              }
+            }).join('')}
                  </div>
                </div>
              `;
-           }
-           
-           const elements = payload.elements;
-           if (elements) {
-             html += `
+          }
+
+          const elements = payload.elements;
+          if (elements) {
+            html += `
                <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-self: flex-start; max-width: 90%;">
                  ${elements.map(el => `
                    <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 1rem; width: 200px;">
@@ -5690,21 +5688,21 @@ window.initSimulator = async function() {
                      <div style="font-weight: 600; color: #fff;">${el.title}</div>
                      <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem;">${el.subtitle || ''}</div>
                      ${el.buttons ? el.buttons.map(b => {
-                       if (b.type === 'web_url') {
-                         return `<a href="${b.url}" target="_blank" style="display:block; text-align:center; background: #3b82f6; border: none; color: #fff; padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; width: 100%; margin-top: 0.25rem; box-sizing: border-box; text-decoration: none;">${b.title}</a>`;
-                       } else {
-                         return `<button onclick="window.sendSimulatorPayload('${b.payload}')" style="background: #3b82f6; border: none; color: #fff; padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; width: 100%; margin-top: 0.25rem;">${b.title}</button>`;
-                       }
-                     }).join('') : ''}
+              if (b.type === 'web_url') {
+                return `<a href="${b.url}" target="_blank" style="display:block; text-align:center; background: #3b82f6; border: none; color: #fff; padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; width: 100%; margin-top: 0.25rem; box-sizing: border-box; text-decoration: none;">${b.title}</a>`;
+              } else {
+                return `<button onclick="window.sendSimulatorPayload('${b.payload}')" style="background: #3b82f6; border: none; color: #fff; padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; width: 100%; margin-top: 0.25rem;">${b.title}</button>`;
+              }
+            }).join('') : ''}
                    </div>
                  `).join('')}
                </div>
              `;
-           }
+          }
         }
       }
     });
-    
+
     if (isTyping) {
       html += `
         <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 0.75rem 1rem; border-radius: 12px; align-self: flex-start; max-width: 75%; font-size: 0.95rem; display: flex; gap: 0.25rem; align-items: center;">
@@ -5715,11 +5713,11 @@ window.initSimulator = async function() {
         </div>
       `;
     }
-    
+
     if (snapshot.docs.length === 0) {
       html = `<div style="text-align: center; color: #64748b; font-size: 0.8rem; margin-top: auto; margin-bottom: 1rem;">Simulation started. Say hi to begin.</div>`;
     }
-    
+
     chatWin.innerHTML = html;
     chatWin.scrollTop = chatWin.scrollHeight;
 
@@ -5736,9 +5734,9 @@ window.initSimulator = async function() {
   });
 };
 
-window.sendSimulatorPayload = async function(payloadText) {
+window.sendSimulatorPayload = async function (payloadText) {
   const { db, firestore } = await window._getAdminDb();
-  
+
   await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
     sender: 'user',
     payload: payloadText,
@@ -5756,7 +5754,7 @@ window.sendSimulatorPayload = async function(payloadText) {
       }]
     }]
   };
-  
+
   const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
   await fetch(`${BACKEND_URL}/webhook`, {
     method: 'POST',
@@ -5765,14 +5763,14 @@ window.sendSimulatorPayload = async function(payloadText) {
   });
 };
 
-window.sendSimulatorMessage = async function() {
+window.sendSimulatorMessage = async function () {
   const input = document.getElementById('simulator-input');
   if (!input || !input.value.trim()) return;
   const text = input.value.trim();
   input.value = '';
-  
+
   const { db, firestore } = await window._getAdminDb();
-  
+
   await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
     sender: 'user',
     text: text,
@@ -5790,7 +5788,7 @@ window.sendSimulatorMessage = async function() {
       }]
     }]
   };
-  
+
   const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
   await fetch(`${BACKEND_URL}/webhook`, {
     method: 'POST',
@@ -5799,19 +5797,19 @@ window.sendSimulatorMessage = async function() {
   });
 };
 
-window.handleSimulatorImageUpload = async function(event) {
+window.handleSimulatorImageUpload = async function (event) {
   const file = event.target.files[0];
   if (!file) return;
   event.target.value = '';
 
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     const img = new Image();
-    img.onload = async function() {
+    img.onload = async function () {
       const canvas = document.createElement('canvas');
       let width = img.width;
       let height = img.height;
-      
+
       const MAX_SIZE = 800;
       if (width > height && width > MAX_SIZE) {
         height *= MAX_SIZE / width;
@@ -5820,15 +5818,15 @@ window.handleSimulatorImageUpload = async function(event) {
         width *= MAX_SIZE / height;
         height = MAX_SIZE;
       }
-      
+
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
-      
+
       // Compress to JPEG to keep size well under 1MB
       const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-      
+
       const { db, firestore } = await window._getAdminDb();
       await firestore.addDoc(firestore.collection(db, 'simulator_chats'), {
         sender: 'user',
@@ -5852,7 +5850,7 @@ window.handleSimulatorImageUpload = async function(event) {
           }]
         }]
       };
-      
+
       const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
       await fetch(`${BACKEND_URL}/webhook`, {
         method: 'POST',
@@ -5865,7 +5863,7 @@ window.handleSimulatorImageUpload = async function(event) {
   reader.readAsDataURL(file);
 };
 
-window.resetSimulator = async function() {
+window.resetSimulator = async function () {
   if (!confirm("Are you sure? This will wipe all test users, complaints, applications, and memory for the simulator.")) return;
   try {
     const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
@@ -5876,12 +5874,12 @@ window.resetSimulator = async function() {
     } else {
       alert("Error resetting simulator: " + data.error);
     }
-  } catch(e) {
+  } catch (e) {
     alert("Connection error: " + e.message);
   }
 };
 
-window.exportBillingExcel = async function(event) {
+window.exportBillingExcel = async function (event) {
   try {
     const btn = event ? event.currentTarget : document.querySelector('button[onclick="window.exportBillingExcel()"]');
     const oldText = btn ? btn.innerHTML : 'Export to Excel';
@@ -5906,7 +5904,7 @@ window.exportBillingExcel = async function(event) {
       }
     }, 2000);
 
-  } catch(e) {
+  } catch (e) {
     console.error("Export Excel Error: ", e);
     alert("Error exporting Excel: " + e.message);
   }
