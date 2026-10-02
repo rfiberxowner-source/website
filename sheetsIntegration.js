@@ -885,6 +885,23 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
             });
         }
 
+        // Update Name (Column A)
+        if (user.fullName || user.name) {
+            batchRequests.push({
+                updateCells: {
+                    range: {
+                        sheetId: sheetId,
+                        startRowIndex: rowIndex - 1,
+                        endRowIndex: rowIndex,
+                        startColumnIndex: 0, // Column A
+                        endColumnIndex: 1
+                    },
+                    rows: [{ values: [{ userEnteredValue: { stringValue: user.fullName || user.name } }] }],
+                    fields: 'userEnteredValue'
+                }
+            });
+        }
+
         // Apply color to Payment column (D)
         if (colPayment !== -1) {
             const paymentType = user.paymentType || 'Monthly';

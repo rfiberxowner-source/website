@@ -1237,6 +1237,21 @@ export const adminViews = {
               <div style="font-size: 0.8rem; font-weight: 700; color: #fff; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px;">Editable Details</div>
               <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
                 <div>
+                  <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600;">First Name</label>
+                  <input type="text" id="modal-client-firstname-input" oninput="window.checkAdminClientChanges()" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.6rem; border-radius: 6px; font-size: 0.85rem; outline: none;">
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600;">Last Name</label>
+                  <input type="text" id="modal-client-lastname-input" oninput="window.checkAdminClientChanges()" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.6rem; border-radius: 6px; font-size: 0.85rem; outline: none;">
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600;">Payment Type (D2 Column)</label>
+                  <select id="modal-client-paymenttype-input" onchange="window.checkAdminClientChanges()" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.6rem; border-radius: 6px; font-size: 0.85rem; outline: none; cursor: pointer;">
+                    <option style="background: #0f131f; color: #fff;" value="Monthly">Monthly</option>
+                    <option style="background: #0f131f; color: #fff;" value="Every Last week">Every Last week</option>
+                  </select>
+                </div>
+                <div>
                   <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600;">Account Name</label>
                   <input type="text" id="modal-client-accountname-input" oninput="window.checkAdminClientChanges()" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.6rem; border-radius: 6px; font-size: 0.85rem; outline: none;">
                 </div>
@@ -4041,6 +4056,17 @@ window.requestAdminClientUpdate = async function () {
   const statusInput = document.getElementById('modal-client-status-input');
   const locInput = document.getElementById('modal-client-location-input');
   const acctNameInput = document.getElementById('modal-client-accountname-input');
+    const fNameInput = document.getElementById('modal-client-firstname-input');
+    const lNameInput = document.getElementById('modal-client-lastname-input');
+    const ptInput = document.getElementById('modal-client-paymenttype-input');
+    
+    fNameInput.value = u.firstName || '';
+    lNameInput.value = u.lastName || '';
+    ptInput.value = u.paymentType || 'Monthly';
+    
+    fNameInput.dataset.original = fNameInput.value;
+    lNameInput.dataset.original = lNameInput.value;
+    ptInput.dataset.original = ptInput.value;
 
   const plan = planInput.value;
   const amount = amountInput.value;
@@ -4056,6 +4082,12 @@ window.requestAdminClientUpdate = async function () {
   if (status !== statusInput.dataset.original) changes.push('Status');
   if (locVal !== locInput.dataset.original) changes.push('Location');
   if (acctName !== acctNameInput.dataset.original) changes.push('Account Name');
+  const fName = fNameInput.value;
+  const lName = lNameInput.value;
+  const pType = ptInput.value;
+  if (fName !== fNameInput.dataset.original) changes.push('First Name');
+  if (lName !== lNameInput.dataset.original) changes.push('Last Name');
+  if (pType !== ptInput.dataset.original) changes.push('Payment Type');
 
   if (changes.length === 0) {
     const msg = document.getElementById('modal-client-update-msg');
@@ -4076,6 +4108,10 @@ window.requestAdminClientUpdate = async function () {
       const { db, firestore } = await window._getAdminDb();
       await firestore.updateDoc(firestore.doc(db, "users", id), {
         accountname: acctName,
+        firstName: fName,
+        lastName: lName,
+        name: (fName + ' ' + lName).trim(),
+        paymentType: pType,
         plan: plan,
         amount: amount,
         password: pass,
