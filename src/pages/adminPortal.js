@@ -4502,8 +4502,8 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
         </div>
         <style>
           .admin-receipt-wrapper { font-family: 'Inter', sans-serif; color: #000; }
-          .admin-receipt-wrapper .container { background: #fff; max-width: 800px; margin: 0 auto; padding: 3rem; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.3); position: relative; border: 1px solid #eee; }
-          .admin-receipt-wrapper .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+          .admin-receipt-wrapper .container { background: #fff; max-width: 800px; margin: 0 auto; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.3); position: relative; border: 1px solid #eee; }
+          .admin-receipt-wrapper .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
           .admin-receipt-wrapper .logo-area { display: flex; align-items: center; gap: 1rem; }
           .admin-receipt-wrapper .logo-icon { width: 40px; height: 40px; background: #E53935; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
           .admin-receipt-wrapper .logo-icon svg { width: 24px; height: 24px; color: #fff; }
@@ -4512,58 +4512,68 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
           .admin-receipt-wrapper .brand-sub { font-size: 0.7rem; color: #666; font-weight: 600; letter-spacing: 2px; }
           .admin-receipt-wrapper .page-num { font-size: 0.8rem; color: #666; }
           
-          .admin-receipt-wrapper .title-area { border-top: 2px solid #E53935; border-bottom: 1px solid #eee; padding: 1.5rem 0; text-align: center; margin-bottom: 2rem; }
-          .admin-receipt-wrapper .title-text { font-size: 1.25rem; font-weight: 700; color: #000; letter-spacing: 2px; }
+          .admin-receipt-wrapper .title-area { border-top: 2px solid #E53935; border-bottom: 1px solid #eee; padding: 0.75rem 0; text-align: center; margin-bottom: 1rem; }
+          .admin-receipt-wrapper .title-text { font-size: 1.1rem; font-weight: 700; color: #000; letter-spacing: 2px; }
           
-          .admin-receipt-wrapper .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
-          .admin-receipt-wrapper .cust-name { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.25rem 0; text-transform: uppercase; }
-          .admin-receipt-wrapper .cust-addr { font-size: 0.85rem; color: #666; margin: 0; }
+          .admin-receipt-wrapper .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+          .admin-receipt-wrapper .cust-name { font-size: 1rem; font-weight: 700; margin: 0 0 0.15rem 0; text-transform: uppercase; }
+          .admin-receipt-wrapper .cust-addr { font-size: 0.8rem; color: #666; margin: 0; }
           
-          .admin-receipt-wrapper .stat-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-          .admin-receipt-wrapper .stat-table th, .admin-receipt-wrapper .stat-table td { border: 1px solid #000; padding: 0.75rem; text-align: center; }
-          .admin-receipt-wrapper .stat-table th { background: #111; color: #fff; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; border-color: #111; }
+          .admin-receipt-wrapper .stat-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+          .admin-receipt-wrapper .stat-table th, .admin-receipt-wrapper .stat-table td { border: 1px solid #000; padding: 0.5rem; text-align: center; }
+          .admin-receipt-wrapper .stat-table th { background: #111; color: #fff; font-weight: 700; font-size: 0.65rem; text-transform: uppercase; border-color: #111; }
           
-          .admin-receipt-wrapper .bill-summary { border: 1px solid #eee; padding: 1.5rem; margin-top: 1.5rem; }
-          .admin-receipt-wrapper .bs-title { background: #111; color: #fff; display: inline-block; padding: 0.5rem 1.5rem; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1.5rem; }
+          .admin-receipt-wrapper .bill-summary { border: 1px solid #eee; padding: 1rem; margin-top: 1rem; }
+          .admin-receipt-wrapper .bs-title { background: #111; color: #fff; display: inline-block; padding: 0.35rem 1rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.75rem; }
           
-          .admin-receipt-wrapper .charge-section { margin-bottom: 1.5rem; }
-          .admin-receipt-wrapper .ch-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.75rem; color: #000; }
-          .admin-receipt-wrapper .ch-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.5rem; color: #444; padding-left: 1rem; }
-          .admin-receipt-wrapper .ch-sub { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; margin-top: 1rem; color: #000; border-bottom: 1px solid #eee; padding-bottom: 1rem; }
+          .admin-receipt-wrapper .charge-section { margin-bottom: 0.75rem; }
+          .admin-receipt-wrapper .ch-title { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.4rem; color: #000; }
+          .admin-receipt-wrapper .ch-row { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.3rem; color: #444; padding-left: 1rem; }
+          .admin-receipt-wrapper .ch-sub { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; color: #000; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
           
-          .admin-receipt-wrapper .total-box { background: #111; color: #fff; padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
-          .admin-receipt-wrapper .tb-label { font-size: 1rem; font-weight: 700; text-transform: uppercase; }
-          .admin-receipt-wrapper .tb-amount { font-size: 1.25rem; font-weight: 800; }
+          .admin-receipt-wrapper .total-box { background: #111; color: #fff; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; }
+          .admin-receipt-wrapper .tb-label { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; }
+          .admin-receipt-wrapper .tb-amount { font-size: 1.1rem; font-weight: 800; }
           
-          .admin-receipt-wrapper .footer-text { text-align: center; font-size: 0.8rem; color: #666; font-style: italic; margin: 2rem 0; }
+          .admin-receipt-wrapper .footer-text { text-align: center; font-size: 0.75rem; color: #666; font-style: italic; margin: 1rem 0; }
           .admin-receipt-wrapper .footer-tax { text-align: center; font-size: 0.7rem; color: #aaa; letter-spacing: 2px; text-transform: uppercase; }
           
-          .admin-receipt-wrapper .cut-line { display: flex; align-items: center; gap: 1rem; margin: 3rem 0; }
-          .admin-receipt-wrapper .cut-dot { width: 12px; height: 12px; border-radius: 50%; background: #111; }
+          .admin-receipt-wrapper .cut-line { display: flex; align-items: center; gap: 1rem; margin: 1rem 0; }
+          .admin-receipt-wrapper .cut-dot { width: 10px; height: 10px; border-radius: 50%; background: #111; }
           .admin-receipt-wrapper .cut-dash { flex: 1; border-top: 2px dashed #ccc; }
           
-          .admin-receipt-wrapper .stub-header { text-align: center; margin-bottom: 2rem; }
-          .admin-receipt-wrapper .stub-title { background: #E53935; color: #fff; display: inline-block; padding: 0.5rem 1.5rem; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; }
+          .admin-receipt-wrapper .stub-header { text-align: center; margin-bottom: 0.75rem; }
+          .admin-receipt-wrapper .stub-title { background: #E53935; color: #fff; display: inline-block; padding: 0.35rem 1rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.25rem; }
           
-          .admin-receipt-wrapper .stub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; font-size: 0.85rem; }
-          .admin-receipt-wrapper .sg-col { display: flex; flex-direction: column; gap: 0.75rem; }
-          .admin-receipt-wrapper .sg-row { display: flex; gap: 1rem; }
+          .admin-receipt-wrapper .stub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.8rem; }
+          .admin-receipt-wrapper .sg-col { display: flex; flex-direction: column; gap: 0.5rem; }
+          .admin-receipt-wrapper .sg-row { display: flex; gap: 0.75rem; }
           .admin-receipt-wrapper .sg-label { width: 120px; font-weight: 600; color: #444; }
           .admin-receipt-wrapper .sg-val { flex: 1; color: #000; }
           
           @media print {
+            @page { size: A4; margin: 10mm; }
             .no-print { display: none !important; }
             body > div:not(.admin-receipt-wrapper) { display: none !important; }
             #admin-sidebar, header { display: none !important; }
             main { padding: 0 !important; margin: 0 !important; }
-            .admin-receipt-wrapper .container { border: none !important; padding: 0 !important; box-shadow: none !important; }
+            .admin-receipt-wrapper { margin: 0; padding: 0; }
+            .admin-receipt-wrapper .container { border: none !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important; max-width: 100% !important; }
+            .admin-receipt-wrapper .header { margin-bottom: 0.5rem; }
+            .admin-receipt-wrapper .title-area { padding: 0.5rem 0; margin-bottom: 0.5rem; }
+            .admin-receipt-wrapper .info-grid { gap: 0.5rem; margin-bottom: 0.5rem; }
+            .admin-receipt-wrapper .bill-summary { padding: 0.5rem; margin-top: 0.5rem; }
+            .admin-receipt-wrapper .charge-section { margin-bottom: 0.5rem; }
+            .admin-receipt-wrapper .footer-text { margin: 0.5rem 0; }
+            .admin-receipt-wrapper .cut-line { margin: 0.75rem 0; }
+            .admin-receipt-wrapper .stub-header { margin-bottom: 0.5rem; }
           }
         </style>
       
         <div class="container">
           <div class="header">
             <div class="logo-area">
-              <img src="/logo2-removebg-preview.png" alt="RFiberX" style="height: 250px; width: auto; margin-left: -15px;" />
+              <img src="/logo2-removebg-preview.png" alt="RFiberX" style="height: 100px; width: auto; margin-left: -10px;" />
             </div>
             <div class="page-num">Page 1 of 1</div>
           </div>
@@ -4576,7 +4586,7 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
             <div>
               <p class="cust-name">${customerName}</p>
               <p class="cust-addr">${address}</p>
-              ${currentSpeedStr && currentSpeedStr !== 'N/A' ? `<p class="cust-plan" style="margin-top: 5px; font-size: 32px; font-weight: 700; color: #1f2937; letter-spacing: -1px;">${currentSpeedStr}</p>` : ''}
+              ${currentSpeedStr && currentSpeedStr !== 'N/A' ? `<p class="cust-plan" style="margin-top: 3px; font-size: 22px; font-weight: 700; color: #1f2937; letter-spacing: -1px;">${currentSpeedStr}</p>` : ''}
             </div>
             <div>
               <table class="stat-table">
@@ -4671,7 +4681,7 @@ window.openReceiptPage = async function (paymentId, isPending = false) {
             </div>
           </div>
           
-          <div style="text-align: center; font-size: 0.7rem; color: #aaa; margin-top: 3rem;">${isPending ? 'Bill ID' : 'Payment ID'}: ${pm.id}</div>
+          <div style="text-align: center; font-size: 0.7rem; color: #aaa; margin-top: 1rem;">${isPending ? 'Bill ID' : 'Payment ID'}: ${pm.id}</div>
         </div>
       </div>
     `;
