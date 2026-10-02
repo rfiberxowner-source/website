@@ -1237,6 +1237,14 @@ export const adminViews = {
               <div style="font-size: 0.8rem; font-weight: 700; color: #fff; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px;">Editable Details</div>
               <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
                 <div>
+                  <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600;">Address</label>
+                  <input type="text" id="modal-client-address-input" oninput="window.checkAdminClientChanges()" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.6rem; border-radius: 6px; font-size: 0.85rem; outline: none;">
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600;">Phone Number</label>
+                  <input type="text" id="modal-client-phone-input" oninput="window.checkAdminClientChanges()" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.6rem; border-radius: 6px; font-size: 0.85rem; outline: none;">
+                </div>
+                <div>
                   <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600;">First Name</label>
                   <input type="text" id="modal-client-firstname-input" oninput="window.checkAdminClientChanges()" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.6rem; border-radius: 6px; font-size: 0.85rem; outline: none;">
                 </div>
@@ -3954,6 +3962,26 @@ window.openAdminClientModal = async function (id) {
     document.getElementById('modal-client-phone').innerText = u.phone || u.contactNumber || 'TBD';
 
     // Set editable details
+    const fNameInput = document.getElementById('modal-client-firstname-input');
+    const lNameInput = document.getElementById('modal-client-lastname-input');
+    const ptInput = document.getElementById('modal-client-paymenttype-input');
+    const addressInput = document.getElementById('modal-client-address-input');
+    const phoneInput = document.getElementById('modal-client-phone-input');
+    
+    if (fNameInput) {
+        fNameInput.value = u.firstName || '';
+        lNameInput.value = u.lastName || '';
+        ptInput.value = u.paymentType || 'Monthly';
+        addressInput.value = u.address || '';
+        phoneInput.value = u.phone || u.contactNumber || '';
+        
+        fNameInput.dataset.original = fNameInput.value;
+        lNameInput.dataset.original = lNameInput.value;
+        ptInput.dataset.original = ptInput.value;
+        addressInput.dataset.original = addressInput.value;
+        phoneInput.dataset.original = phoneInput.value;
+    }
+
     const plan = u.plan || u.Plan || '30Mbps';
     const planSel = document.getElementById('modal-client-plan-input');
     // Ensure the plan exists in the dropdown, else just leave it as is or add it
@@ -4059,14 +4087,8 @@ window.requestAdminClientUpdate = async function () {
     const fNameInput = document.getElementById('modal-client-firstname-input');
     const lNameInput = document.getElementById('modal-client-lastname-input');
     const ptInput = document.getElementById('modal-client-paymenttype-input');
-    
-    fNameInput.value = u.firstName || '';
-    lNameInput.value = u.lastName || '';
-    ptInput.value = u.paymentType || 'Monthly';
-    
-    fNameInput.dataset.original = fNameInput.value;
-    lNameInput.dataset.original = lNameInput.value;
-    ptInput.dataset.original = ptInput.value;
+    const addressInput = document.getElementById('modal-client-address-input');
+    const phoneInput = document.getElementById('modal-client-phone-input');
 
   const plan = planInput.value;
   const amount = amountInput.value;
@@ -4085,9 +4107,14 @@ window.requestAdminClientUpdate = async function () {
   const fName = fNameInput.value;
   const lName = lNameInput.value;
   const pType = ptInput.value;
+  const addr = addressInput.value;
+  const phoneVal = phoneInput.value;
+  
   if (fName !== fNameInput.dataset.original) changes.push('First Name');
   if (lName !== lNameInput.dataset.original) changes.push('Last Name');
   if (pType !== ptInput.dataset.original) changes.push('Payment Type');
+  if (addr !== addressInput.dataset.original) changes.push('Address');
+  if (phoneVal !== phoneInput.dataset.original) changes.push('Phone');
 
   if (changes.length === 0) {
     const msg = document.getElementById('modal-client-update-msg');
@@ -4112,6 +4139,8 @@ window.requestAdminClientUpdate = async function () {
         lastName: lName,
         name: (fName + ' ' + lName).trim(),
         paymentType: pType,
+        address: addr,
+        phone: phoneVal,
         plan: plan,
         amount: amount,
         password: pass,
