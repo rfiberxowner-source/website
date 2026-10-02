@@ -2562,6 +2562,10 @@ window.initAdminBanking = async function () {
         if (rawPlan === '45Mbps') rawPlan = '50Mbps';
         let amountStr = String(u.amount || u.ammount || '').trim();
         if (rawPlan !== '150Mbps' && (!amountStr || amountStr === '0' || amountStr === '')) return;
+        
+        window._userPaymentTypes = window._userPaymentTypes || {};
+        if (u.accountNumber) window._userPaymentTypes[u.accountNumber] = u.paymentType || 'Monthly';
+        
         validClients++;
       });
       let outSum = 0;
@@ -2581,6 +2585,9 @@ window.initAdminBanking = async function () {
         if (status !== 'paid' && status !== 'completed') {
           if (b.dueDate && status !== 'waiting') {
             const dueDate = new Date(b.dueDate);
+            if (window._userPaymentTypes && window._userPaymentTypes[b.accountNumber] === 'Every Last Week') {
+              dueDate.setMonth(dueDate.getMonth() + 1);
+            }
             const now = new Date();
             now.setHours(0, 0, 0, 0);
             dueDate.setHours(0, 0, 0, 0);
@@ -2734,6 +2741,9 @@ window.renderBills = async function () {
       // Dynamic overdue check
       if (rawStatus !== 'paid' && rawStatus !== 'completed' && rawStatus !== 'waiting' && b.dueDate) {
         const dueDate = new Date(b.dueDate);
+        if (window._userPaymentTypes && window._userPaymentTypes[b.accountNumber] === 'Every Last Week') {
+          dueDate.setMonth(dueDate.getMonth() + 1);
+        }
         const now = new Date();
         now.setHours(0, 0, 0, 0);
         dueDate.setHours(0, 0, 0, 0);
@@ -4861,7 +4871,8 @@ window.unpaidAdminBill = async function (paymentId, customerId, cName) {
           billData.dueDate = pm.dueDate;
         } else {
           const n = new Date();
-          billData.dueDate = (n.getMonth() + 1) + '/07/' + n.getFullYear(); // Default to 7th
+          const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+          billData.dueDate = months[n.getMonth()] + ' 7, ' + n.getFullYear();
         }
 
         await firestore.addDoc(firestore.collection(db, "users", uid, "billing_emails"), billData);
