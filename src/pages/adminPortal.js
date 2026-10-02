@@ -4758,13 +4758,34 @@ window.unpaidAdminBill = async function(paymentId, customerId, cName) {
       const pm = pDoc.data();
       const uid = pm.userId || customerId;
       if (uid && uid !== 'undefined' && uid.trim() !== '') {
+         // Fetch user data to populate bill properly
+         const userDoc = await firestore.getDoc(firestore.doc(db, "users", uid));
+         let uData = {};
+         if (userDoc.exists()) uData = userDoc.data();
+
          const billData = {
-             amount: pm.amount || 0,
+             amount: pm.amount || uData.ammount || uData.amount || 0,
              billingMonth: pm.billingMonth || pm.month || pm.period || '-',
-             plan: pm.plan || '-',
+             plan: pm.plan || uData.Plan || uData.plan || '-',
              status: 'Pending',
-             timestamp: firestore.serverTimestamp()
+             timestamp: firestore.serverTimestamp(),
+             name: pm.customerName || pm.name || uData.name || cName || 'Unknown',
+             accountNumber: pm.accountNumber || uData.accountNumber || '',
+             email: uData.email || '',
+             phone: uData.phone || '',
+             facebook: uData.facebook || '',
+             dateSent: new Date().toISOString(),
+             type: 'billing_statement'
          };
+         
+         // Try to calculate due date if missing
+         if (pm.dueDate) {
+             billData.dueDate = pm.dueDate;
+         } else {
+             const n = new Date();
+             billData.dueDate = (n.getMonth() + 1) + '/07/' + n.getFullYear(); // Default to 7th
+         }
+
          await firestore.addDoc(firestore.collection(db, "users", uid, "billing_emails"), billData);
       }
     }
