@@ -756,6 +756,7 @@ export const adminViews = {
               <th style="padding: 1rem;">PAYMENT CHANNEL</th>
               <th style="padding: 1rem;">DATE PAID</th>
               <th style="padding: 1rem;">STATUS</th>
+              <th style="padding: 1rem;">ACTIONS</th>
             </tr>
           </thead>
           <tbody id="ph-tbody">
@@ -2826,6 +2827,11 @@ window.renderPayments = async function () {
           <td style="padding: 1rem;">${(() => { let m = pm.method || 'Online payment'; return (m === 'Instant Payment' || m === 'Digital Payment' || m === 'Online') ? 'Online payment' : m; })()}</td>
           <td style="padding: 1rem;">${dateStr}</td>
           <td style="padding: 1rem;"><span style="color: #10b981; background: rgba(16,185,129,0.1); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">${displayStatus}</span></td>
+          <td style="padding: 1rem;">
+            <button onclick="event.stopPropagation(); window.unpaidAdminBill('${paymentId}', '${pm.userId || ''}', '${cName}')" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; font-family: inherit; font-size: 0.75rem; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg> Unpaid
+            </button>
+          </td>
         </tr>
       `;
     });
@@ -4736,6 +4742,46 @@ window.renderDashActivity = async function () {
   } catch (e) {
     console.error(e);
     tb.innerHTML = '<tr><td colspan="6" style="padding: 2rem; text-align:center; color: #e53935;">Error loading activity</td></tr>';
+  }
+};
+
+
+window.unpaidAdminBill = async function(paymentId, customerId, cName) {
+  if (!confirm(`Are you sure you want to mark ${cName}'s payment as UNPAID?\nThis will revert the payment and update the Google Sheet.`)) return;
+
+  try {
+    const { db, firestore } = await window._getAdminDb();
+    
+    // Fetch payment to get details for recreation
+    const pDoc = await firestore.getDoc(firestore.doc(db, "payments", paymentId));
+    if (pDoc.exists()) {
+      const pm = pDoc.data();
+      const uid = pm.userId || customerId;
+      if (uid && uid !== 'undefined' && uid.trim() !== '') {
+         const billData = {
+             amount: pm.amount || 0,
+             billingMonth: pm.billingMonth || pm.month || pm.period || '-',
+             plan: pm.plan || '-',
+             status: 'Pending',
+             timestamp: firestore.serverTimestamp()
+         };
+         await firestore.addDoc(firestore.collection(db, "users", uid, "billing_emails"), billData);
+      }
+    }
+    
+    // Delete payment (triggers backend Google Sheet revert)
+    await firestore.deleteDoc(firestore.doc(db, "payments", paymentId));
+    
+    // Ping backend to wake it up
+    try {
+      const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
+      fetch(`${BACKEND_URL}/`).catch(() => {});
+    } catch (e) {}
+
+    alert(`Successfully reverted ${cName}'s payment!`);
+  } catch (err) {
+    console.error(err);
+    alert('Failed to revert payment.');
   }
 };
 
