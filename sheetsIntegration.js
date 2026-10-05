@@ -758,6 +758,7 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
         let colLoc = 15; // P (index 15)
         let colClientType = 2; // C (index 2)
         let colPayment = 3; // D (index 3)
+        let colStatus = 7; // H (index 7)
         
         for(let r = 0; r < Math.min(rows.length, 5); r++) {
             const h = rows[r].map(c => String(c || '').toLowerCase().trim());
@@ -769,6 +770,8 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
                 if (cC !== -1) colClientType = cC;
                 let cP = h.findIndex(x => x === 'payment' || x.includes('payment type') || x.includes('payment mode'));
                 if (cP !== -1) colPayment = cP;
+                let cS = h.findIndex(x => x === 'status');
+                if (cS !== -1) colStatus = cS;
                 break;
             }
         }
@@ -897,6 +900,23 @@ async function applyProfileUpdates(user, sheetName, sheetsMeta) {
                         endColumnIndex: 1
                     },
                     rows: [{ values: [{ userEnteredValue: { stringValue: user.fullName || user.name } }] }],
+                    fields: 'userEnteredValue'
+                }
+            });
+        }
+
+        // Update Connection Status (e.g. Connected / Disconnected)
+        if (user.status && colStatus !== -1) {
+            batchRequests.push({
+                updateCells: {
+                    range: {
+                        sheetId: sheetId,
+                        startRowIndex: rowIndex - 1,
+                        endRowIndex: rowIndex,
+                        startColumnIndex: colStatus,
+                        endColumnIndex: colStatus + 1
+                    },
+                    rows: [{ values: [{ userEnteredValue: { stringValue: user.status } }] }],
                     fields: 'userEnteredValue'
                 }
             });
