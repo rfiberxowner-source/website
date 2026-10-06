@@ -329,7 +329,7 @@ export async function createNewMonthSheet(targetDate = new Date()) {
                 dueDateString,                    // E: Due Date
                 '',                               // F: Date of Payment (CLEAR IT)
                 status,                           // G: Payment Status (UNPAID)
-                u.connectionStatus || 'CONNECTED', // H: Connection Status
+                u.status || 'Connected',          // H: Connection Status
                 '',                               // I: Ref No. (CLEAR IT)
                 u.plan || u.Plan || '',           // J: Plan
                 '',                               // K: Amount (CLEAR IT)
