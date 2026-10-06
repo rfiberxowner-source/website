@@ -2600,11 +2600,32 @@ window.initAdminBanking = async function () {
           if (b.accountNumber) outSet.add(b.accountNumber);
         }
 
-        if (isOverdue && (b.status || 'Pending').toLowerCase() !== 'overdue') {
+        if (isOverdue) {
           const userId = d.ref.parent.parent.id;
-          firestore.updateDoc(firestore.doc(db, "users", userId, "billing_emails", d.id), {
-            status: 'Overdue'
-          }).catch(e => console.error('Failed to update overdue status:', e));
+          
+          if ((b.status || 'Pending').toLowerCase() !== 'overdue') {
+            firestore.updateDoc(firestore.doc(db, "users", userId, "billing_emails", d.id), {
+              status: 'Overdue'
+            }).catch(e => console.error('Failed to update overdue status:', e));
+          }
+
+          // Auto-disconnect user if they aren't already disconnected
+          if (allUsersSnap) {
+            const uDoc = allUsersSnap.docs.find(doc => doc.id === userId);
+            if (uDoc) {
+              const currentStatus = String(uDoc.data().status || '').trim().toLowerCase();
+              if (currentStatus !== 'disconnected' && currentStatus !== 'deleted') {
+                console.log(`Auto-disconnecting ${userId} due to overdue bill.`);
+                firestore.updateDoc(firestore.doc(db, "users", userId), {
+                  status: 'Disconnected'
+                }).then(() => {
+                  // Wake up the server so sheetsIntegration.js can sync this to Google Sheets
+                  const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
+                  fetch(`${BACKEND_URL}/`).catch(() => { });
+                }).catch(e => console.error('Failed to disconnect user:', e));
+              }
+            }
+          }
         }
 
         if (status === 'overdue' && b.accountNumber) overdueCount++;
@@ -4191,6 +4212,11 @@ window.requestAdminClientUpdate = async function () {
 
       if (window.renderAdminClientsTable) await window.renderAdminClientsTable();
       setTimeout(window.closeAdminClientModal, 1500);
+      
+      // Wake up the server so sheetsIntegration.js can sync any profile changes (like Status) to Google Sheets
+      const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
+      fetch(`${BACKEND_URL}/`).catch(() => { });
+
     } catch (e) {
       msg.style.display = 'block';
       msg.style.background = 'rgba(229,57,53,0.1)';
