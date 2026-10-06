@@ -3378,8 +3378,14 @@ window.renderAdminClientsTable = async function () {
       const uB = b.data();
 
       if (statFilter === 'Newest' || statFilter === 'Oldest') {
-        const timeA = uA.createdAt ? new Date(uA.createdAt).getTime() : 0;
-        const timeB = uB.createdAt ? new Date(uB.createdAt).getTime() : 0;
+        let timeA = 0;
+        if (uA.createdAt) {
+          timeA = (typeof uA.createdAt.toMillis === 'function') ? uA.createdAt.toMillis() : (uA.createdAt.toDate ? uA.createdAt.toDate().getTime() : new Date(uA.createdAt).getTime() || 0);
+        }
+        let timeB = 0;
+        if (uB.createdAt) {
+          timeB = (typeof uB.createdAt.toMillis === 'function') ? uB.createdAt.toMillis() : (uB.createdAt.toDate ? uB.createdAt.toDate().getTime() : new Date(uB.createdAt).getTime() || 0);
+        }
         if (timeA !== timeB) {
           return statFilter === 'Newest' ? timeB - timeA : timeA - timeB;
         }
