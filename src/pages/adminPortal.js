@@ -4980,6 +4980,13 @@ window.markAdminBillPaid = async function (btn, billId, customerId, amountStr, b
     const userDoc = await firestore.getDoc(userDocRef);
     if (userDoc.exists()) {
       const uData = userDoc.data();
+      
+      // Auto-reconnect user if they were disconnected
+      const currentStatus = String(uData.status || '').trim().toLowerCase();
+      if (currentStatus === 'disconnected') {
+        await firestore.updateDoc(userDocRef, { status: 'Connected' });
+      }
+
       if (uData.expoPushToken) {
         fetch('https://exp.host/--/api/v2/push/send', {
           method: 'POST',
