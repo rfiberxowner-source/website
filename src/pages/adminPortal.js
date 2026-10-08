@@ -2573,6 +2573,7 @@ window.initAdminBanking = async function () {
       let overdueCount = 0;
       let pendingCount = 0;
       let waitingCount = 0;
+      let disconnectedAnyone = false;
 
       billsSnap.docs.forEach(d => {
         const b = d.data();
@@ -2603,26 +2604,25 @@ window.initAdminBanking = async function () {
         if (isOverdue) {
           const userId = d.ref.parent.parent.id;
           
-          if ((b.status || 'Pending').toLowerCase() !== 'overdue') {
-            firestore.updateDoc(firestore.doc(db, "users", userId, "billing_emails", d.id), {
-              status: 'Overdue'
-            }).catch(e => console.error('Failed to update overdue status:', e));
-          }
+          if (!window._hasProcessedOverdue) {
+            if ((b.status || 'Pending').toLowerCase() !== 'overdue') {
+              firestore.updateDoc(firestore.doc(db, "users", userId, "billing_emails", d.id), {
+                status: 'Overdue'
+              }).catch(e => console.error('Failed to update overdue status:', e));
+            }
 
-          // Auto-disconnect user if they aren't already disconnected
-          if (allUsersSnap) {
-            const uDoc = allUsersSnap.docs.find(doc => doc.id === userId);
-            if (uDoc) {
-              const currentStatus = String(uDoc.data().status || '').trim().toLowerCase();
-              if (currentStatus !== 'disconnected' && currentStatus !== 'deleted') {
-                console.log(`Auto-disconnecting ${userId} due to overdue bill.`);
-                firestore.updateDoc(firestore.doc(db, "users", userId), {
-                  status: 'Disconnected'
-                }).then(() => {
-                  // Wake up the server so sheetsIntegration.js can sync this to Google Sheets
-                  const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
-                  fetch(`${BACKEND_URL}/`).catch(() => { });
-                }).catch(e => console.error('Failed to disconnect user:', e));
+            // Auto-disconnect user if they aren't already disconnected
+            if (allUsersSnap) {
+              const uDoc = allUsersSnap.docs.find(doc => doc.id === userId);
+              if (uDoc) {
+                const currentStatus = String(uDoc.data().status || '').trim().toLowerCase();
+                if (currentStatus !== 'disconnected' && currentStatus !== 'deleted') {
+                  console.log(`Auto-disconnecting ${userId} due to overdue bill.`);
+                  disconnectedAnyone = true;
+                  firestore.updateDoc(firestore.doc(db, "users", userId), {
+                    status: 'Disconnected'
+                  }).catch(e => console.error('Failed to disconnect user:', e));
+                }
               }
             }
           }
@@ -2637,6 +2637,13 @@ window.initAdminBanking = async function () {
       document.getElementById('admin-outstanding-accounts').innerText = `Across ${outSet.size} accounts`;
       document.getElementById('admin-overdue-accounts').innerText = overdueCount;
       if (document.getElementById('admin-waiting-bills')) document.getElementById('admin-waiting-bills').innerText = waitingCount;
+
+      if (disconnectedAnyone) {
+        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://website-98gm.onrender.com';
+        fetch(`${BACKEND_URL}/`).catch(() => { });
+      }
+
+      window._hasProcessedOverdue = true;
     };
 
     window._bankUnsubs.push(
