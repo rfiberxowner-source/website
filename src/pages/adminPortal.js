@@ -2620,7 +2620,8 @@ window.initAdminBanking = async function () {
                   console.log(`Auto-disconnecting ${userId} due to overdue bill.`);
                   disconnectedAnyone = true;
                   firestore.updateDoc(firestore.doc(db, "users", userId), {
-                    status: 'Disconnected'
+                    status: 'Disconnected',
+                    lastUpdated: new Date().toISOString()
                   }).catch(e => console.error('Failed to disconnect user:', e));
                 }
               }
@@ -4195,7 +4196,8 @@ window.requestAdminClientUpdate = async function () {
         plan_price: firestore.deleteField(),
         planPrice: firestore.deleteField(),
         price: firestore.deleteField(),
-        monthlyFee: firestore.deleteField()
+        monthlyFee: firestore.deleteField(),
+        lastUpdated: new Date().toISOString()
       });
 
       // Cascade plan and amount updates to all UNPAID billing statements
@@ -4991,7 +4993,10 @@ window.markAdminBillPaid = async function (btn, billId, customerId, amountStr, b
       // Auto-reconnect user if they were disconnected
       const currentStatus = String(uData.status || '').trim().toLowerCase();
       if (currentStatus === 'disconnected') {
-        await firestore.updateDoc(userDocRef, { status: 'Connected' });
+        await firestore.updateDoc(userDocRef, { 
+          status: 'Connected',
+          lastUpdated: new Date().toISOString()
+        });
       }
 
       if (uData.expoPushToken) {

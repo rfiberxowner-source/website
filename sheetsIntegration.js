@@ -1063,6 +1063,17 @@ function listenForNewUsers() {
                             shouldAppend = true;
                         }
                     }
+
+                    // CRITICAL FIX: If the user was modified while the server was asleep,
+                    // they appear as 'added' on initial load. We check lastUpdated to catch them.
+                    if (user.lastUpdated) {
+                        const updatedDate = typeof user.lastUpdated.toDate === 'function'
+                            ? user.lastUpdated.toDate()
+                            : new Date(user.lastUpdated);
+                        if ((Date.now() - updatedDate.getTime()) < 15 * 60 * 1000) { // 15 mins
+                            await syncProfileToSheet(user);
+                        }
+                    }
                 } else {
                     // Real-time: always append genuinely new users
                     shouldAppend = true;
